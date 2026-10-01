@@ -272,7 +272,12 @@
                             <h3 class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
                                 <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
                             </h3>
-                            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded-md">分子動能模擬</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleParticleSim()" id="particleToggleBtn" class="text-[10px] bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 transition">
+                                    <i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬
+                                </button>
+                                <span class="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded-md">分子動能模擬</span>
+                            </div>
                         </div>
                         <p class="text-[11px] text-slate-500 mb-2">
                             溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格（NaCl）的速度越快：
@@ -364,9 +369,35 @@
                     </div>
                 </div>
 
-                <!-- SRL Step 3: Reflection Card with Explicit Submit Button -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card space-y-3">
-                    <div class="flex justify-between items-center">
+                <!-- Key Learning Points Summary Card (Personalized based on Group Data & Dialogue) -->
+                <div id="learningPointsSummaryCard" class="hidden bg-gradient-to-br from-amber-50 to-orange-50/90 rounded-2xl p-5 shadow-sm border border-amber-200/90 space-y-3.5 transition-all">
+                    <div class="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📝</span>
+                            <div>
+                                <h3 class="text-sm font-bold text-amber-950 font-fun">Key Learning Points Summary / 關鍵學習小結</h3>
+                                <p class="text-[11px] text-amber-700">Jot these down on your worksheet / 請將以下重點抄錄於工作紙上：</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyPersonalizedSummary()" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[10px] font-bold shadow-sm transition flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3 h-3 text-amber-700"></i> 複製小結
+                        </button>
+                    </div>
+
+                    <div id="personalizedSummaryContent" class="space-y-3 text-xs text-slate-700">
+                        <!-- Dynamically filled with Group's personalized empirical data, average comparison, and error analysis -->
+                    </div>
+
+                    <div class="p-2.5 bg-white/70 rounded-xl border border-amber-200/60 text-center">
+                        <p class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1.5">
+                            <span>✨ Well done! Agent Water is so proud of your scientific thinking!</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SRL Step 3: Reflection Card with Scaffolding Guidance -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card space-y-3.5">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                         <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                             <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i>
                             <span>SRL Reflection / 探究反思與觀點轉變</span>
@@ -375,23 +406,57 @@
                     </div>
 
                     <div class="space-y-3 text-xs">
-                        <div>
-                            <label class="font-bold text-slate-600 block mb-1">
-                                I used to think... (我以前以為...)
-                            </label>
-                            <textarea id="usedToThink" rows="2" placeholder="e.g. I thought 1 group data was enough, and hot water dissolves salt for no reason..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs"></textarea>
+                        <!-- Scaffolding Section 1: I used to think -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="font-bold text-slate-700 block text-[11px]">
+                                    I used to think... (我以前以為...)
+                                </label>
+                                <span class="text-[10px] text-indigo-600 font-semibold">💡 點擊下方鷹架句型快速套用：</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" onclick="applyScaffold('used', 'I thought hot water dissolves salt faster just by feeling.')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 rounded-md text-[10px] border border-slate-200 transition">
+                                    💭 憑直覺感覺 (Just by feeling)
+                                </button>
+                                <button type="button" onclick="applyScaffold('used', 'I used to think dissolving speed depends only on temperature, without controlling stirring speed.')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 rounded-md text-[10px] border border-slate-200 transition">
+                                    💭 忽略攪拌變因 (Ignored stirring)
+                                </button>
+                                <button type="button" onclick="applyScaffold('used', 'I used to think testing 1 single group was enough to prove the scientific result.')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 rounded-md text-[10px] border border-slate-200 transition">
+                                    💭 以為測一組已夠 (Single group enough)
+                                </button>
+                            </div>
+                            <textarea id="usedToThink" rows="2" placeholder="例如：I thought hot water dissolves salt faster just by feeling." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed"></textarea>
                         </div>
-                        <div>
-                            <label class="font-bold text-indigo-900 block mb-1">
-                                Now I think... (現在我知道...)
-                            </label>
-                            <textarea id="nowIThink" rows="2" placeholder="e.g. Hot water provides energy so salt dissolves faster; taking class average reduces human timing & stirring errors!" class="w-full p-2 bg-indigo-50/50 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs"></textarea>
+
+                        <!-- Scaffolding Section 2: Now I think -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="font-bold text-indigo-900 block text-[11px]">
+                                    Now I think... (現在我知道...)
+                                </label>
+                                <span class="text-[10px] text-indigo-600 font-semibold">🔬 科學實證觀點：</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" onclick="applyScaffold('now', 'I thought hot water dissolves salt faster by measuring the time of dissolving using a timer.')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-800 rounded-md text-[10px] border border-indigo-200 transition font-medium">
+                                    ⏱️ 碼錶定時量測 (Measuring with a timer)
+                                </button>
+                                <button type="button" onclick="applyScaffold('now', 'Now I know water molecules have higher kinetic energy at 80°C and collide violently to dismantle NaCl lattice faster.')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-800 rounded-md text-[10px] border border-indigo-200 transition font-medium">
+                                    🔬 水分子高動能劇烈碰撞 (Kinetic Energy)
+                                </button>
+                                <button type="button" onclick="applyScaffold('now', 'Now I know taking the class average of 8 groups cancels out human reaction delay & stirring fluctuations.')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-800 rounded-md text-[10px] border border-indigo-200 transition font-medium">
+                                    ⚖️ 全班平均抵消隨機誤差 (Average cancels error)
+                                </button>
+                                <button type="button" onclick="applyScaffold('now', 'Now I know in a fair test, ONLY water temperature should change while stirring & water volume stay constant.')" class="px-2 py-1 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-800 rounded-md text-[10px] border border-indigo-200 transition font-medium">
+                                    🎯 公平測試嚴格控制變因 (Fair test control)
+                                </button>
+                            </div>
+                            <textarea id="nowIThink" rows="2" placeholder="例如：I thought hot water dissolves salt faster by measuring the time of dissolving using a timer." class="w-full p-2.5 bg-indigo-50/50 border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed"></textarea>
                         </div>
 
                         <!-- Reflection Submit Button -->
                         <div class="flex items-center justify-between pt-1 border-t border-slate-100">
                             <span id="reflectionStatus" class="text-[10px] text-slate-400 italic">Not submitted yet / 尚未提交</span>
-                            <button type="button" onclick="submitGroupReflection()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                            <button type="button" onclick="submitGroupReflection()" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5">
                                 <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit / Update Reflection (提交/更新反思)
                             </button>
                         </div>
@@ -425,12 +490,15 @@
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button onclick="openShareModal()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-white/20">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="openShareModal()" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-white/20">
                             <i data-lucide="qr-code" class="w-4 h-4 text-amber-300"></i> 投屏 QR Code
                         </button>
-                        <button onclick="refreshAITeacherDiagnostics()" class="bg-gradient-to-r from-teal-500 to-sky-500 hover:from-teal-400 hover:to-sky-400 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-2 border border-white/20">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 一鍵刷新全班 SRL 診斷
+                        <button onclick="renderTeacherDashboardUI()" class="bg-teal-600/80 hover:bg-teal-500 active:scale-95 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-teal-400/40">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 刷新實時看板
+                        </button>
+                        <button onclick="fillDemoDataForClass()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-1.5 border border-white/20">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-amber-100"></i> 填入示範數據 (Demo)
                         </button>
                     </div>
                 </div>
@@ -849,9 +917,7 @@
                     try {
                         const parsed = JSON.parse(message.toString());
                         if (parsed && parsed.payload) {
-                            classData = parsed.payload;
-                            saveToStorage();
-                            updateAllUI();
+                            mergeIncomingClassData(parsed.payload);
                         }
                     } catch(err) {
                         console.error("MQTT parse err:", err);
@@ -902,7 +968,7 @@
             }
         }
 
-        // Local Storage & Broadcast Sync
+        // Local Storage & Broadcast Sync with Group-by-Group Merging
         function loadFromStorage() {
             const key = `salt_dissolving_data_${currentClass.replace(/\s+/g, '_')}`;
             const saved = localStorage.getItem(key);
@@ -920,12 +986,66 @@
             localStorage.setItem(key, JSON.stringify(classData));
         }
 
+        function mergeIncomingClassData(incomingPayload) {
+            if (!incomingPayload) return;
+            let hasChanged = false;
+            for (let i = 1; i <= 8; i++) {
+                const gKey = `Group ${i}`;
+                const incoming = incomingPayload[gKey];
+                if (!incoming) continue;
+                if (!classData[gKey]) {
+                    classData[gKey] = incoming;
+                    hasChanged = true;
+                    continue;
+                }
+                // Merge data if present
+                if (incoming.data && incoming.data[25] !== undefined && incoming.data[80] !== undefined) {
+                    if (!classData[gKey].data ||
+                        classData[gKey].data[25] !== incoming.data[25] ||
+                        classData[gKey].data[80] !== incoming.data[80]) {
+                        classData[gKey].data = { 25: incoming.data[25], 80: incoming.data[80] };
+                        hasChanged = true;
+                    }
+                }
+                // Merge reflection
+                if (incoming.reflectionSubmitted) {
+                    if (!classData[gKey].reflectionSubmitted || incoming.nowIThink !== classData[gKey].nowIThink) {
+                        classData[gKey].reflectionSubmitted = true;
+                        classData[gKey].usedToThink = incoming.usedToThink;
+                        classData[gKey].nowIThink = incoming.nowIThink;
+                        classData[gKey].reflectionTime = incoming.reflectionTime;
+                        hasChanged = true;
+                    }
+                } else if (incoming.usedToThink || incoming.nowIThink) {
+                    if (incoming.usedToThink && !classData[gKey].usedToThink) { classData[gKey].usedToThink = incoming.usedToThink; hasChanged = true; }
+                    if (incoming.nowIThink && !classData[gKey].nowIThink) { classData[gKey].nowIThink = incoming.nowIThink; hasChanged = true; }
+                }
+                // Merge stage & summaries
+                if (incoming.stage && incoming.stage > (classData[gKey].stage || 0)) {
+                    classData[gKey].stage = incoming.stage;
+                    classData[gKey].summaryEn = incoming.summaryEn || classData[gKey].summaryEn;
+                    classData[gKey].summaryZh = incoming.summaryZh || classData[gKey].summaryZh;
+                    hasChanged = true;
+                }
+                // Merge chat logs
+                if (incoming.chatLogs && Array.isArray(incoming.chatLogs)) {
+                    const myLogs = classData[gKey].chatLogs || [];
+                    if (incoming.chatLogs.length > myLogs.length) {
+                        classData[gKey].chatLogs = incoming.chatLogs;
+                        hasChanged = true;
+                    }
+                }
+            }
+            if (hasChanged) {
+                saveToStorage();
+                updateAllUI();
+            }
+        }
+
         if (localBroadcastChannel) {
             localBroadcastChannel.onmessage = (event) => {
-                if (event.data && event.data.type === 'UPDATE_SALT_DATA') {
-                    classData = event.data.payload;
-                    saveToStorage();
-                    updateAllUI();
+                if (event.data && event.data.payload) {
+                    mergeIncomingClassData(event.data.payload);
                 }
             };
         }
@@ -937,7 +1057,7 @@
             }
             if (mqttClient && isMqttConnected) {
                 const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
-                mqttClient.publish(topic, JSON.stringify({ payload: classData, timestamp: Date.now() }), { qos: 0 });
+                mqttClient.publish(topic, JSON.stringify({ payload: classData, timestamp: Date.now() }), { qos: 0, retain: true });
             }
         }
 
@@ -957,7 +1077,7 @@
                         document.getElementById('studentViewSection').classList.add('hidden');
                         document.getElementById('teacherViewSection').classList.remove('hidden');
                         
-                        refreshAITeacherDiagnostics();
+                        renderTeacherDashboardUI();
                     } else {
                         alert("❌ 密碼錯誤！ / Incorrect Password!");
                         select.value = lastSelectedRole;
@@ -998,7 +1118,36 @@
                 }
                 
                 renderStudentChatHistory();
+                renderPersonalizedLearningSummary(currentRole);
                 updateAllUI();
+            }
+        }
+
+        // Scaffolding Quick-Fill Helper for SRL Reflection
+        function applyScaffold(type, text) {
+            if (type === 'used') {
+                const el = document.getElementById('usedToThink');
+                if (el) {
+                    el.value = text;
+                    saveWorksheetProgress();
+                }
+            } else if (type === 'now') {
+                const el = document.getElementById('nowIThink');
+                if (el) {
+                    el.value = text;
+                    saveWorksheetProgress();
+                }
+            }
+        }
+
+        // Demo Data Population for Classroom Showcase
+        function fillDemoDataForClass() {
+            if (confirm("是否要填入全班 8 組示範數據以供公開課展示？\n(Populate 8 groups demo data for classroom presentation?)")) {
+                generateSimulatedClassData();
+                broadcastData();
+                renderTeacherDashboardUI();
+                updateAllUI();
+                alert("✅ 已成功填入全班 8 組示範數據！(Sample data populated for all 8 groups)");
             }
         }
 
@@ -1059,6 +1208,7 @@
             broadcastData();
             updateAllUI();
             renderStudentChatHistory();
+            renderPersonalizedLearningSummary(currentRole);
         }
 
         function generateSimulatedClassData() {
@@ -1131,11 +1281,6 @@
             };
         }
 
-        function saveAndBroadcast() {
-            localStorage.setItem('salt_dissolving_data_v2', JSON.stringify(classData));
-            channel.postMessage({ type: 'UPDATE_SALT_DATA', payload: classData });
-        }
-
         function updateAllUI() {
             const myData = classData[currentRole] ? classData[currentRole].data : null;
             const avgData = calculateClassAverage();
@@ -1178,6 +1323,11 @@
                     tr.innerHTML = html;
                     tbody.appendChild(tr);
                 });
+            }
+
+            // Update Student Learning Summary if active
+            if (currentRole !== "Teacher") {
+                renderPersonalizedLearningSummary(currentRole);
             }
 
             // Update Teacher View if Active
@@ -1294,12 +1444,15 @@
 
                 broadcastData();
                 updateAllUI();
+                renderPersonalizedLearningSummary(currentRole);
 
                 setTimeout(() => {
                     if (opt.nextStage <= 3 && dialogueStages[opt.nextStage]) {
                         appendAIBubbleToGroup(currentRole, dialogueStages[opt.nextStage].aiEnglish, dialogueStages[opt.nextStage].aiChinese);
                         broadcastData();
                         updateAllUI();
+                    } else if (opt.nextStage >= 4) {
+                        renderPersonalizedLearningSummary(currentRole);
                     }
                 }, 800);
 
@@ -1578,12 +1731,111 @@
         }
 
         function refreshAITeacherDiagnostics() {
-            generateSimulatedClassData();
             renderTeacherDashboardUI();
+        }
+
+        // ================= KEY LEARNING POINTS SUMMARY (DIFFERENTIATED FOR EACH GROUP) =================
+        function renderPersonalizedLearningSummary(groupKey) {
+            const card = document.getElementById('learningPointsSummaryCard');
+            const content = document.getElementById('personalizedSummaryContent');
+            if (!card || !content) return;
+
+            const gInfo = classData[groupKey];
+            if (!gInfo) return;
+
+            const gData = gInfo.data;
+            const avg = calculateClassAverage();
+            
+            // 1. Empirical Timing Trend
+            let trendEn = "";
+            let trendZh = "";
+            if (gData && gData[25] !== undefined && gData[80] !== undefined) {
+                const diff = Math.abs(gData[25] - gData[80]);
+                const speedup = gData[80] < gData[25] ? Math.round(((gData[25] - gData[80]) / gData[25]) * 100) : 0;
+                if (gData[80] < gData[25]) {
+                    trendEn = `<strong>Empirical Data Trend / 本組實測數據趨勢與水溫效應:</strong> Your group (${groupKey}) recorded dissolving time dropping from <strong>${gData[25]}s</strong> (at 25°C cold water) to <strong>${gData[80]}s</strong> (at 80°C hot water)—a significant reduction of <strong>${diff}s</strong> (${speedup}% faster)! Higher temperature gives water molecules higher thermal kinetic energy, causing violent and frequent collisions that dismantle the salt (NaCl) crystal lattice much faster.`;
+                    trendZh = `<strong>本組實測數據趨勢與水溫效應：</strong> 貴組（${groupKey}）實測溶解時間由 25°C 冷水的 <strong>${gData[25]} 秒</strong>大幅縮短至 80°C 熱水的 <strong>${gData[80]} 秒</strong>（足足縮短了 <strong>${diff} 秒</strong>，溶解速率提升約 <strong>${speedup}%</strong>）！證實水溫越高，水分子熱動能越大，高速劇烈碰撞食鹽晶格，使其瓦解並擴散的速度成倍加快。`;
+                } else {
+                    trendEn = `<strong>Empirical Anomaly Identified / 實測反常數據警示:</strong> Your group (${groupKey}) recorded 80°C (${gData[80]}s) slower than 25°C (${gData[25]}s). Scientifically, this indicates an uncontrolled variable (e.g. forgot stirring in hot water, or water cooled down). In scientific inquiry, identifying anomalies is the first step to discovering truth!`;
+                    trendZh = `<strong>實測反常數據警示：</strong> 貴組（${groupKey}）記錄到 80°C（${gData[80]} 秒）比 25°C（${gData[25]} 秒）更慢。在科學探究中，這指向了未嚴格控制的變因（例如熱水忘記攪拌、或放置過久水溫下降）。主動排查反常現象正是優秀科學家的必備思維！`;
+                }
+            } else {
+                trendEn = `<strong>Data Trend Anticipation / 數據趨勢前瞻:</strong> In fair tests, salt dissolves significantly faster in 80°C hot water than 25°C cold water due to increased microscopic molecular kinetic energy and collision frequency.`;
+                trendZh = `<strong>數據趨勢前瞻：</strong> 在公平測試中，由於微觀水分子熱動能大增，80°C 熱水溶解食鹽的速度必定遠快於 25°C 冷水。`;
+            }
+
+            // 2. Why Class Average?
+            let avgEn = "";
+            let avgZh = "";
+            if (avg && avg.count >= 1 && gData) {
+                const diffFromAvg = Math.abs(gData[25] - avg[25]);
+                avgEn = `<strong>Why Class Average? / 為什麼需要全班平均值？:</strong> Your group recorded ${gData[25]}s for cold water, which is close to the 8-group class average (${avg[25]}s, diff: ${diffFromAvg}s). Calculating the average of 8 groups <strong>REDUCES individual random errors</strong> (such as stopwatch click latency and uneven hand stirring), making experimental findings substantially more reliable!`;
+                avgZh = `<strong>為什麼需要全班平均值？：</strong> 貴組 25°C 測得 ${gData[25]} 秒，與全班 8 組平均值（${avg[25]} 秒，相差 ${diffFromAvg} 秒）相互印證。計算全班平均值能<strong>有效抵消個別同學按碼錶時差與攪拌不均等隨機誤差</strong>，讓實驗數據具備高度科學信度！`;
+            } else {
+                avgEn = `<strong>Why Class Average? / 為什麼需要全班平均值？:</strong> Calculating the average of 8 independent groups eliminates random human variations and cancels out experimental noise, turning individual subjective attempts into solid scientific evidence!`;
+                avgZh = `<strong>為什麼需要全班平均值？：</strong> 收集全班 8 組獨立數據並計算平均值，能消除個人人為隨機誤差，將單一觀察昇華為具有統計說服力的科學實證！`;
+            }
+
+            // 3. Differentiated Human Error Limitation
+            let errorEn = "";
+            let errorZh = "";
+            const chatSnippet = (gInfo.chatLogs || []).map(l => l.en).join(" ").toLowerCase();
+            if (chatSnippet.includes("stirring") || chatSnippet.includes("stir") || groupKey === "Group 1" || groupKey === "Group 4" || groupKey === "Group 7") {
+                errorEn = `<strong>Human Error Limitation (Stirring Fluctuation) / 實驗人為局限與誤差分析:</strong> Inconsistent manual stirring speed is the primary source of error. Hand stirring easily suffers from muscle fatigue and speed fluctuations. In advanced STEM laboratories, adopting a fixed-RPM magnetic stirrer strictly fixes this controlled variable.`;
+                errorZh = `<strong>實驗人為局限與誤差分析（攪拌速度波動）：</strong> 手動玻璃棒攪拌極難保持絕對勻速，容易出現前快後慢或個人力道差異。在進階 STEM 實驗室中，改用定速磁力攪拌器（Magnetic Stirrer）能徹底嚴格鎖定此項控制變因。`;
+            } else if (chatSnippet.includes("stopwatch") || chatSnippet.includes("reaction") || groupKey === "Group 2" || groupKey === "Group 5" || groupKey === "Group 8") {
+                errorEn = `<strong>Human Error Limitation (Reaction Delay) / 實驗人為局限與誤差分析:</strong> Human visual reaction delay (~0.3-0.8s) when identifying the exact dissolution end-point and clicking the stopwatch creates timing noise. Taking multiple trials and class averaging smoothens out this biological delay.`;
+                errorZh = `<strong>實驗人為局限與誤差分析（按錶反應時差）：</strong> 肉眼判斷食鹽晶體完全消失與手指按停碼錶之間存在約 0.3-0.8 秒的人類生理反應時差。透過多組數據求平均是消除此類生理時差的最佳科學手段。`;
+            } else {
+                errorEn = `<strong>Human Error Limitation (Visual End-Point Judgment) / 實驗人為局限與誤差分析:</strong> Determining when the last crystal dissolves by naked eye is subjective due to optical scattering in water. Designing an automated turbidity / light sensor could standardize the detection of the dissolving end-point.`;
+                errorZh = `<strong>實驗人為局限與誤差分析（終點目測主觀性）：</strong> 單憑肉眼觀察微小鹽粒完全溶解存在主觀界限。若能結合光電濁度傳感器（Turbidity Sensor）進行自動化監測，可徹底排除主觀視覺誤差。`;
+            }
+
+            content.innerHTML = `
+                <div class="p-3 bg-white/90 rounded-xl border border-amber-200/80 space-y-1">
+                    <p class="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> 1. ${trendEn}
+                    </p>
+                    <p class="text-[11px] text-slate-600 pl-3.5 leading-relaxed">${trendZh}</p>
+                </div>
+
+                <div class="p-3 bg-white/90 rounded-xl border border-amber-200/80 space-y-1">
+                    <p class="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-teal-500"></span> 2. ${avgEn}
+                    </p>
+                    <p class="text-[11px] text-slate-600 pl-3.5 leading-relaxed">${avgZh}</p>
+                </div>
+
+                <div class="p-3 bg-white/90 rounded-xl border border-amber-200/80 space-y-1">
+                    <p class="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span> 3. ${errorEn}
+                    </p>
+                    <p class="text-[11px] text-slate-600 pl-3.5 leading-relaxed">${errorZh}</p>
+                </div>
+            `;
+
+            card.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function copyPersonalizedSummary() {
+            const content = document.getElementById('personalizedSummaryContent');
+            if (!content) return;
+            const text = content.innerText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("✅ 關鍵學習小結已成功複製！請貼到工作紙上。\n(Key Learning Points copied to clipboard!)");
+                }).catch(() => {
+                    prompt("請手動複製以下學習小結：", text);
+                });
+            } else {
+                prompt("請手動複製以下學習小結：", text);
+            }
         }
 
         // ================= MICROSCOPIC PARTICLE SIMULATION (KINETIC THEORY) =================
         let particleAnimId = null;
+        let isParticlePaused = false;
 
         class ParticleSimulation {
             constructor(canvasId, tempMode) {
@@ -1595,19 +1847,20 @@
                 this.height = this.canvas.height;
                 this.isHot = (tempMode === 'hot');
                 
-                // Water molecules (H2O)
-                const count = this.isHot ? 24 : 14;
-                const baseSpeed = this.isHot ? 3.6 : 1.1;
+                // Water molecules: Cold = calm (0.55 px/frame), Hot = active (2.0 px/frame)
+                const count = this.isHot ? 18 : 12;
+                const baseSpeed = this.isHot ? 2.0 : 0.55;
                 this.waterMolecules = [];
                 for (let i = 0; i < count; i++) {
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = baseSpeed * (0.7 + Math.random() * 0.6);
+                    const speed = baseSpeed * (0.85 + Math.random() * 0.3);
                     this.waterMolecules.push({
-                        x: Math.random() * this.width,
-                        y: Math.random() * this.height,
+                        x: 15 + Math.random() * (this.width - 30),
+                        y: 15 + Math.random() * (this.height - 30),
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
-                        radius: this.isHot ? 4.5 : 4
+                        baseSpeed: speed,
+                        radius: 4.5
                     });
                 }
 
@@ -1623,7 +1876,7 @@
                 this.crystalGrid = [];
                 const cols = 5;
                 const rows = 4;
-                const spacing = 7.5;
+                const spacing = 7;
                 const startX = (this.width - (cols - 1) * spacing) / 2;
                 const startY = (this.height - (rows - 1) * spacing) / 2;
 
@@ -1640,6 +1893,8 @@
             }
 
             update() {
+                if (isParticlePaused) return;
+
                 const cx = this.width / 2;
                 const cy = this.height / 2;
 
@@ -1648,29 +1903,30 @@
                     m.x += m.vx;
                     m.y += m.vy;
 
-                    // Wall bouncing
-                    if (m.x - m.radius < 0) { m.x = m.radius; m.vx *= -1; }
-                    if (m.x + m.radius > this.width) { m.x = this.width - m.radius; m.vx *= -1; }
-                    if (m.y - m.radius < 0) { m.y = m.radius; m.vy *= -1; }
-                    if (m.y + m.radius > this.height) { m.y = this.height - m.radius; m.vy *= -1; }
+                    // Elastic wall bounce without accelerating
+                    if (m.x - m.radius < 0) { m.x = m.radius; m.vx = Math.abs(m.vx); }
+                    if (m.x + m.radius > this.width) { m.x = this.width - m.radius; m.vx = -Math.abs(m.vx); }
+                    if (m.y - m.radius < 0) { m.y = m.radius; m.vy = Math.abs(m.vy); }
+                    if (m.y + m.radius > this.height) { m.y = this.height - m.radius; m.vy = -Math.abs(m.vy); }
 
-                    // Collision with crystal region
-                    if (Math.abs(m.x - cx) < 24 && Math.abs(m.y - cy) < 20) {
-                        m.vx *= -1.05;
-                        m.vy *= -1.05;
-                        m.vx += (Math.random() - 0.5) * 0.5;
-                        m.vy += (Math.random() - 0.5) * 0.5;
-                        
-                        // Collision causes dissolution more readily at 80°C
-                        if (Math.random() < (this.isHot ? 0.09 : 0.015)) {
+                    // Elastic bounce off crystal zone (width 40, height 30)
+                    if (Math.abs(m.x - cx) < 22 && Math.abs(m.y - cy) < 17) {
+                        const dx = m.x - cx;
+                        const dy = m.y - cy;
+                        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                        m.vx = (dx / dist) * m.baseSpeed;
+                        m.vy = (dy / dist) * m.baseSpeed;
+
+                        // Dissolution trigger probability: significantly higher in hot water
+                        if (Math.random() < (this.isHot ? 0.05 : 0.005)) {
                             this.triggerDissolve();
                         }
                     }
                 });
 
-                // Periodic continuous dissolution
+                // Periodic steady dissolution: Hot dissolves ~4x faster than Cold
                 this.dissolveTimer++;
-                if (this.dissolveTimer % (this.isHot ? 40 : 180) === 0) {
+                if (this.dissolveTimer % (this.isHot ? 55 : 240) === 0) {
                     this.triggerDissolve();
                 }
 
@@ -1679,27 +1935,27 @@
                     const ion = this.dissolvedIons[i];
                     ion.x += ion.vx;
                     ion.y += ion.vy;
-                    ion.life -= 0.015;
+                    ion.life -= (this.isHot ? 0.012 : 0.006);
                     if (ion.life <= 0) {
                         this.dissolvedIons.splice(i, 1);
                     }
                 }
 
-                // Regrow/refresh crystal if almost completely dissolved
+                // Regrow crystal once depleted
                 const activeCount = this.crystalGrid.filter(p => p.active).length;
-                if (activeCount < 5) {
+                if (activeCount < 4) {
                     this.initCrystal();
                 }
             }
 
             triggerDissolve() {
                 const activeNodes = this.crystalGrid.filter(p => p.active);
-                if (activeNodes.length > 3) {
+                if (activeNodes.length > 2) {
                     const idx = Math.floor(Math.random() * activeNodes.length);
                     const node = activeNodes[idx];
                     node.active = false;
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = this.isHot ? 2.4 : 0.9;
+                    const speed = this.isHot ? 1.2 : 0.4;
                     this.dissolvedIons.push({
                         x: node.x,
                         y: node.y,
@@ -1715,16 +1971,16 @@
                 if (!this.ctx) return;
                 this.ctx.clearRect(0, 0, this.width, this.height);
 
-                // Thermal backdrop
+                // Thermal soft background
                 this.ctx.fillStyle = this.isHot ? 'rgba(255, 241, 242, 0.95)' : 'rgba(240, 249, 255, 0.95)';
                 this.ctx.fillRect(0, 0, this.width, this.height);
 
                 // Crystal lattice outline box
-                this.ctx.strokeStyle = this.isHot ? 'rgba(244, 63, 94, 0.25)' : 'rgba(14, 165, 233, 0.25)';
+                this.ctx.strokeStyle = this.isHot ? 'rgba(244, 63, 94, 0.3)' : 'rgba(14, 165, 233, 0.3)';
                 this.ctx.lineWidth = 1;
-                this.ctx.strokeRect((this.width - 44)/2, (this.height - 34)/2, 44, 34);
+                this.ctx.strokeRect((this.width - 40)/2, (this.height - 30)/2, 40, 30);
 
-                // Draw intact crystal ions
+                // Draw intact crystal ions (NaCl)
                 this.crystalGrid.forEach(p => {
                     if (!p.active) return;
                     this.ctx.beginPath();
@@ -1733,32 +1989,23 @@
                     this.ctx.fill();
                 });
 
-                // Draw dissolved hydrated ions
+                // Draw dissolved hydrated ions (gradual fade)
                 this.dissolvedIons.forEach(ion => {
                     this.ctx.save();
                     this.ctx.globalAlpha = Math.max(0, ion.life);
                     this.ctx.beginPath();
-                    this.ctx.arc(ion.x, ion.y, ion.type === 'Na' ? 3.2 : 4, 0, Math.PI * 2);
+                    this.ctx.arc(ion.x, ion.y, ion.type === 'Na' ? 3.0 : 3.8, 0, Math.PI * 2);
                     this.ctx.fillStyle = ion.type === 'Na' ? '#7c3aed' : '#059669';
                     this.ctx.fill();
                     this.ctx.restore();
                 });
 
-                // Draw water molecules (H2O)
+                // Draw water molecules (H2O) - NO flicker lines, clean, smooth, readable
                 this.waterMolecules.forEach(m => {
-                    if (this.isHot) {
-                        this.ctx.beginPath();
-                        this.ctx.moveTo(m.x - m.vx * 2.5, m.y - m.vy * 2.5);
-                        this.ctx.lineTo(m.x, m.y);
-                        this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
-                        this.ctx.lineWidth = 2;
-                        this.ctx.stroke();
-                    }
-
-                    // Oxygen atom
+                    // Oxygen atom center
                     this.ctx.beginPath();
                     this.ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
-                    this.ctx.fillStyle = this.isHot ? '#ef4444' : '#0284c7';
+                    this.ctx.fillStyle = this.isHot ? '#e11d48' : '#0284c7';
                     this.ctx.fill();
 
                     // Hydrogen atoms
@@ -1770,11 +2017,14 @@
                     this.ctx.fill();
                 });
 
-                // Thermal state badges
-                this.ctx.fillStyle = this.isHot ? '#be123c' : '#0369a1';
-                this.ctx.font = 'bold 9px sans-serif';
-                this.ctx.fillText(this.isHot ? '🔥 High Kinetic E (劇烈碰撞)' : '❄️ Low Kinetic E (緩慢運動)', 6, 12);
-                this.ctx.fillText(this.isHot ? 'Dissolving: VERY FAST' : 'Dissolving: SLOW', 6, this.height - 6);
+                // Clear informative overlay
+                this.ctx.fillStyle = this.isHot ? '#9f1239' : '#0369a1';
+                this.ctx.font = 'bold 9px "Noto Sans TC", sans-serif';
+                this.ctx.fillText(this.isHot ? '🔥 80°C 熱水 • 水分子動能大 • 高速劇烈碰撞' : '❄️ 25°C 冷水 • 水分子動能小 • 慢速平緩碰撞', 6, 12);
+                
+                this.ctx.fillStyle = this.isHot ? '#be123c' : '#0284c7';
+                this.ctx.font = '9px "Noto Sans TC", sans-serif';
+                this.ctx.fillText(this.isHot ? '速度: 快速 (2.0) • 碰撞率: 高 (~4×) • 溶解快速' : '速度: 慢速 (0.55) • 碰撞率: 低 • 溶解緩慢', 6, this.height - 6);
             }
         }
 
@@ -1796,6 +2046,17 @@
                 hotSim.draw();
             }
             particleAnimId = requestAnimationFrame(animateParticles);
+        }
+
+        function toggleParticleSim() {
+            isParticlePaused = !isParticlePaused;
+            const btn = document.getElementById('particleToggleBtn');
+            if (btn) {
+                btn.innerHTML = isParticlePaused ? 
+                    '<i data-lucide="play" class="w-3 h-3 text-emerald-600"></i> 繼續播放' : 
+                    '<i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬';
+                if (window.lucide) lucide.createIcons();
+            }
         }
 
         // ================= SHARE MODAL & QR CODE GENERATION =================
