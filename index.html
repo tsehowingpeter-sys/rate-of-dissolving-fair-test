@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S1 Science: Rate of Dissolving Salt & SRL Command Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- MQTT over WebSocket for Real-time Cloud Multi-device Sync -->
+    <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+    <!-- QRCode.js for Classroom QR Sharing -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+        .animate-pulse-dot { animation: pulse-dot 2s infinite ease-in-out; }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+        .font-fun { font-family: 'Fredoka', cursive, 'Noto Sans TC', sans-serif; }
+        .chat-bubble-ai {
+            background-color: #e0f2fe;
+            border-radius: 18px 18px 18px 2px;
+        }
+        .chat-bubble-user {
+            background-color: #0284c7;
+            color: white;
+            border-radius: 18px 18px 2px 18px;
+        }
+        .srl-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+        }
+        .drag-item {
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+        .drop-zone {
+            min-height: 90px;
+            transition: all 0.2s ease;
+        }
+        .drop-zone.drag-over {
+            background-color: #e0f2fe !important;
+            border-color: #0284c7 !important;
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-12">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-teal-600 via-sky-600 to-indigo-700 text-white shadow-lg py-4 px-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-md border border-white/30">
+                    <i data-lucide="flask-conical" class="w-7 h-7 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <h1 class="text-lg md:text-xl font-bold font-fun tracking-wide">
+                            Exp 1.2: Rate of Dissolving Table Salt
+                        </h1>
+                        <span id="roleBadge" class="text-[10px] bg-emerald-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Student View / 學生模式</span>
+                        <span id="syncBadge" class="text-[10px] bg-sky-400/20 text-sky-200 border border-sky-300/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot"></span>
+                            <span id="syncStatusText">Connecting Cloud...</span>
+                        </span>
+                    </div>
+                    <p class="text-teal-100 text-xs">
+                        實驗 1.2：水溫對食鹽溶解速率的影響 • 公開課實時雲端連線與高階思維探究中心
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions: QR Code Share + Class Selector + Mode Switcher -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <!-- Share QR Button -->
+                <button onclick="openShareModal()" class="bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/30 transition flex items-center gap-1.5 shadow">
+                    <i data-lucide="qr-code" class="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Share / 分享同學</span>
+                </button>
+
+                <!-- Class Input / Switcher -->
+                <div class="bg-slate-900/40 px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow-inner">
+                    <span class="text-[11px] text-teal-200 font-bold">班別:</span>
+                    <input type="text" id="classInput" value="Class 1A" onchange="handleClassChange(this.value)" class="bg-white/90 text-slate-900 text-xs font-bold px-2 py-0.5 rounded w-20 focus:outline-none focus:ring-1 focus:ring-teal-400 text-center">
+                </div>
+
+                <!-- Selector Dropdown with Teacher Password Access -->
+                <div class="bg-slate-900/40 px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-2 shadow-inner">
+                    <label class="text-xs font-semibold text-teal-100 whitespace-nowrap flex items-center gap-1">
+                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> 切換:
+                    </label>
+                    <select id="groupSelect" onchange="handleRoleChange()" class="bg-white text-slate-800 text-xs font-bold px-2.5 py-1 rounded-lg focus:outline-none shadow cursor-pointer">
+                        <option value="Group 1">Group 1 (第 1 組)</option>
+                        <option value="Group 2">Group 2 (第 2 組)</option>
+                        <option value="Group 3">Group 3 (第 3 組)</option>
+                        <option value="Group 4">Group 4 (第 4 組)</option>
+                        <option value="Group 5">Group 5 (第 5 組)</option>
+                        <option value="Group 6">Group 6 (第 6 組)</option>
+                        <option value="Group 7">Group 7 (第 7 組)</option>
+                        <option value="Group 8">Group 8 (第 8 組)</option>
+                        <option value="Teacher" class="font-bold text-amber-600 bg-amber-50">🔒 Teacher Mode (教師智慧指揮中心)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+
+        <!-- ================= STUDENT VIEW ================= -->
+        <div id="studentViewSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Left Column: Worksheet, Data Entry, Chart & Table (7 Cols) -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <!-- 1. Interactive Scientific Inquiry Worksheet -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-600"></i>
+                            <span>1. Scientific Inquiry Worksheet / 科學探究工作紙</span>
+                        </h2>
+                        <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-md">SRL Step 1: Planning</span>
+                    </div>
+
+                    <div class="space-y-4 text-xs">
+                        <!-- Problem & Hypothesis -->
+                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
+                            <p class="font-bold text-slate-700 mb-1">
+                                (a) Problem to be investigated / 待探究的問題：
+                            </p>
+                            <p class="text-slate-600 italic font-medium">Does hot water dissolve salt faster than cold water? / 熱水溶解食鹽的速度是否比冷水快？</p>
+                        </div>
+
+                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
+                            <label class="font-bold text-slate-700 block mb-1">
+                                (b) My Hypothesis / 我的科學假設：
+                            </label>
+                            <select id="studentHypothesis" onchange="saveWorksheetProgress()" class="w-full p-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none text-xs font-medium">
+                                <option value="">-- Select Hypothesis / 請選擇假設 --</option>
+                                <option value="faster">Hot water dissolves salt FASTER than cold water. (熱水比冷水更快溶解食鹽。)</option>
+                                <option value="slower">Hot water dissolves salt SLOWER than cold water. (熱水比冷水更慢溶解食鹽。)</option>
+                                <option value="same">Water temperature has NO EFFECT on dissolving speed. (水溫對溶解速度沒有影響。)</option>
+                            </select>
+                        </div>
+
+                        <!-- (c) Drag & Drop Identification of Variables -->
+                        <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <p class="font-bold text-slate-700">(c) Identification of Variables (Drag or Click to Assign) / 控制變因拖拽配對：</p>
+                                <button type="button" onclick="checkVariableAnswers()" class="bg-teal-600 hover:bg-teal-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow transition flex items-center gap-1">
+                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Check Answer / 檢查答案
+                                </button>
+                            </div>
+
+                            <!-- Variable Items Bank -->
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                                <p class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Variable Cards Pool / 待分類變因卡片 (Drag to targets below / 拖拽或點選目標):</p>
+                                <div id="variablePool" class="flex flex-wrap gap-2 min-h-[36px]">
+                                    <div draggable="true" ondragstart="drag(event)" id="var_temp" onclick="selectCardToMove('var_temp')" class="drag-item bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-amber-600"></i> Water Temp (水溫: 25°C vs 80°C)
+                                    </div>
+                                    <div draggable="true" ondragstart="drag(event)" id="var_vol" onclick="selectCardToMove('var_vol')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Water Volume (水體積: 50 cm³)
+                                    </div>
+                                    <div draggable="true" ondragstart="drag(event)" id="var_mass" onclick="selectCardToMove('var_mass')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Salt Mass (食鹽質量: 5 g)
+                                    </div>
+                                    <div draggable="true" ondragstart="drag(event)" id="var_stir" onclick="selectCardToMove('var_stir')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Stirring Speed & Rod (攪拌速度)
+                                    </div>
+                                    <div draggable="true" ondragstart="drag(event)" id="var_time" onclick="selectCardToMove('var_time')" class="drag-item bg-indigo-100 hover:bg-indigo-200 border border-indigo-300 text-indigo-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-indigo-600"></i> Dissolving Time (完全溶解時間)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Target Drop Zones -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                                <!-- Zone 1: Changed -->
+                                <div ondrop="drop(event, 'changed')" ondragover="allowDrop(event)" onclick="dropSelectedCard('changed')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-teal-200 hover:border-teal-400">
+                                    <span class="font-bold text-teal-700 block mb-1">Variable to be changed / 改變的變因</span>
+                                    <div id="zone_changed" class="space-y-1"></div>
+                                </div>
+                                <!-- Zone 2: Constant -->
+                                <div ondrop="drop(event, 'constant')" ondragover="allowDrop(event)" onclick="dropSelectedCard('constant')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-sky-200 hover:border-sky-400">
+                                    <span class="font-bold text-sky-700 block mb-1">Variables kept constant / 保持不變的變因</span>
+                                    <div id="zone_constant" class="space-y-1"></div>
+                                </div>
+                                <!-- Zone 3: Compared -->
+                                <div ondrop="drop(event, 'compared')" ondragover="allowDrop(event)" onclick="dropSelectedCard('compared')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-indigo-200 hover:border-indigo-400">
+                                    <span class="font-bold text-indigo-700 block mb-1">Variable to be compared / 比較的變因</span>
+                                    <div id="zone_compared" class="space-y-1"></div>
+                                </div>
+                            </div>
+
+                            <div id="variableCheckFeedback" class="hidden text-center text-xs font-bold p-2 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Data Entry Form -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-5 h-5 text-teal-600"></i>
+                            <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
+                        </h2>
+                        <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active
+                        </span>
+                    </div>
+
+                    <form id="dataForm" onsubmit="event.preventDefault(); submitGroupData();" class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <label class="block text-xs font-bold text-slate-700">25 °C Cold Water (冷水)</label>
+                                <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="t25" placeholder="e.g. 180" min="1" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+                                    <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                <label class="block text-xs font-bold text-slate-700">80 °C Hot Water (熱水)</label>
+                                <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" id="t80" placeholder="e.g. 60" min="1" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+                                    <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-1">
+                            <button type="submit" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2.5 rounded-xl text-xs sm:text-sm shadow transition flex items-center justify-center gap-1.5">
+                                <i data-lucide="upload" class="w-4 h-4"></i> Submit Data / 上傳數據
+                            </button>
+                            <button type="button" onclick="generateSimulatedClassData()" class="bg-sky-100 hover:bg-sky-200 text-sky-800 font-semibold px-3 py-2.5 rounded-xl text-xs transition flex items-center gap-1.5" title="Fill all groups with sample data for open class demo">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-sky-600"></i> Auto-fill Class / 模擬全班 8 組數據
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. Bar Chart Visualization & Interactive Particle Visualizer -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-600"></i>
+                            <span>3. Class Data Bar Chart Comparison / 數據對比柱狀圖</span>
+                        </h2>
+                        <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">SRL Step 2: Monitoring</span>
+                    </div>
+                    <p class="text-xs text-slate-500">Comparing My Group (Blue Bar) vs Class Average (Green Bar).</p>
+                    <div class="relative h-64 w-full">
+                        <canvas id="classBarChart"></canvas>
+                    </div>
+
+                    <!-- Particle Theory Dynamic Visualizer (Microscopic Kinetic Energy) -->
+                    <div class="border-t border-slate-100 pt-3">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <h3 class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
+                                <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
+                            </h3>
+                            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-semibold px-2 py-0.5 rounded-md">分子動能模擬</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mb-2">
+                            溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格（NaCl）的速度越快：
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-sky-50 rounded-xl p-3 border border-sky-200">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-xs text-sky-800">25°C 冷水 (Cold Water)</span>
+                                    <span class="text-[10px] text-sky-600">低動能 • 慢速碰撞</span>
+                                </div>
+                                <canvas id="particleCanvasCold" width="240" height="90" class="w-full h-24 bg-sky-100/60 rounded-lg border border-sky-200"></canvas>
+                            </div>
+                            <div class="bg-rose-50 rounded-xl p-3 border border-rose-200">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold text-xs text-rose-800">80°C 熱水 (Hot Water)</span>
+                                    <span class="text-[10px] text-rose-600">高動能 • 高速劇烈碰撞</span>
+                                </div>
+                                <canvas id="particleCanvasHot" width="240" height="90" class="w-full h-24 bg-rose-100/60 rounded-lg border border-rose-200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Class Data Overview Table -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 overflow-x-auto">
+                    <h2 class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+                        <span>8 Groups Data Matrix / 全班 8 組數據總覽表</span>
+                        <span id="submittedCount" class="text-teal-600 font-semibold">0/8 Groups Submitted</span>
+                    </h2>
+                    <table class="w-full text-[11px] text-center border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="p-1.5 border">Temperature / 水溫</th>
+                                <th class="p-1.5 border" id="th-G1">G1</th>
+                                <th class="p-1.5 border" id="th-G2">G2</th>
+                                <th class="p-1.5 border" id="th-G3">G3</th>
+                                <th class="p-1.5 border" id="th-G4">G4</th>
+                                <th class="p-1.5 border" id="th-G5">G5</th>
+                                <th class="p-1.5 border" id="th-G6">G6</th>
+                                <th class="p-1.5 border" id="th-G7">G7</th>
+                                <th class="p-1.5 border" id="th-G8">G8</th>
+                                <th class="p-1.5 border bg-teal-50 text-teal-800 font-bold">AVG (平均)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody" class="text-slate-700">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+            <!-- Right Column: Agent Water AI Companion & Reflection (5 Cols) -->
+            <section class="lg:col-span-5 flex flex-col space-y-6">
+                
+                <!-- Agent Water Chat Section -->
+                <div class="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                    <!-- Agent Header -->
+                    <div class="bg-gradient-to-r from-sky-500 to-blue-600 p-4 text-white flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-xl shadow">
+                                💧
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base font-fun">Agent Water (水精靈 AI 導師)</h3>
+                                <p class="text-[11px] text-sky-100">SRL Science Thinking Buddy • 探究思考引導夥伴</p>
+                            </div>
+                        </div>
+                        <span id="studentGroupTag" class="text-[11px] font-bold bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">Group 1</span>
+                    </div>
+
+                    <!-- Chat Messages Window -->
+                    <div id="chatContainer" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
+                        <!-- Initial Welcome -->
+                    </div>
+
+                    <!-- SRL Guidance Options & Chat Input -->
+                    <div class="p-3 bg-white border-t border-slate-100 space-y-2">
+                        <div id="optionsContainer" class="grid grid-cols-1 gap-1.5 max-h-36 overflow-y-auto pr-1">
+                            <p class="text-[10px] text-slate-400 italic text-center">Submit your group data to start chat with Agent Water! / 請先提交數據以開啟對話！</p>
+                        </div>
+
+                        <form id="chatForm" onsubmit="handleCustomTextSubmit(event)" class="flex gap-2 pt-1 border-t border-slate-100">
+                            <input type="text" id="userInput" placeholder="Or type your thoughts... / 或輸入你的想法..." class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                            <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
+                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SRL Step 3: Reflection Card with Explicit Submit Button -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i>
+                            <span>SRL Reflection / 探究反思與觀點轉變</span>
+                        </h3>
+                        <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-md">SRL Step 3: Reflection</span>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="font-bold text-slate-600 block mb-1">
+                                I used to think... (我以前以為...)
+                            </label>
+                            <textarea id="usedToThink" rows="2" placeholder="e.g. I thought 1 group data was enough, and hot water dissolves salt for no reason..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs"></textarea>
+                        </div>
+                        <div>
+                            <label class="font-bold text-indigo-900 block mb-1">
+                                Now I think... (現在我知道...)
+                            </label>
+                            <textarea id="nowIThink" rows="2" placeholder="e.g. Hot water provides energy so salt dissolves faster; taking class average reduces human timing & stirring errors!" class="w-full p-2 bg-indigo-50/50 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs"></textarea>
+                        </div>
+
+                        <!-- Reflection Submit Button -->
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                            <span id="reflectionStatus" class="text-[10px] text-slate-400 italic">Not submitted yet / 尚未提交</span>
+                            <button type="button" onclick="submitGroupReflection()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit / Update Reflection (提交/更新反思)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ================= TEACHER COMMAND CENTER VIEW (HIDDEN BY DEFAULT) ================= -->
+        <div id="teacherViewSection" class="hidden space-y-6">
+
+            <!-- Top Projection Header & Metrics Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 shadow-xl border border-indigo-500/30 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-white/10">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <span class="px-2.5 py-0.5 bg-amber-400 text-slate-900 font-bold text-[10px] rounded-full uppercase tracking-wider flex items-center gap-1">
+                                <i data-lucide="tv" class="w-3 h-3"></i> Live Presentation Mode / 觀課投屏模式
+                            </span>
+                            <span class="px-2.5 py-0.5 bg-sky-500/30 text-sky-200 border border-sky-400/30 text-[10px] rounded-full">SRL Pedagogy Analytics Engine</span>
+                            <span id="teacherClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">Class 1A</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold font-fun tracking-wide text-white">
+                            Teacher Command Center • 教師智慧指揮中心
+                        </h2>
+                        <p class="text-slate-300 text-xs md:text-sm mt-1">
+                            Real-time AI Pedagogy Synthesis • 全班 8 組數據實時分析、異常值排查、SRL 學習進程與高階思維討論議題生成
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button onclick="openShareModal()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-white/20">
+                            <i data-lucide="qr-code" class="w-4 h-4 text-amber-300"></i> 投屏 QR Code
+                        </button>
+                        <button onclick="refreshAITeacherDiagnostics()" class="bg-gradient-to-r from-teal-500 to-sky-500 hover:from-teal-400 hover:to-sky-400 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-2 border border-white/20">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 一鍵刷新全班 SRL 診斷
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Executive Stats Strip -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 backdrop-blur-md">
+                        <p class="text-[11px] text-slate-400 font-medium">Submission Rate / 數據提交率</p>
+                        <p id="teacherStatSubmitted" class="text-xl md:text-2xl font-bold text-teal-400 mt-1">0 / 8 <span class="text-xs text-slate-400 font-normal">Groups</span></p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 backdrop-blur-md">
+                        <p class="text-[11px] text-slate-400 font-medium">Avg SRL Dialogue / 平均思考對話深度</p>
+                        <p id="teacherStatDialogueCount" class="text-xl md:text-2xl font-bold text-sky-400 mt-1">0 <span class="text-xs text-slate-400 font-normal">turns/group</span></p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 backdrop-blur-md">
+                        <p class="text-[11px] text-slate-400 font-medium">Core Concept Mastery / 核心概念掌握度</p>
+                        <p id="teacherStatMastery" class="text-xl md:text-2xl font-bold text-amber-400 mt-1">-- %</p>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5 backdrop-blur-md">
+                        <p class="text-[11px] text-slate-400 font-medium">Anomaly / 異常值狀況</p>
+                        <p id="teacherStatAnomaly" class="text-sm font-bold text-emerald-300 mt-1 truncate">正常 (No major outlier)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: SRL Real-Time Whole-Class Discussion Prompts -->
+            <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-3xl p-6 shadow-md border border-amber-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2.5 bg-amber-500 text-white rounded-2xl shadow">
+                            <i data-lucide="messages-square" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base md:text-lg font-bold text-amber-950 font-fun">
+                                Real-time SRL Discussion Questions / 依據全班數據即時生成之大組討論議題
+                            </h3>
+                            <p class="text-xs text-amber-800">
+                                Facilitation questions automatically generated based on live group timings and AI chat diagnostics.
+                            </p>
+                        </div>
+                    </div>
+                    <span class="hidden sm:inline-block text-[10px] bg-amber-200 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-300">Pedagogical Facilitation</span>
+                </div>
+
+                <div id="wholeClassDiscussionContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Dynamic SRL Discussion Prompt Cards -->
+                </div>
+            </div>
+
+            <!-- SECTION 2: SRL Reflection Gallery (全班 8 組觀點轉變對比牆) -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2.5 bg-indigo-600 text-white rounded-2xl shadow">
+                            <i data-lucide="brain" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-800 font-fun">
+                                Cross-Group SRL Reflection Gallery / 全班 8 組反思與觀點轉變對比牆
+                            </h3>
+                            <p class="text-xs text-slate-500">Live side-by-side comparison of "I used to think" vs "Now I think" for classroom discussion.</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full border border-indigo-200">Interactive Reflection Wall</span>
+                </div>
+
+                <div id="teacherReflectionGallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Dynamic Group Reflection Cards -->
+                </div>
+            </div>
+
+            <!-- SECTION 3: Class Diagnostics & 8 Group Matrix -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Class Strengths & Growth Areas (4 Cols) -->
+                <div class="lg:col-span-4 bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                            <i data-lucide="target" class="w-5 h-5 text-indigo-600"></i>
+                            <span>Classroom SRL Analytics / 全班學習診斷</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Strengths -->
+                            <div class="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p class="text-xs font-bold text-emerald-800 flex items-center gap-1.5 mb-1.5">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i> Class Strengths (全班強項)
+                                </p>
+                                <ul id="classStrengthsList" class="text-xs text-slate-700 space-y-1 pl-4 list-disc">
+                                    <li>All groups successfully identified that hot water speeds up salt dissolving.</li>
+                                    <li>Good awareness of identifying controlled variables (volume of water, salt mass).</li>
+                                </ul>
+                            </div>
+
+                            <!-- Weaknesses / Growth Areas -->
+                            <div class="p-3.5 bg-rose-50 rounded-2xl border border-rose-100">
+                                <p class="text-xs font-bold text-rose-800 flex items-center gap-1.5 mb-1.5">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i> Growth Areas (需要改進之處)
+                                </p>
+                                <ul id="classWeaknessList" class="text-xs text-slate-700 space-y-1 pl-4 list-disc">
+                                    <li>Some groups struggled to distinguish human reaction delay vs systematic apparatus error.</li>
+                                    <li>Need deeper practice in articulating why taking class average increases data reliability.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-200/60 text-center">
+                        <p class="text-[11px] text-slate-500">
+                            💡 <span class="font-bold text-slate-700">Teacher Action:</span> Highlight how magnetic stirrers eliminate manual stirring speed differences!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 8-Group Live Matrix & AI Dialogue Summaries (8 Cols) -->
+                <div class="lg:col-span-8 bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="layout-grid" class="w-5 h-5 text-sky-600"></i>
+                            <span>8 Groups SRL Matrix & AI Summaries / 8 組實時探究軌跡與點評</span>
+                        </h3>
+                        <span class="text-xs text-slate-400">Live updated across tabs</span>
+                    </div>
+
+                    <!-- 8 Group Cards Grid -->
+                    <div id="teacherGroupGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[520px] overflow-y-auto pr-1">
+                        <!-- Dynamic Group Cards (Group 1 - 8) -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- SHARE QR CODE MODAL -->
+    <div id="shareModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl border border-slate-200">
+            <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex items-center gap-2 text-slate-800 font-bold text-base">
+                    <i data-lucide="qr-code" class="w-5 h-5 text-teal-600"></i>
+                    <span>學生掃碼進入課堂 (Student QR Login)</span>
+                </div>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+            </div>
+            <p class="text-xs text-slate-500">
+                請同學使用 iPad 或手機相機掃描下方 QR Code，即時連入本節公開課：
+            </p>
+            <div class="flex justify-center py-2">
+                <div id="qrcode" class="p-3 bg-white rounded-2xl shadow-inner border border-slate-200"></div>
+            </div>
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-left space-y-1">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">課堂網址 (URL):</span>
+                <p id="shareUrlText" class="text-xs font-mono font-bold text-sky-700 truncate select-all"></p>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-[10px] text-teal-600 font-bold">目前連線頻道: <span id="shareChannelText">Class 1A</span></span>
+                    <button onclick="copyShareUrl()" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-[11px] font-bold shadow transition">複製網址</button>
+                </div>
+            </div>
+            <button onclick="closeShareModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition">關閉 / Close</button>
+        </div>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        // Global State & Real-Time Sync Configuration
+        let currentClass = localStorage.getItem('salt_exp_class') || "Class 1A";
+        let currentRole = "Group 1"; // Default role
+        let lastSelectedRole = "Group 1";
+        let selectedCardForClickMove = null;
+
+        // Broadcast Channel for Multi-tab Local Sync
+        const localBroadcastChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('salt_dissolving_srl') : null;
+
+        // MQTT Client for Cloud Real-Time Multi-device Sync (EMQX Public Broker)
+        let mqttClient = null;
+        let isMqttConnected = false;
+
+        // Global Data Structure for 8 Groups
+        function createFreshClassData() {
+            const data = {};
+            for(let i=1; i<=8; i++) {
+                data[`Group ${i}`] = {
+                    data: null, // { 25: seconds, 80: seconds }
+                    hypothesis: "",
+                    usedToThink: "",
+                    nowIThink: "",
+                    reflectionSubmitted: false,
+                    reflectionTime: "",
+                    variables: { changed: [], constant: [], compared: [] },
+                    chatLogs: [],
+                    stage: 0,
+                    summaryEn: "Awaiting experiment data submission...",
+                    summaryZh: "尚未上傳實驗數據...",
+                    strengthEn: "Ready for inquiry",
+                    strengthZh: "準備開始探究",
+                    growthEn: "Pending evaluation",
+                    growthZh: "暫未評估"
+                };
+            }
+            return data;
+        }
+
+        let classData = createFreshClassData();
+
+        // SRL Dialogue Flow Setup for Agent Water
+        const dialogueStages = {
+            1: {
+                aiEnglish: "Look at the Bar Chart! Comparing 25°C Cold Water and 80°C Hot Water, what happens to the salt dissolving time?",
+                aiChinese: "看看柱狀圖！對比 25°C 冷水與 80°C 熱水，食鹽完全溶解所需的時間有何變化？",
+                options: [
+                    { 
+                        labelEn: "⏱️ Time is SHORTER in hot water! (Salt dissolves faster!)", 
+                        labelZh: "⏱️ 熱水的時間更短！(熱水溶解食鹽更快！)", 
+                        type: "scientific", 
+                        feedbackEn: "Bingo! Excellent observation! 🌟 Hot water particles move faster, making salt dissolve MUCH FASTER!", 
+                        feedbackZh: "答對了！觀察非常準確！🌟 熱水水分子運動較快，能讓食鹽更快溶解！", 
+                        nextStage: 2, 
+                        summaryEn: "Correctly identified that higher temperature reduces dissolving time.", 
+                        summaryZh: "精準辨識出水溫升高能顯著縮短食鹽溶解時間。" 
+                    },
+                    { 
+                        labelEn: "⏳ Time is LONGER in hot water!", 
+                        labelZh: "⏳ 熱水的時間反而更長！", 
+                        type: "incorrect", 
+                        feedbackEn: "Check the bar height again! Is the 80°C bar shorter or taller than 25°C?", 
+                        feedbackZh: "再仔細看看柱狀圖的高度！80°C 的柱子比 25°C 高還是矮呢？", 
+                        nextStage: 1, 
+                        summaryEn: "Re-evaluating bar chart height comparison.", 
+                        summaryZh: "正在重新引導對比柱狀圖高度變化。" 
+                    }
+                ]
+            },
+            2: {
+                aiEnglish: "Look at the Green Bar (Class Average)! Why do scientists collect data from 8 groups instead of relying on 1 group?",
+                aiChinese: "看看綠色柱子（全班平均值）！為什麼科學家要收集全班 8 組數據取平均，而不是只看 1 組？",
+                options: [
+                    { 
+                        labelEn: "🎯 To reduce random timing/stirring errors & make results reliable!", 
+                        labelZh: "🎯 為了減少按碼錶與攪拌的人為誤差，提高數據可靠性！", 
+                        type: "scientific", 
+                        feedbackEn: "Super scientific reasoning! 🏆 Class average cancels out individual human timing delay and stirring speed differences!", 
+                        feedbackZh: "非常有科學頭腦！🏆 計算全班平均值可以抵銷個人手動按碼錶的延遲與攪拌速度不一的隨機誤差！", 
+                        nextStage: 3, 
+                        summaryEn: "Mastered role of class average in reducing random errors.", 
+                        summaryZh: "深刻理解取全班平均數可有效抵銷人為隨機誤差。" 
+                    },
+                    { 
+                        labelEn: "👥 Because doing experiments together is more fun!", 
+                        labelZh: "👥 因為全班一起做實驗比較熱鬧！", 
+                        type: "subjective", 
+                        feedbackEn: "It is fun! But scientifically, if 1 group clicks the stopwatch late, how does average help?", 
+                        feedbackZh: "哈哈，確實很熱鬧！但從科學角度看，如果其中一組按碼錶慢了，平均值有何作用？", 
+                        nextStage: 2, 
+                        summaryEn: "Prompted to think deeply about error control.", 
+                        summaryZh: "正在引導深入思考誤差控制價值。" 
+                    }
+                ]
+            },
+            3: {
+                aiEnglish: "My group's timing is slightly different from the class average. What human factor caused this slight difference?",
+                aiChinese: "我們組的數據與全班平均值有微小差異！在實驗過程中，什麼人為因素會導致這個差異？",
+                options: [
+                    { 
+                        labelEn: "🥣 Human stirring speed was not completely constant!", 
+                        labelZh: "🥣 人手攪拌的速度無法做到完全均勻！", 
+                        type: "scientific", 
+                        feedbackEn: "Spot on! Human stirring rate fluctuates easily. Fantastic reflection! Fill in your SRL Reflection Card now!", 
+                        feedbackZh: "完全切中要害！人手攪拌速度極易波動。非常棒的反思！現在請填寫下方的探究反思卡吧！", 
+                        nextStage: 4, 
+                        summaryEn: "Identified manual stirring speed fluctuation as main source of error.", 
+                        summaryZh: "準確指出人手攪拌速度波動為主要誤差來源。" 
+                    },
+                    { 
+                        labelEn: "⏱️ Reaction time delay when clicking stopwatch!", 
+                        labelZh: "⏱️ 眼看食鹽融化到按停碼錶有反應時間延遲！", 
+                        type: "scientific", 
+                        feedbackEn: "Awesome insight! Human visual judgment delay introduces small random error!", 
+                        feedbackZh: "觀察入木三分！人類視覺判斷與反應延遲會帶來隨機誤差！", 
+                        nextStage: 4, 
+                        summaryEn: "Identified visual judgment & reaction delay error.", 
+                        summaryZh: "成功指出視覺判斷與按表反應延遲誤差。" 
+                    }
+                ]
+            }
+        };
+
+        // DRAG & DROP / CLICK INTERACTION FOR VARIABLES
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+
+        function drop(ev, targetZoneKey) {
+            ev.preventDefault();
+            const cardId = ev.dataTransfer.getData("text");
+            moveCardToZone(cardId, targetZoneKey);
+        }
+
+        function selectCardToMove(cardId) {
+            selectedCardForClickMove = cardId;
+            const el = document.getElementById(cardId);
+            if (el) el.classList.add('ring-2', 'ring-teal-500');
+        }
+
+        function dropSelectedCard(targetZoneKey) {
+            if (selectedCardForClickMove) {
+                moveCardToZone(selectedCardForClickMove, targetZoneKey);
+                const el = document.getElementById(selectedCardForClickMove);
+                if (el) el.classList.remove('ring-2', 'ring-teal-500');
+                selectedCardForClickMove = null;
+            }
+        }
+
+        function moveCardToZone(cardId, targetZoneKey) {
+            const cardEl = document.getElementById(cardId);
+            const targetContainer = document.getElementById(`zone_${targetZoneKey}`);
+            if (cardEl && targetContainer) {
+                targetContainer.appendChild(cardEl);
+                saveWorksheetProgress();
+            }
+        }
+
+        function checkVariableAnswers() {
+            const correctMap = {
+                'var_temp': 'changed',
+                'var_vol': 'constant',
+                'var_mass': 'constant',
+                'var_stir': 'constant',
+                'var_time': 'compared'
+            };
+
+            let score = 0;
+            let total = 5;
+
+            for (let cardId in correctMap) {
+                const targetZoneKey = correctMap[cardId];
+                const cardEl = document.getElementById(cardId);
+                if (cardEl && cardEl.parentElement.id === `zone_${targetZoneKey}`) {
+                    score++;
+                }
+            }
+
+            const feedbackEl = document.getElementById('variableCheckFeedback');
+            feedbackEl.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800');
+
+            if (score === total) {
+                feedbackEl.classList.add('bg-emerald-100', 'text-emerald-800');
+                feedbackEl.innerHTML = `🎉 Correct! (${score}/${total}) Excellent understanding of controlled variables! / 完全正確！精準掌控實驗變因！`;
+            } else {
+                feedbackEl.classList.add('bg-amber-100', 'text-amber-800');
+                feedbackEl.innerHTML = `💡 Score: ${score}/${total}. Some variables are misplaced! Try moving them again! / 得分：${score}/${total}。部分變因擺放有誤，請再調整！`;
+            }
+        }
+
+        // Initialize Bar Chart
+        let classBarChart;
+        function initChart() {
+            const ctx = document.getElementById('classBarChart').getContext('2d');
+            classBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['25 °C Cold Water (冷水)', '80 °C Hot Water (熱水)'],
+                    datasets: [
+                        {
+                            label: 'My Group (本組)',
+                            data: [null, null],
+                            backgroundColor: 'rgba(2, 132, 199, 0.85)',
+                            borderColor: '#0284c7',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        },
+                        {
+                            label: 'Class Average (全班 8 組平均)',
+                            data: [null, null],
+                            backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            borderRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Dissolving Time (seconds / 秒)' } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // ================= MQTT CLOUD REAL-TIME SYNC =================
+        function initMqtt() {
+            try {
+                const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
+                const clientId = 'openclass_salt_' + Math.random().toString(16).substring(2, 10);
+                
+                mqttClient = mqtt.connect(brokerUrl, {
+                    clientId: clientId,
+                    clean: true,
+                    connectTimeout: 4000,
+                    reconnectPeriod: 3000
+                });
+
+                mqttClient.on('connect', () => {
+                    isMqttConnected = true;
+                    updateSyncBadgeUI(true, "Cloud Sync Active (EMQX)");
+                    const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
+                    mqttClient.subscribe(topic, { qos: 0 });
+                });
+
+                mqttClient.on('message', (topic, message) => {
+                    try {
+                        const parsed = JSON.parse(message.toString());
+                        if (parsed && parsed.payload) {
+                            classData = parsed.payload;
+                            saveToStorage();
+                            updateAllUI();
+                        }
+                    } catch(err) {
+                        console.error("MQTT parse err:", err);
+                    }
+                });
+
+                mqttClient.on('error', (err) => {
+                    console.warn("MQTT error, using local broadcast:", err);
+                    updateSyncBadgeUI(false, "Local Broadcast Active");
+                });
+
+                mqttClient.on('close', () => {
+                    isMqttConnected = false;
+                    updateSyncBadgeUI(false, "Local Broadcast Active");
+                });
+            } catch(e) {
+                console.warn("MQTT init error:", e);
+                updateSyncBadgeUI(false, "Local Broadcast Active");
+            }
+        }
+
+        function updateSyncBadgeUI(isOnline, text) {
+            const badge = document.getElementById('syncBadge');
+            const txt = document.getElementById('syncStatusText');
+            if (txt) txt.innerText = text;
+            if (badge) {
+                if (isOnline) {
+                    badge.className = "text-[10px] bg-emerald-400/20 text-emerald-200 border border-emerald-300/30 px-2 py-0.5 rounded-full flex items-center gap-1";
+                } else {
+                    badge.className = "text-[10px] bg-amber-400/20 text-amber-200 border border-amber-300/30 px-2 py-0.5 rounded-full flex items-center gap-1";
+                }
+            }
+        }
+
+        function handleClassChange(newClass) {
+            currentClass = (newClass || "Class 1A").trim();
+            localStorage.setItem('salt_exp_class', currentClass);
+            document.getElementById('classInput').value = currentClass;
+            const tBadge = document.getElementById('teacherClassBadge');
+            if (tBadge) tBadge.innerText = currentClass;
+            
+            loadFromStorage();
+            updateAllUI();
+
+            if (mqttClient && isMqttConnected) {
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
+                mqttClient.subscribe(topic, { qos: 0 });
+            }
+        }
+
+        // Local Storage & Broadcast Sync
+        function loadFromStorage() {
+            const key = `salt_dissolving_data_${currentClass.replace(/\s+/g, '_')}`;
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                try {
+                    classData = JSON.parse(saved);
+                } catch(e) { console.error("Could not parse storage", e); }
+            } else {
+                classData = createFreshClassData();
+            }
+        }
+
+        function saveToStorage() {
+            const key = `salt_dissolving_data_${currentClass.replace(/\s+/g, '_')}`;
+            localStorage.setItem(key, JSON.stringify(classData));
+        }
+
+        if (localBroadcastChannel) {
+            localBroadcastChannel.onmessage = (event) => {
+                if (event.data && event.data.type === 'UPDATE_SALT_DATA') {
+                    classData = event.data.payload;
+                    saveToStorage();
+                    updateAllUI();
+                }
+            };
+        }
+
+        function broadcastData() {
+            saveToStorage();
+            if (localBroadcastChannel) {
+                localBroadcastChannel.postMessage({ type: 'UPDATE_SALT_DATA', payload: classData });
+            }
+            if (mqttClient && isMqttConnected) {
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
+                mqttClient.publish(topic, JSON.stringify({ payload: classData, timestamp: Date.now() }), { qos: 0 });
+            }
+        }
+
+        // Role Switcher with Password Prompt
+        function handleRoleChange() {
+            const select = document.getElementById('groupSelect');
+            const selectedVal = select.value;
+
+            if (selectedVal === 'Teacher') {
+                setTimeout(() => {
+                    const pwd = prompt("🔒 請輸入教師智慧指揮中心密碼 / Enter Teacher Password:");
+                    if (pwd === "teacherwater") {
+                        currentRole = "Teacher";
+                        document.getElementById('roleBadge').innerText = "Teacher Command Center / 教師模式";
+                        document.getElementById('roleBadge').className = "text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
+                        
+                        document.getElementById('studentViewSection').classList.add('hidden');
+                        document.getElementById('teacherViewSection').classList.remove('hidden');
+                        
+                        refreshAITeacherDiagnostics();
+                    } else {
+                        alert("❌ 密碼錯誤！ / Incorrect Password!");
+                        select.value = lastSelectedRole;
+                    }
+                }, 50);
+            } else {
+                lastSelectedRole = selectedVal;
+                currentRole = selectedVal;
+                document.getElementById('roleBadge').innerText = "Student View / 學生模式";
+                document.getElementById('roleBadge').className = "text-[10px] bg-emerald-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
+                
+                document.getElementById('studentGroupTag').innerText = currentRole;
+                document.getElementById('teacherViewSection').classList.add('hidden');
+                document.getElementById('studentViewSection').classList.remove('hidden');
+
+                // Reload fields for selected group
+                const gObj = classData[currentRole];
+                if (gObj && gObj.data) {
+                    document.getElementById('t25').value = gObj.data[25];
+                    document.getElementById('t80').value = gObj.data[80];
+                } else {
+                    document.getElementById('dataForm').reset();
+                }
+
+                if (gObj) {
+                    document.getElementById('studentHypothesis').value = gObj.hypothesis || "";
+                    document.getElementById('usedToThink').value = gObj.usedToThink || "";
+                    document.getElementById('nowIThink').value = gObj.nowIThink || "";
+                    
+                    const statusEl = document.getElementById('reflectionStatus');
+                    if (gObj.reflectionSubmitted) {
+                        statusEl.innerText = `Submitted at ${gObj.reflectionTime} / 已提交`;
+                        statusEl.className = "text-[10px] text-emerald-600 font-bold";
+                    } else {
+                        statusEl.innerText = "Not submitted yet / 尚未提交";
+                        statusEl.className = "text-[10px] text-slate-400 italic";
+                    }
+                }
+                
+                renderStudentChatHistory();
+                updateAllUI();
+            }
+        }
+
+        // Save Worksheet Progress
+        function saveWorksheetProgress() {
+            if (currentRole === "Teacher") return;
+            classData[currentRole].hypothesis = document.getElementById('studentHypothesis').value;
+            classData[currentRole].usedToThink = document.getElementById('usedToThink').value;
+            classData[currentRole].nowIThink = document.getElementById('nowIThink').value;
+            broadcastData();
+        }
+
+        // Explicit Reflection Submission Function
+        function submitGroupReflection() {
+            const used = document.getElementById('usedToThink').value.trim();
+            const now = document.getElementById('nowIThink').value.trim();
+
+            if (!used || !now) {
+                alert("Please fill in both reflection textboxes before submitting! / 請填寫完整的反思內容！");
+                return;
+            }
+
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            classData[currentRole].usedToThink = used;
+            classData[currentRole].nowIThink = now;
+            classData[currentRole].reflectionSubmitted = true;
+            classData[currentRole].reflectionTime = nowTime;
+
+            broadcastData();
+            updateAllUI();
+
+            const statusEl = document.getElementById('reflectionStatus');
+            statusEl.innerText = `Submitted at ${nowTime} / 已成功更新`;
+            statusEl.className = "text-[10px] text-emerald-600 font-bold";
+
+            alert("🎉 Reflection submitted & synchronized to Teacher Gallery! / 反思已成功提交並同步至教師展台！");
+        }
+
+        function submitGroupData() {
+            const t25 = parseFloat(document.getElementById('t25').value);
+            const t80 = parseFloat(document.getElementById('t80').value);
+
+            if (isNaN(t25) || isNaN(t80)) {
+                alert("Please enter valid timing numbers for both temperatures! / 請輸入有效的數據！");
+                return;
+            }
+
+            classData[currentRole].data = { 25: t25, 80: t80 };
+            
+            // Initiate SRL Stage 1 AI dialogue
+            if (classData[currentRole].stage === 0) {
+                classData[currentRole].stage = 1;
+                appendAIBubbleToGroup(currentRole, dialogueStages[1].aiEnglish, dialogueStages[1].aiChinese);
+                classData[currentRole].summaryEn = "Analyzing salt dissolving speed vs temperature...";
+                classData[currentRole].summaryZh = "正分析水溫對食鹽溶解速度之影響...";
+            }
+
+            broadcastData();
+            updateAllUI();
+            renderStudentChatHistory();
+        }
+
+        function generateSimulatedClassData() {
+            const baselines = { 25: 180, 80: 55 };
+            const sampleSummaries = [
+                { stage: 3, en: "Mastered relation & identified manual stirring speed variation.", zh: "理解水溫影響並指出手動攪拌速度誤差。", strEn: "High Data Accuracy", strZh: "數據測量精準", groEn: "Articulate reaction delay", groZh: "可更詳細說明反應延遲", used: "I used to think salt dissolves at the same speed regardless of temp.", now: "Now I know hot water molecules move faster with higher thermal energy, and taking class average cancels human error!" },
+                { stage: 2, en: "Understood role of 8-group average in error reduction.", zh: "理解全班 8 組平均可減少隨機誤差。", strEn: "Strong Scientific Logic", strZh: "邏輯推導能力強", groEn: "Detail human factors", groZh: "可深化人為誤差討論", used: "I used to think 1 group data is accurate enough.", now: "Now I realize human timing delay varies, so class average gives reliable results." },
+                { stage: 3, en: "Completed SRL reflection card with great insights.", zh: "成功完成探究並填寫觀點轉變反思卡。", strEn: "Excellent Metacognition", strZh: "後設認知與反思極佳", groEn: "Keep up the spirit", groZh: "繼續保持探究精神", used: "I thought hot water dissolves salt by magic.", now: "Now I know temperature increases kinetic energy and collision rate of particles!" },
+                { stage: 1, en: "Observing bar chart heights, starting error reflection.", zh: "觀察柱狀圖高低中，開始引導誤差概念。", strEn: "Active Engagement", strZh: "對話參與度高", groEn: "Focus on control variables", groZh: "需留意控制變因", used: "I used to think timer delay doesn't matter much.", now: "Now I understand visual judgement delay creates random errors." }
+            ];
+
+            for(let i=1; i<=8; i++) {
+                const gName = `Group ${i}`;
+                if (!classData[gName].data || gName !== currentRole) {
+                    classData[gName].data = {
+                        25: Math.round(baselines[25] + (Math.random() * 30 - 15)),
+                        80: Math.round(baselines[80] + (Math.random() * 16 - 8))
+                    };
+                    const sample = sampleSummaries[(i - 1) % sampleSummaries.length];
+                    classData[gName].stage = sample.stage;
+                    classData[gName].hypothesis = "faster";
+                    classData[gName].usedToThink = sample.used;
+                    classData[gName].nowIThink = sample.now;
+                    classData[gName].reflectionSubmitted = true;
+                    classData[gName].reflectionTime = "10:15 AM";
+                    classData[gName].summaryEn = sample.en;
+                    classData[gName].summaryZh = sample.zh;
+                    classData[gName].strengthEn = sample.strEn;
+                    classData[gName].strengthZh = sample.strZh;
+                    classData[gName].growthEn = sample.groEn;
+                    classData[gName].growthZh = sample.groZh;
+
+                    if (classData[gName].chatLogs.length === 0) {
+                        classData[gName].chatLogs.push({ sender: 'ai', en: dialogueStages[1].aiEnglish, zh: dialogueStages[1].aiChinese });
+                        classData[gName].chatLogs.push({ sender: 'user', en: dialogueStages[1].options[0].labelEn, zh: dialogueStages[1].options[0].labelZh });
+                        classData[gName].chatLogs.push({ sender: 'ai', en: dialogueStages[1].options[0].feedbackEn, zh: dialogueStages[1].options[0].feedbackZh });
+                    }
+                }
+            }
+
+            if (classData[currentRole].stage === 0 && classData[currentRole].data) {
+                classData[currentRole].stage = 1;
+                appendAIBubbleToGroup(currentRole, dialogueStages[1].aiEnglish, dialogueStages[1].aiChinese);
+            }
+
+            broadcastData();
+            updateAllUI();
+            renderStudentChatHistory();
+        }
+
+        function calculateClassAverage() {
+            let sums = { 25: 0, 80: 0 };
+            let count = 0;
+
+            for(let i=1; i<=8; i++) {
+                const g = classData[`Group ${i}`].data;
+                if (g) {
+                    sums[25] += g[25];
+                    sums[80] += g[80];
+                    count++;
+                }
+            }
+
+            if (count === 0) return null;
+
+            return {
+                25: Math.round(sums[25] / count),
+                80: Math.round(sums[80] / count),
+                count: count
+            };
+        }
+
+        function saveAndBroadcast() {
+            localStorage.setItem('salt_dissolving_data_v2', JSON.stringify(classData));
+            channel.postMessage({ type: 'UPDATE_SALT_DATA', payload: classData });
+        }
+
+        function updateAllUI() {
+            const myData = classData[currentRole] ? classData[currentRole].data : null;
+            const avgData = calculateClassAverage();
+
+            // Update Chart
+            if (myData && classBarChart) {
+                classBarChart.data.datasets[0].data = [myData[25], myData[80]];
+            } else if (classBarChart) {
+                classBarChart.data.datasets[0].data = [null, null];
+            }
+
+            if (avgData && classBarChart) {
+                classBarChart.data.datasets[1].data = [avgData[25], avgData[80]];
+                document.getElementById('submittedCount').innerText = `${avgData.count}/8 Groups Submitted`;
+            } else if (classBarChart) {
+                classBarChart.data.datasets[1].data = [null, null];
+                document.getElementById('submittedCount').innerText = `0/8 Groups Submitted`;
+            }
+
+            if (classBarChart) classBarChart.update();
+
+            // Update Table
+            const tbody = document.getElementById('dataTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                [{ temp: '25 °C Cold Water', key: 25 }, { temp: '80 °C Hot Water', key: 80 }].forEach(row => {
+                    let tr = document.createElement('tr');
+                    tr.className = "border-b hover:bg-slate-50";
+                    
+                    let html = `<td class="p-2 font-bold border-r bg-slate-50">${row.temp}</td>`;
+                    for(let i=1; i<=8; i++) {
+                        const gVal = classData[`Group ${i}`].data ? classData[`Group ${i}`].data[row.key] : '-';
+                        const isMyGroup = `Group ${i}` === currentRole;
+                        html += `<td class="p-2 border-r ${isMyGroup ? 'bg-sky-100 font-bold text-sky-900' : ''}">${gVal} ${gVal !== '-' ? 's' : ''}</td>`;
+                    }
+
+                    const avgVal = avgData ? avgData[row.key] : '-';
+                    html += `<td class="p-2 font-bold bg-teal-50 text-teal-800">${avgVal} ${avgVal !== '-' ? 's' : ''}</td>`;
+                    
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Update Teacher View if Active
+            if (currentRole === "Teacher") {
+                renderTeacherDashboardUI();
+            }
+        }
+
+        function appendAIBubbleToGroup(groupKey, en, zh) {
+            classData[groupKey].chatLogs.push({ sender: 'ai', en: en, zh: zh });
+            if (groupKey === currentRole) {
+                renderStudentChatHistory();
+            }
+        }
+
+        function appendUserBubbleToGroup(groupKey, en, zh) {
+            classData[groupKey].chatLogs.push({ sender: 'user', en: en, zh: zh });
+            if (groupKey === currentRole) {
+                renderStudentChatHistory();
+            }
+        }
+
+        function renderStudentChatHistory() {
+            const container = document.getElementById('chatContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const logs = classData[currentRole] ? classData[currentRole].chatLogs : [];
+            
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 bg-sky-200 text-sky-800 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">💧</div>
+                        <div class="chat-bubble-ai p-3.5 text-xs text-slate-700 max-w-[88%] space-y-2">
+                            <p class="font-bold text-sky-900">Hello my young scientist! 👋</p>
+                            <p>I am Agent Water! Submit your 25°C & 80°C timings to analyze salt dissolving speed with me!</p>
+                            <p class="text-slate-500 text-[11px] border-t border-sky-200/60 pt-1">你好！我是水精靈！上傳數據後，我們一起探索水溫對食鹽溶解的影響吧！</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                logs.forEach(log => {
+                    if (log.sender === 'ai') {
+                        const div = document.createElement('div');
+                        div.className = "flex items-start gap-2.5";
+                        div.innerHTML = `
+                            <div class="w-8 h-8 bg-sky-200 text-sky-800 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">💧</div>
+                            <div class="chat-bubble-ai p-3.5 text-xs text-slate-700 max-w-[88%] space-y-1.5">
+                                <p class="font-semibold text-sky-900">${log.en}</p>
+                                <p class="text-slate-500 text-[11px] border-t border-sky-200/60 pt-1">${log.zh}</p>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    } else {
+                        const div = document.createElement('div');
+                        div.className = "flex items-start justify-end gap-2.5";
+                        div.innerHTML = `
+                            <div class="chat-bubble-user p-3.5 text-xs max-w-[88%] space-y-1">
+                                <p class="font-semibold">${log.en}</p>
+                                ${log.zh !== log.en ? `<p class="text-sky-100 text-[11px] border-t border-sky-400/60 pt-1">${log.zh}</p>` : ''}
+                            </div>
+                            <div class="w-8 h-8 bg-sky-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">Me</div>
+                        `;
+                        container.appendChild(div);
+                    }
+                });
+            }
+
+            renderStudentOptions();
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderStudentOptions() {
+            const container = document.getElementById('optionsContainer');
+            if (!container) return;
+            const stage = classData[currentRole] ? classData[currentRole].stage : 0;
+            const stageData = dialogueStages[stage];
+
+            if (!stageData || stage >= 4) {
+                if (stage >= 4) {
+                    container.innerHTML = `
+                        <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+                            <p class="text-xs font-bold text-emerald-800">🎉 SRL Inquiry Completed! / 探究反思順利完成！</p>
+                            <p class="text-[10px] text-emerald-600">Great job! Remember to complete and submit your SRL Reflection Card below.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center">Submit your group data to start chat with Agent Water! / 請先提交數據！</p>`;
+                }
+                return;
+            }
+
+            container.innerHTML = '';
+            stageData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-2.5 rounded-xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100 text-xs text-slate-700 transition flex flex-col gap-0.5 shadow-sm";
+                btn.onclick = () => selectStudentOption(opt);
+                btn.innerHTML = `
+                    <span class="font-bold text-sky-900">${opt.labelEn}</span>
+                    <span class="text-[10px] text-slate-500">${opt.labelZh}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectStudentOption(opt) {
+            appendUserBubbleToGroup(currentRole, opt.labelEn, opt.labelZh);
+
+            setTimeout(() => {
+                appendAIBubbleToGroup(currentRole, opt.feedbackEn, opt.feedbackZh);
+                classData[currentRole].stage = opt.nextStage;
+                classData[currentRole].summaryEn = opt.summaryEn;
+                classData[currentRole].summaryZh = opt.summaryZh;
+
+                broadcastData();
+                updateAllUI();
+
+                setTimeout(() => {
+                    if (opt.nextStage <= 3 && dialogueStages[opt.nextStage]) {
+                        appendAIBubbleToGroup(currentRole, dialogueStages[opt.nextStage].aiEnglish, dialogueStages[opt.nextStage].aiChinese);
+                        broadcastData();
+                        updateAllUI();
+                    }
+                }, 800);
+
+            }, 400);
+        }
+
+        // SMART CONTEXT-AWARE AGENT WATER NLP PARSER
+        function handleCustomTextSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('userInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            appendUserBubbleToGroup(currentRole, val, val);
+            input.value = '';
+
+            const lower = val.toLowerCase();
+            let aiReplyEn = "";
+            let aiReplyZh = "";
+
+            if (lower.includes("error") || lower.includes("accurate") || lower.includes("reliable") || lower.includes("precision") || lower.includes("average") || lower.includes("random") || lower.includes("誤差") || lower.includes("準確") || lower.includes("平均") || lower.includes("可靠") || lower.includes("隨機")) {
+                aiReplyEn = "🎯 Excellent scientific insight on data reliability! Taking averages cancels out human timing delays and individual experimental noise!";
+                aiReplyZh = "🎯 非常深刻的科學洞察！計算全班平均值能有效抵銷個人按表延遲與隨機實驗誤差！";
+            } else if (lower.includes("hot") || lower.includes("cold") || lower.includes("temp") || lower.includes("heat") || lower.includes("fast") || lower.includes("energy") || lower.includes("particle") || lower.includes("更快") || lower.includes("熱水") || lower.includes("冷水") || lower.includes("溫度") || lower.includes("能量") || lower.includes("粒子") || lower.includes("動能")) {
+                aiReplyEn = "🔥 Spot on regarding thermal energy! Higher water temperature gives kinetic energy to water molecules, dissolving salt much quicker!";
+                aiReplyZh = "🔥 切中熱能原理！較高水溫給予水分子更多動能，從而加速與食鹽粒子的碰撞和溶解！";
+            } else if (lower.includes("stir") || lower.includes("rod") || lower.includes("speed") || lower.includes("手動") || lower.includes("攪拌") || lower.includes("速度") || lower.includes("玻璃棒") || lower.includes("磁力")) {
+                aiReplyEn = "🥣 Great point! Manual stirring speed varies between group members, which is why stirring rate is a critical controlled variable!";
+                aiReplyZh = "🥣 說得太好了！手動攪拌速度在不同同學之間很難一致，因此攪拌速率是極其關鍵的控制變因！";
+            } else {
+                aiReplyEn = `💡 I see what you mean: "${val}"! You are connecting your observations to scientific reasoning. Keep exploring!`;
+                aiReplyZh = `💡 我明白你的意思了：「${val}」！你正嘗試將觀察與科學邏輯結合，繼續保持這份探究精神！`;
+            }
+
+            setTimeout(() => {
+                appendAIBubbleToGroup(currentRole, aiReplyEn, aiReplyZh);
+                broadcastData();
+                updateAllUI();
+            }, 600);
+        }
+
+        // Outlier Detector Function
+        function detectOutliers() {
+            const avg = calculateClassAverage();
+            if (!avg || avg.count < 3) return null;
+
+            let outliers = [];
+            for (let i = 1; i <= 8; i++) {
+                const gData = classData[`Group ${i}`].data;
+                if (gData) {
+                    const diff25 = Math.abs(gData[25] - avg[25]);
+                    const diff80 = Math.abs(gData[80] - avg[80]);
+                    // If timing deviates by more than 35s on cold or 20s on hot, or inversion (80°C slower than 25°C!)
+                    if (gData[80] >= gData[25]) {
+                        outliers.push({
+                            group: `Group ${i}`,
+                            type: 'inversion',
+                            descEn: `Group ${i} recorded 80°C (${gData[80]}s) slower than or equal to 25°C (${gData[25]}s)!`,
+                            descZh: `第 ${i} 組數據反常：80°C 熱水（${gData[80]}秒）居然比 25°C 冷水（${gData[25]}秒）更慢！`
+                        });
+                    } else if (diff25 > 40 || diff80 > 25) {
+                        outliers.push({
+                            group: `Group ${i}`,
+                            type: 'extreme_value',
+                            descEn: `Group ${i} deviates significantly from class average (Diff: ${Math.max(diff25, diff80)}s)!`,
+                            descZh: `第 ${i} 組數據偏離全班平均值達 ${Math.max(diff25, diff80)} 秒！`
+                        });
+                    }
+                }
+            }
+            return outliers;
+        }
+
+        // Teacher Command Center Logic
+        function renderTeacherDashboardUI() {
+            let submittedCount = 0;
+            let totalTurns = 0;
+            for(let i=1; i<=8; i++) {
+                if (classData[`Group ${i}`].data) submittedCount++;
+                totalTurns += classData[`Group ${i}`].chatLogs.length;
+            }
+            document.getElementById('teacherStatSubmitted').innerHTML = `${submittedCount} / 8 <span class="text-xs text-slate-400 font-normal">Groups</span>`;
+            document.getElementById('teacherStatDialogueCount').innerHTML = `${Math.round(totalTurns / 8)} <span class="text-xs text-slate-400 font-normal">turns/group</span>`;
+            document.getElementById('teacherStatMastery').innerText = `${Math.min(100, Math.round((submittedCount / 8) * 85 + 15))}%`;
+
+            // Outlier check
+            const outliers = detectOutliers();
+            const outlierEl = document.getElementById('teacherStatAnomaly');
+            if (outlierEl) {
+                if (outliers && outliers.length > 0) {
+                    outlierEl.className = "text-xs font-bold text-rose-300 mt-1 truncate";
+                    outlierEl.innerHTML = `⚠️ 偵測到 ${outliers.length} 組異常 (${outliers[0].group})`;
+                } else {
+                    outlierEl.className = "text-xs font-bold text-emerald-300 mt-1 truncate";
+                    outlierEl.innerText = "全班規律正常 (No anomaly)";
+                }
+            }
+
+            renderWholeClassDiscussionPrompts();
+            renderTeacherReflectionGallery();
+            renderTeacherGroupMatrix();
+        }
+
+        // Generate SRL Whole Class Discussion Prompts (HOTS) based on live data
+        function renderWholeClassDiscussionPrompts() {
+            const container = document.getElementById('wholeClassDiscussionContainer');
+            if (!container) return;
+
+            const avg = calculateClassAverage();
+            const avgDiff = avg ? (avg[25] - avg[80]) : 120;
+            const outliers = detectOutliers();
+
+            // Card 1: Outlier or Temperature difference
+            let card1Html = "";
+            if (outliers && outliers.length > 0) {
+                const out = outliers[0];
+                card1Html = `
+                    <div class="bg-rose-50 p-4 rounded-2xl border-2 border-rose-300 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-bold bg-rose-200 text-rose-900 px-2 py-0.5 rounded-md">⚠️ 異常值偵測 (Outlier Spotting)</span>
+                                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+                            </div>
+                            <h4 class="text-xs font-bold text-rose-950 mb-1">🚨 實時警示：${out.descZh}</h4>
+                            <p class="text-[11px] text-slate-700 mb-2">面對異常數據，科學家會直接刪除，還是重新排查「是否忘記攪拌」或「水溫放久變涼」？如何從批判角度分析？</p>
+                        </div>
+                        <div class="pt-2 border-t border-rose-200 text-[10px] text-rose-800 font-medium">
+                            💡 高階目標：培養不盲從數據、懂得排查反常現象的批判思維。
+                        </div>
+                    </div>
+                `;
+            } else {
+                card1Html = `
+                    <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 1 • 微觀分子動力學</span>
+                                <i data-lucide="atom" class="w-4 h-4 text-amber-600"></i>
+                            </div>
+                            <h4 class="text-xs font-bold text-slate-800 mb-1">🔍 全班平均 80°C 比 25°C 快約 ${avgDiff} 秒！微觀分子能量如何解釋？</h4>
+                            <p class="text-[11px] text-slate-600 mb-2">請同學觀察剛才的「分子動能模擬」：熱水水分子以更高速劇烈碰撞食鹽晶格（NaCl），這如何加速了晶體被拆解的過程？</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
+                            💡 核心目標：將巨觀「秒數差異」昇華至微觀「水分子動能與碰撞理論」。
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                ${card1Html}
+
+                <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 2 • 誤差與可靠性 (Reliability)</span>
+                            <i data-lucide="scale" class="w-4 h-4 text-amber-600"></i>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1">⚖️ 為什麼計算全班 8 組平均值能「消除」個人隨機誤差？</h4>
+                        <p class="text-[11px] text-slate-600 mb-2">若第 2 組按停碼錶慢了 3 秒，而第 5 組攪拌速度稍快，單組數據都有偏差。全班平均值如何像天平一樣互相抵消正負誤差？</p>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
+                        💡 核心目標：深刻理解大樣本平均值與實驗信度（Reliability）的本質。
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 3 • STEM 工程改良</span>
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600"></i>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 mb-1">🛠️ 如何設計「零人為誤差」的自動化實驗裝置？</h4>
+                        <p class="text-[11px] text-slate-600 mb-2">人手攪拌極易疲勞波動，肉眼判斷終點也存在主觀時差。若引入「磁力攪拌器」或「光電濁度傳感器」，可以如何徹底固定控制變因？</p>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
+                        💡 核心目標：STEM 工程思維、自動化監測與公平測試極致評估。
+                    </div>
+                </div>
+            `;
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // Render Teacher SRL Reflection Gallery across 8 Groups
+        function renderTeacherReflectionGallery() {
+            const container = document.getElementById('teacherReflectionGallery');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for(let i=1; i<=8; i++) {
+                const gKey = `Group ${i}`;
+                const gInfo = classData[gKey];
+                const isSub = gInfo.reflectionSubmitted;
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 rounded-2xl p-3.5 border border-slate-200 flex flex-col justify-between space-y-2.5 shadow-sm hover:border-indigo-300 transition";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                        <span class="font-bold text-xs text-slate-800">${gKey}</span>
+                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${isSub ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-500'}">
+                            ${isSub ? 'Submitted / 已提交' : 'Pending'}
+                        </span>
+                    </div>
+
+                    <div class="space-y-1.5 text-[11px]">
+                        <div class="bg-slate-100 p-2 rounded-lg border border-slate-200">
+                            <span class="text-[10px] font-bold text-slate-500 block">I used to think (以前以為):</span>
+                            <p class="text-slate-700 font-medium italic truncate">${gInfo.usedToThink || 'Not written yet...'}</p>
+                        </div>
+                        <div class="bg-indigo-50 p-2 rounded-lg border border-indigo-100">
+                            <span class="text-[10px] font-bold text-indigo-700 block">Now I think (現在知道):</span>
+                            <p class="text-indigo-950 font-bold italic line-clamp-2">${gInfo.nowIThink || 'Not written yet...'}</p>
+                        </div>
+                    </div>
+
+                    <div class="text-[9px] text-slate-400 text-right">
+                        ${isSub ? `Updated: ${gInfo.reflectionTime}` : 'Awaiting student submission'}
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function renderTeacherGroupMatrix() {
+            const container = document.getElementById('teacherGroupGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for(let i=1; i<=8; i++) {
+                const gKey = `Group ${i}`;
+                const gInfo = classData[gKey];
+                const hasData = gInfo.data !== null;
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 rounded-2xl p-4 border border-slate-200/90 hover:border-sky-300 transition shadow-sm space-y-2.5";
+                
+                const lastUserMsg = gInfo.chatLogs.filter(l => l.sender === 'user').slice(-1)[0];
+                const userMsgSnippet = lastUserMsg ? lastUserMsg.en : "No responses yet";
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-xs text-slate-800">${gKey}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full ${hasData ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200 text-slate-600'}">
+                                ${hasData ? 'Data Submitted' : 'Pending'}
+                            </span>
+                        </div>
+                        <span class="text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md">SRL Stage ${gInfo.stage}/3</span>
+                    </div>
+
+                    <div>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">SRL Thinking Trajectory / 思考軌跡</p>
+                        <p class="text-xs font-bold text-slate-800 mt-0.5">${gInfo.summaryEn}</p>
+                        <p class="text-[11px] text-slate-500">${gInfo.summaryZh}</p>
+                    </div>
+
+                    <div class="bg-white p-2 rounded-xl border border-slate-200/80 text-[11px]">
+                        <span class="text-[10px] text-sky-600 font-bold">Latest Answer / 最新回答:</span>
+                        <p class="text-slate-700 italic truncate font-medium">"${userMsgSnippet}"</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-[10px] pt-1">
+                        <div class="bg-emerald-50/80 border border-emerald-200/60 p-1.5 rounded-lg">
+                            <span class="font-bold text-emerald-800">💪 Strength (強項):</span>
+                            <p class="text-slate-600 truncate">${gInfo.strengthZh}</p>
+                        </div>
+                        <div class="bg-amber-50/80 border border-amber-200/60 p-1.5 rounded-lg">
+                            <span class="font-bold text-amber-800">🎯 Growth (建議):</span>
+                            <p class="text-slate-600 truncate">${gInfo.growthZh}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function refreshAITeacherDiagnostics() {
+            generateSimulatedClassData();
+            renderTeacherDashboardUI();
+        }
+
+        // ================= MICROSCOPIC PARTICLE SIMULATION (KINETIC THEORY) =================
+        let particleAnimId = null;
+
+        class ParticleSimulation {
+            constructor(canvasId, tempMode) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                this.tempMode = tempMode; // 'cold' (25°C) or 'hot' (80°C)
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.isHot = (tempMode === 'hot');
+                
+                // Water molecules (H2O)
+                const count = this.isHot ? 24 : 14;
+                const baseSpeed = this.isHot ? 3.6 : 1.1;
+                this.waterMolecules = [];
+                for (let i = 0; i < count; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = baseSpeed * (0.7 + Math.random() * 0.6);
+                    this.waterMolecules.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        radius: this.isHot ? 4.5 : 4
+                    });
+                }
+
+                // Dissolved floating ions (Na+ / Cl-)
+                this.dissolvedIons = [];
+                this.dissolveTimer = 0;
+
+                // Salt crystal lattice in center (NaCl)
+                this.initCrystal();
+            }
+
+            initCrystal() {
+                this.crystalGrid = [];
+                const cols = 5;
+                const rows = 4;
+                const spacing = 7.5;
+                const startX = (this.width - (cols - 1) * spacing) / 2;
+                const startY = (this.height - (rows - 1) * spacing) / 2;
+
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        this.crystalGrid.push({
+                            x: startX + c * spacing,
+                            y: startY + r * spacing,
+                            type: (r + c) % 2 === 0 ? 'Na' : 'Cl',
+                            active: true
+                        });
+                    }
+                }
+            }
+
+            update() {
+                const cx = this.width / 2;
+                const cy = this.height / 2;
+
+                // Update water molecules
+                this.waterMolecules.forEach(m => {
+                    m.x += m.vx;
+                    m.y += m.vy;
+
+                    // Wall bouncing
+                    if (m.x - m.radius < 0) { m.x = m.radius; m.vx *= -1; }
+                    if (m.x + m.radius > this.width) { m.x = this.width - m.radius; m.vx *= -1; }
+                    if (m.y - m.radius < 0) { m.y = m.radius; m.vy *= -1; }
+                    if (m.y + m.radius > this.height) { m.y = this.height - m.radius; m.vy *= -1; }
+
+                    // Collision with crystal region
+                    if (Math.abs(m.x - cx) < 24 && Math.abs(m.y - cy) < 20) {
+                        m.vx *= -1.05;
+                        m.vy *= -1.05;
+                        m.vx += (Math.random() - 0.5) * 0.5;
+                        m.vy += (Math.random() - 0.5) * 0.5;
+                        
+                        // Collision causes dissolution more readily at 80°C
+                        if (Math.random() < (this.isHot ? 0.09 : 0.015)) {
+                            this.triggerDissolve();
+                        }
+                    }
+                });
+
+                // Periodic continuous dissolution
+                this.dissolveTimer++;
+                if (this.dissolveTimer % (this.isHot ? 40 : 180) === 0) {
+                    this.triggerDissolve();
+                }
+
+                // Update dissolved ions floating into solvent
+                for (let i = this.dissolvedIons.length - 1; i >= 0; i--) {
+                    const ion = this.dissolvedIons[i];
+                    ion.x += ion.vx;
+                    ion.y += ion.vy;
+                    ion.life -= 0.015;
+                    if (ion.life <= 0) {
+                        this.dissolvedIons.splice(i, 1);
+                    }
+                }
+
+                // Regrow/refresh crystal if almost completely dissolved
+                const activeCount = this.crystalGrid.filter(p => p.active).length;
+                if (activeCount < 5) {
+                    this.initCrystal();
+                }
+            }
+
+            triggerDissolve() {
+                const activeNodes = this.crystalGrid.filter(p => p.active);
+                if (activeNodes.length > 3) {
+                    const idx = Math.floor(Math.random() * activeNodes.length);
+                    const node = activeNodes[idx];
+                    node.active = false;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = this.isHot ? 2.4 : 0.9;
+                    this.dissolvedIons.push({
+                        x: node.x,
+                        y: node.y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        type: node.type,
+                        life: 1.0
+                    });
+                }
+            }
+
+            draw() {
+                if (!this.ctx) return;
+                this.ctx.clearRect(0, 0, this.width, this.height);
+
+                // Thermal backdrop
+                this.ctx.fillStyle = this.isHot ? 'rgba(255, 241, 242, 0.95)' : 'rgba(240, 249, 255, 0.95)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                // Crystal lattice outline box
+                this.ctx.strokeStyle = this.isHot ? 'rgba(244, 63, 94, 0.25)' : 'rgba(14, 165, 233, 0.25)';
+                this.ctx.lineWidth = 1;
+                this.ctx.strokeRect((this.width - 44)/2, (this.height - 34)/2, 44, 34);
+
+                // Draw intact crystal ions
+                this.crystalGrid.forEach(p => {
+                    if (!p.active) return;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.type === 'Na' ? 2.8 : 3.6, 0, Math.PI * 2);
+                    this.ctx.fillStyle = p.type === 'Na' ? '#8b5cf6' : '#10b981'; // Na+ purple, Cl- green
+                    this.ctx.fill();
+                });
+
+                // Draw dissolved hydrated ions
+                this.dissolvedIons.forEach(ion => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = Math.max(0, ion.life);
+                    this.ctx.beginPath();
+                    this.ctx.arc(ion.x, ion.y, ion.type === 'Na' ? 3.2 : 4, 0, Math.PI * 2);
+                    this.ctx.fillStyle = ion.type === 'Na' ? '#7c3aed' : '#059669';
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+
+                // Draw water molecules (H2O)
+                this.waterMolecules.forEach(m => {
+                    if (this.isHot) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(m.x - m.vx * 2.5, m.y - m.vy * 2.5);
+                        this.ctx.lineTo(m.x, m.y);
+                        this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.35)';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.stroke();
+                    }
+
+                    // Oxygen atom
+                    this.ctx.beginPath();
+                    this.ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = this.isHot ? '#ef4444' : '#0284c7';
+                    this.ctx.fill();
+
+                    // Hydrogen atoms
+                    const hDist = m.radius * 0.75;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.beginPath();
+                    this.ctx.arc(m.x - hDist * 0.7, m.y - hDist * 0.7, 1.5, 0, Math.PI * 2);
+                    this.ctx.arc(m.x + hDist * 0.7, m.y - hDist * 0.7, 1.5, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+
+                // Thermal state badges
+                this.ctx.fillStyle = this.isHot ? '#be123c' : '#0369a1';
+                this.ctx.font = 'bold 9px sans-serif';
+                this.ctx.fillText(this.isHot ? '🔥 High Kinetic E (劇烈碰撞)' : '❄️ Low Kinetic E (緩慢運動)', 6, 12);
+                this.ctx.fillText(this.isHot ? 'Dissolving: VERY FAST' : 'Dissolving: SLOW', 6, this.height - 6);
+            }
+        }
+
+        let coldSim = null;
+        let hotSim = null;
+
+        function initParticles() {
+            coldSim = new ParticleSimulation('particleCanvasCold', 'cold');
+            hotSim = new ParticleSimulation('particleCanvasHot', 'hot');
+        }
+
+        function animateParticles() {
+            if (coldSim) {
+                coldSim.update();
+                coldSim.draw();
+            }
+            if (hotSim) {
+                hotSim.update();
+                hotSim.draw();
+            }
+            particleAnimId = requestAnimationFrame(animateParticles);
+        }
+
+        // ================= SHARE MODAL & QR CODE GENERATION =================
+        let qrCodeObj = null;
+
+        function openShareModal() {
+            const modal = document.getElementById('shareModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+
+            const shareUrl = window.location.href.split('?')[0] + '?class=' + encodeURIComponent(currentClass);
+            const urlText = document.getElementById('shareUrlText');
+            const chText = document.getElementById('shareChannelText');
+            if (urlText) urlText.innerText = shareUrl;
+            if (chText) chText.innerText = currentClass;
+
+            const qrContainer = document.getElementById('qrcode');
+            if (qrContainer) {
+                qrContainer.innerHTML = '';
+                if (window.QRCode) {
+                    qrCodeObj = new QRCode(qrContainer, {
+                        text: shareUrl,
+                        width: 170,
+                        height: 170,
+                        colorDark: "#0f172a",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } else {
+                    qrContainer.innerHTML = `<p class="text-xs text-slate-500 py-6">QRCode loading...</p>`;
+                }
+            }
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('shareModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function copyShareUrl() {
+            const shareUrl = window.location.href.split('?')[0] + '?class=' + encodeURIComponent(currentClass);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert("課堂連結已複製到剪貼簿！\n(Class URL copied to clipboard)");
+                }).catch(() => {
+                    prompt("請手動複製網址 (Copy URL manually):", shareUrl);
+                });
+            } else {
+                prompt("請手動複製網址 (Copy URL manually):", shareUrl);
+            }
+        }
+
+        // ================= PAGE LOAD INITIALIZER =================
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+            
+            // Check URL parameters (e.g. ?class=Class+1A&group=Group+2)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('class')) {
+                currentClass = urlParams.get('class').trim();
+                localStorage.setItem('salt_exp_class', currentClass);
+            }
+            const classInput = document.getElementById('classInput');
+            if (classInput) classInput.value = currentClass;
+            const tBadge = document.getElementById('teacherClassBadge');
+            if (tBadge) tBadge.innerText = currentClass;
+
+            initChart();
+            loadFromStorage();
+            initMqtt();
+            initParticles();
+            animateParticles();
+
+            // Set role from URL if present
+            if (urlParams.get('group')) {
+                const gParam = urlParams.get('group').trim();
+                const targetRole = gParam.toLowerCase().startsWith('group') ? gParam : ('Group ' + gParam);
+                const gSelect = document.getElementById('groupSelect');
+                if (gSelect) {
+                    gSelect.value = targetRole;
+                    handleRoleChange();
+                }
+            } else if (urlParams.get('role') === 'teacher') {
+                const gSelect = document.getElementById('groupSelect');
+                if (gSelect) {
+                    gSelect.value = 'Teacher';
+                    handleRoleChange();
+                }
+            }
+
+            renderStudentChatHistory();
+            updateAllUI();
+        });
+    </script>
+</body>
+</html>
