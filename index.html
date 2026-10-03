@@ -902,36 +902,54 @@
                     </div>
                 </div>
 
-                <!-- 2. Particle Theory Dynamic Visualizer -->
+                <!-- 2. Particle Theory Dynamic Visualizer (Slim & Centered) -->
                 <div class="border-t border-slate-100 pt-4">
-                    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-                        <h4 class="text-xs sm:text-sm font-bold text-indigo-900 flex items-center gap-1.5">
-                            <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
-                        </h4>
+                    <div class="flex items-center justify-between mb-2.5 flex-wrap gap-2">
                         <div class="flex items-center gap-2">
-                            <button onclick="toggleTeacherParticleSim()" id="teacherParticleToggleBtn" class="text-xs bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-3 py-1 rounded-lg flex items-center gap-1.5 transition min-h-[34px]">
+                            <span class="p-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-sm flex-shrink-0">🔬</span>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-slate-800">
+                                    微觀粒子動態圖解 (Particle Theory Visualizer)
+                                </h4>
+                                <p class="text-[11px] text-slate-500">
+                                    水溫越高，水分子熱運動越劇烈、頻繁碰撞拆解食鹽晶體：
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleTeacherParticleSim()" id="teacherParticleToggleBtn" class="text-xs bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 active:scale-95 text-indigo-800 font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition min-h-[34px] shadow-sm">
                                 <i data-lucide="pause" class="w-3.5 h-3.5 text-indigo-600"></i> 暫停模擬 (Pause)
                             </button>
-                            <span class="text-xs bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2.5 py-1 rounded-lg">分子動能模擬 (Kinetic Simulation)</span>
+                            <span class="text-[11px] bg-slate-100 text-slate-600 font-medium px-2.5 py-1 rounded-lg border border-slate-200">
+                                分子動能模擬 (Kinetic Model)
+                            </span>
                         </div>
                     </div>
-                    <p class="text-[11px] text-slate-500 mb-2">
-                        溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格速度越快：
-                    </p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="bg-sky-50 rounded-2xl p-3.5 border border-sky-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="font-bold text-xs sm:text-sm text-sky-800">25°C 冷水 (Cold Water)</span>
-                                <span class="text-[10px] text-sky-600 font-medium">低動能 • 慢速 (Low Kinetic E)</span>
+
+                    <!-- Centered, Non-Stretched Compact Stage (Max 768px for balanced 16:10 proportion) -->
+                    <div class="max-w-2xl sm:max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                        <div class="bg-sky-50/90 rounded-2xl p-3 border border-sky-200/90 shadow-sm flex flex-col items-center">
+                            <div class="w-full flex justify-between items-center mb-1.5 px-0.5">
+                                <span class="font-bold text-xs text-sky-900 flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 flex-shrink-0"></span> 25°C 冷水 (Cold Water)
+                                </span>
+                                <span class="text-[10px] text-sky-700 font-semibold bg-sky-100/90 border border-sky-200 px-2 py-0.5 rounded-md">低動能 • 0.55 px</span>
                             </div>
-                            <canvas id="teacherParticleCanvasCold" width="320" height="200" class="w-full h-48 sm:h-52 bg-sky-100/60 rounded-xl border border-sky-200 shadow-inner block"></canvas>
+                            <div class="w-full flex justify-center overflow-hidden rounded-xl bg-sky-100/60 border border-sky-200 shadow-inner">
+                                <canvas id="teacherParticleCanvasCold" width="320" height="200" class="w-full max-w-[320px] aspect-[16/10] block mx-auto"></canvas>
+                            </div>
                         </div>
-                        <div class="bg-rose-50 rounded-2xl p-3.5 border border-rose-200 shadow-sm">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <span class="font-bold text-xs sm:text-sm text-rose-800">80°C 熱水 (Hot Water)</span>
-                                <span class="text-[10px] text-rose-600 font-medium">高動能 • 快速 (High Kinetic E)</span>
+
+                        <div class="bg-rose-50/90 rounded-2xl p-3 border border-rose-200/90 shadow-sm flex flex-col items-center">
+                            <div class="w-full flex justify-between items-center mb-1.5 px-0.5">
+                                <span class="font-bold text-xs text-rose-900 flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0"></span> 80°C 熱水 (Hot Water)
+                                </span>
+                                <span class="text-[10px] text-rose-700 font-semibold bg-rose-100/90 border border-rose-200 px-2 py-0.5 rounded-md">高動能 • 2.0 px (~4×)</span>
                             </div>
-                            <canvas id="teacherParticleCanvasHot" width="320" height="200" class="w-full h-48 sm:h-52 bg-rose-100/60 rounded-xl border border-rose-200 shadow-inner block"></canvas>
+                            <div class="w-full flex justify-center overflow-hidden rounded-xl bg-rose-100/60 border border-rose-200 shadow-inner">
+                                <canvas id="teacherParticleCanvasHot" width="320" height="200" class="w-full max-w-[320px] aspect-[16/10] block mx-auto"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -961,6 +979,40 @@
                             <!-- Dynamic Rows -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- SECTION: Scientific Inquiry Worksheet Class Monitoring Board (全班 8 組科學探究工作紙作答情況) -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2.5 bg-teal-600 text-white rounded-2xl shadow">
+                            <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-base md:text-lg font-bold text-slate-900 font-fun">
+                                    Scientific Inquiry Worksheet Monitoring / 全班 8 組科學探究工作紙作答情況
+                                </h3>
+                                <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2.5 py-0.5 rounded-full border border-teal-200">
+                                    SRL Step 1: Planning / 階段一：規劃
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Real-time monitoring of all 8 groups' hypothesis choices, controlled variable classification accuracy, and inquiry readiness. / 即時監控各組科學假設選擇、變因配對正確度及探究規劃完成進度。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Summary Stats Badges -->
+                    <div class="flex items-center gap-2 flex-wrap text-xs" id="worksheetSummaryStats">
+                        <!-- Populated dynamically via renderTeacherWorksheetBoard() -->
+                    </div>
+                </div>
+
+                <!-- 8 Groups Cards Grid (iPad & Tablet responsive: 1 col on mobile, 2 cols on tablet, 4 cols on desktop) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="teacherWorksheetCardsGrid">
+                    <!-- Populated dynamically via renderTeacherWorksheetBoard() -->
                 </div>
             </div>
 
@@ -1630,6 +1682,49 @@
         </div>
     </div>
 
+    <!-- ================= MODAL 6: Teacher Inspection of Student Scientific Inquiry Worksheet ================= -->
+    <div id="groupWorksheetInspectionModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl border border-slate-200/80 text-slate-800 relative my-auto max-h-[92vh] flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-teal-100 text-teal-800 flex items-center justify-center text-lg font-bold flex-shrink-0">
+                        📋
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 id="inspectWorksheetGroupTitle" class="font-bold text-base text-slate-900 font-fun">
+                                Group 1 • Scientific Inquiry Worksheet
+                            </h3>
+                            <span id="inspectWorksheetScoreBadge" class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2.5 py-0.5 rounded-full border border-teal-200">
+                                5/5 滿分配對
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500">
+                            科學探究工作紙：探究問題、科學假設與控制變因分類詳情
+                        </p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeGroupWorksheetModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Body (Scrollable) -->
+            <div class="space-y-3.5 overflow-y-auto pr-1 flex-1 text-xs" id="inspectWorksheetContent">
+                <!-- Dynamically rendered -->
+            </div>
+
+            <!-- Footer -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between flex-shrink-0 flex-wrap gap-2">
+                <span class="text-[10px] text-slate-400">💡 提示：點擊完成檢閱返回教師指揮中心 (Click to return to dashboard)</span>
+                <button type="button" onclick="closeGroupWorksheetModal()" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-bold transition shadow min-h-[42px] flex items-center justify-center">
+                    完成檢閱 (Close)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- JS Logic -->
     <script>
         // Global State & Real-Time Sync Configuration
@@ -2216,6 +2311,19 @@
                     classData[gKey].stepProgress = incoming.stepProgress;
                     hasChanged = true;
                 }
+                // Merge worksheet hypothesis, variables, and completion
+                if (incoming.hypothesis && incoming.hypothesis !== classData[gKey].hypothesis) {
+                    classData[gKey].hypothesis = incoming.hypothesis;
+                    hasChanged = true;
+                }
+                if (incoming.variables) {
+                    classData[gKey].variables = incoming.variables;
+                    hasChanged = true;
+                }
+                if (incoming.worksheetCompleted !== undefined && incoming.worksheetCompleted !== classData[gKey].worksheetCompleted) {
+                    classData[gKey].worksheetCompleted = incoming.worksheetCompleted;
+                    hasChanged = true;
+                }
             }
             if (hasChanged) {
                 saveToStorage();
@@ -2536,6 +2644,32 @@
                 if (t25_b && t80_b && gObj.pairB) {
                     t25_b.value = (typeof gObj.pairB[25] === 'number') ? gObj.pairB[25] : '';
                     t80_b.value = (typeof gObj.pairB[80] === 'number') ? gObj.pairB[80] : '';
+                }
+
+                // Restore variable cards in drop zones
+                const pool = document.getElementById('variablePool');
+                const changedZone = document.getElementById('zone_changed');
+                const constantZone = document.getElementById('zone_constant');
+                const comparedZone = document.getElementById('zone_compared');
+
+                if (pool && changedZone && constantZone && comparedZone) {
+                    const vars = gObj.variables || { changed: [], constant: [], compared: [] };
+                    ['var_temp', 'var_vol', 'var_mass', 'var_stir', 'var_time'].forEach(cid => {
+                        const el = document.getElementById(cid);
+                        if (el) pool.appendChild(el);
+                    });
+                    (vars.changed || []).forEach(cid => {
+                        const el = document.getElementById(cid);
+                        if (el) changedZone.appendChild(el);
+                    });
+                    (vars.constant || []).forEach(cid => {
+                        const el = document.getElementById(cid);
+                        if (el) constantZone.appendChild(el);
+                    });
+                    (vars.compared || []).forEach(cid => {
+                        const el = document.getElementById(cid);
+                        if (el) comparedZone.appendChild(el);
+                    });
                 }
             }
             calculateLiveGroupAverage();
@@ -2958,10 +3092,22 @@
 
         // Save Worksheet Progress
         function saveWorksheetProgress() {
-            if (currentRole === "Teacher") return;
-            classData[currentRole].hypothesis = document.getElementById('studentHypothesis').value;
-            classData[currentRole].usedToThink = document.getElementById('usedToThink').value;
-            classData[currentRole].nowIThink = document.getElementById('nowIThink').value;
+            if (currentRole === "Teacher" || currentRole === "Admin") return;
+            if (!classData[currentRole]) return;
+            classData[currentRole].hypothesis = document.getElementById('studentHypothesis')?.value || "";
+            classData[currentRole].usedToThink = document.getElementById('usedToThink')?.value || "";
+            classData[currentRole].nowIThink = document.getElementById('nowIThink')?.value || "";
+
+            // Collect current variable card placements in drop zones
+            const changedZone = document.getElementById('zone_changed');
+            const constantZone = document.getElementById('zone_constant');
+            const comparedZone = document.getElementById('zone_compared');
+            classData[currentRole].variables = {
+                changed: changedZone ? Array.from(changedZone.children).map(c => c.id) : [],
+                constant: constantZone ? Array.from(constantZone.children).map(c => c.id) : [],
+                compared: comparedZone ? Array.from(comparedZone.children).map(c => c.id) : []
+            };
+
             broadcastData();
         }
 
@@ -3081,7 +3227,16 @@
                     const sample = sampleSummaries[(i - 1) % sampleSummaries.length];
                     classData[gName].stage = sample.stage;
                     classData[gName].stepProgress = 5;
-                    classData[gName].hypothesis = "faster";
+                    if (i === 7) {
+                        classData[gName].hypothesis = "same";
+                        classData[gName].variables = { changed: ['var_temp'], constant: ['var_vol', 'var_mass', 'var_stir'], compared: ['var_time'] };
+                    } else if (i === 4) {
+                        classData[gName].hypothesis = "faster";
+                        classData[gName].variables = { changed: ['var_temp', 'var_stir'], constant: ['var_vol', 'var_mass'], compared: ['var_time'] };
+                    } else {
+                        classData[gName].hypothesis = "faster";
+                        classData[gName].variables = { changed: ['var_temp'], constant: ['var_vol', 'var_mass', 'var_stir'], compared: ['var_time'] };
+                    }
                     classData[gName].usedToThink = sample.used;
                     classData[gName].nowIThink = sample.now;
                     classData[gName].reflectionSubmitted = true;
@@ -3809,6 +3964,7 @@ Crucial Formatting & Output Rules:
             updateDataModeUI();
             updateTeacherChart();
             render8GroupsMatrix('teacherDataTableBody', 'teacherSubmittedCount');
+            renderTeacherWorksheetBoard();
             renderWholeClassDiscussionPrompts();
             renderTeacherReflectionGallery();
         }
@@ -3972,10 +4128,10 @@ Crucial Formatting & Output Rules:
             if (!container) return;
 
             const avg = calculateClassAverage();
-            const avgDiff = avg ? Math.max(1, avg[25] - avg[80]) : 125;
+            const avgDiff = avg ? Math.max(1, Math.round(avg[25] - avg[80])) : 125;
             const speedRatio = avg && avg[80] > 0 ? (avg[25] / avg[80]).toFixed(1) : "3.3";
 
-            // 1. Scan for extremes in 80°C
+            // 1. Scan submitted groups & find extremes
             let submittedGroups = [];
             for (let i = 1; i <= 8; i++) {
                 const gKey = `Group ${i}`;
@@ -3997,11 +4153,16 @@ Crucial Formatting & Output Rules:
             }
             const extremeDiff = Math.max(5, Math.abs(slowestGroup.time - fastestGroup.time));
 
-            // 2. Scan for student quotes & dialogue evidence
+            // 2. Scan for student quotes & dialogue evidence across all groups
             let kineticQuote = null;
             let stopwatchQuote = null;
             let meltingQuote = null;
             let stirringQuote = null;
+            let actualKineticFound = false;
+            let actualStopwatchFound = false;
+            let actualMeltingFound = false;
+            let actualStirringFound = false;
+            let meltingGroups = [];
 
             for (let i = 1; i <= 8; i++) {
                 const gKey = `Group ${i}`;
@@ -4013,56 +4174,101 @@ Crucial Formatting & Output Rules:
                         if (msg.sender === 'user') {
                             const text = (msg.zh || '') + ' ' + (msg.en || '');
                             if (!kineticQuote && (/撞|動能|賽車|能量|快|激烈|collide|kinetic|fast/i.test(text))) {
-                                kineticQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                                actualKineticFound = true;
+                                kineticQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 32) };
                             }
                             if (!stopwatchQuote && (/碼錶|準|時差|平均|反應|遲|timer|stopwatch|delay/i.test(text))) {
-                                stopwatchQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                                actualStopwatchFound = true;
+                                stopwatchQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 32) };
                             }
                             if (!stirringQuote && (/攪拌|手痛|忘記|慢咗|攰|力|stir|uneven|tired/i.test(text))) {
-                                stirringQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                                actualStirringFound = true;
+                                stirringQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 32) };
+                            }
+                            if (/融化|溶化|melt/i.test(text)) {
+                                actualMeltingFound = true;
+                                if (!meltingGroups.includes(gKey)) meltingGroups.push(gKey);
+                                if (!meltingQuote) meltingQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 35) };
                             }
                         }
                     }
                 }
 
                 const reflectText = (gObj.usedToThink || '') + ' ' + (gObj.nowIThink || '');
-                if (!meltingQuote && (/融化|溶化|melt/i.test(reflectText))) {
-                    meltingQuote = { group: gKey, quote: (gObj.usedToThink || gObj.nowIThink).substring(0, 35) };
+                if (/融化|溶化|melt/i.test(reflectText)) {
+                    actualMeltingFound = true;
+                    if (!meltingGroups.includes(gKey)) meltingGroups.push(gKey);
+                    if (!meltingQuote) {
+                        meltingQuote = { group: gKey, quote: (gObj.usedToThink || gObj.nowIThink).substring(0, 35) };
+                    }
                 }
             }
 
+            // Defaults if not mentioned yet
             if (!kineticQuote) kineticQuote = { group: "Group 3", quote: "熱水分子運動好劇烈、撞得好快" };
             if (!stopwatchQuote) stopwatchQuote = { group: "Group 5", quote: "個人按碼錶有時差，全班平均好似準啲" };
             if (!meltingQuote) meltingQuote = { group: "Group 1", quote: "以前以為食鹽在熱水中融化了，現在知道是溶解" };
             if (!stirringQuote) stirringQuote = { group: "Group 6", quote: "攪拌速度好難完全一樣，手會累" };
 
-            // 3. Assemble 5 Contextualized HOTQs
+            // 3. Outlier and Anomaly Detection
+            const outliers = detectOutliers() || [];
+
+            // 4. Calculate Priority Scores and Rationale for each HOTQ
+            // HOTS 3: Discrepancy & Fair Test
+            let scoreDiscrepancy = 25;
+            let rationaleDiscrepancy = `排查組間微小差異與實驗環境公平性。`;
+            if (outliers.length > 0) {
+                scoreDiscrepancy = 85 + (outliers.length * 5);
+                rationaleDiscrepancy = `⚠️ 系統偵測到 ${outliers.length} 組極端或反常數據 (${outliers.map(o => o.group).join(', ')})，急需在大組討論中引導排查未控制變因！`;
+            } else if (extremeDiff >= 15) {
+                scoreDiscrepancy = 60 + Math.min(25, extremeDiff);
+                rationaleDiscrepancy = `⚡ 全班極值差距達 ${extremeDiff} 秒 (${fastestGroup.name} ${fastestGroup.time}s vs ${slowestGroup.name} ${slowestGroup.time}s)，極適合深入探討攪拌、水溫等隱藏變因！`;
+            }
+
+            // HOTS 4: Conceptual Shift (Dissolving vs Melting)
+            let scoreConcepts = 30;
+            let rationaleConcepts = `鞏固微觀粒子本質：辨析水微粒拆解晶格 (溶解) 與純受熱物態改變 (融化)。`;
+            if (actualMeltingFound) {
+                scoreConcepts = 75 + (meltingGroups.length * 5);
+                rationaleConcepts = `💡 學生在探究對話或反思中提到了「融化/melt」(${meltingGroups.join(', ')})，此為初中科學最經典迷思概念，優先度極高！`;
+            }
+
+            // HOTS 1: Microscopic Kinetics
+            let scoreKinetics = 35;
+            let rationaleKinetics = `將巨觀溶解秒數差異，連結至水微粒的碰撞頻率與動能理論。`;
+            if (avg && avgDiff >= 20) {
+                scoreKinetics = 50 + Math.min(25, Math.round(avgDiff / 4));
+                rationaleKinetics = `🔥 全班平均顯示 80°C 比 25°C 顯著加快 ${avgDiff} 秒（約 ${speedRatio} 倍），適合即時昇華至微觀粒子動能與高頻碰撞拆解！`;
+            }
+            if (actualKineticFound) scoreKinetics += 8;
+
+            // HOTS 5: STEM Engineering & Automation
+            let scoreEngineering = 22;
+            let rationaleEngineering = `啟發 STEM 自動化思考，探討如何由人手實驗邁向現代科研精密儀器。`;
+            if (actualStirringFound) {
+                scoreEngineering = 52;
+                rationaleEngineering = `🛠️ 學生在對話記錄中提及攪拌手痛/速度不一，非常適合即時引導思考定速磁力攪拌器與自動傳感改良！`;
+            } else if (extremeDiff >= 12) {
+                scoreEngineering = 36;
+                rationaleEngineering = `手動攪拌為實驗最大潛在誤差源，引導思考如何以自動化設備徹底鎖死攪拌變因。`;
+            }
+
+            // HOTS 2: Error & Reliability
+            let scoreReliability = 26;
+            let rationaleReliability = `探討單次實驗可能存在之碼錶反應時差，理解大樣本平均的科學信度意義。`;
+            if (submittedGroups.length >= 4) {
+                scoreReliability = 40 + (submittedGroups.length * 3);
+                rationaleReliability = `📊 全班已有 ${submittedGroups.length} 組提交數據，具備充足大樣本探討「平均值如何像天平一樣抵消隨機誤差」！`;
+            }
+            if (actualStopwatchFound) scoreReliability += 8;
+
+            // 5. Assemble HOTQ Objects with Priority Attributes
             const questions = [
                 {
-                    category: "kinetics",
-                    badgeText: "HOTS 1 • Microscopic Kinetics / 微觀分子動力學",
-                    icon: "atom",
-                    titleEn: `Class Avg 80°C is ~${avgDiff}s faster (~${speedRatio}x)! How does particle collision explain this?`,
-                    titleZh: `全班平均 80°C 比 25°C 快約 ${avgDiff} 秒（快約 ${speedRatio} 倍）！微觀分子能量如何解釋？`,
-                    bodyEn: `Observe the particle simulation. ${kineticQuote.group} noted during inquiry: "${kineticQuote.quote}". Water molecules at 80°C move violently with high kinetic energy. How does this high-speed bombardment dismantle the solid NaCl crystal lattice?`,
-                    bodyZh: `請觀察「分子動能模擬」。${kineticQuote.group} 在對話中敏銳提出：「${kineticQuote.quote}」。80°C 熱水分子具有極高動能、碰撞頻繁，這種高頻劇烈撞擊如何加速把固態食鹽晶格拆解開？`,
-                    goalEn: `Connect macro timing differences to micro water molecule kinetic energy and collision theory.`,
-                    goalZh: `將巨觀「秒數差異」昇華至微觀「水分子動能與碰撞拆解理論」。`
-                },
-                {
-                    category: "reliability",
-                    badgeText: "HOTS 2 • Error & Reliability / 誤差抵消與實驗信度",
-                    icon: "scale",
-                    titleEn: `Why does calculating the 8-group class average eliminate individual stopwatch delay?`,
-                    titleZh: `為什麼計算全班 8 組平均值能「消除」個人隨機誤差？`,
-                    bodyEn: `${stopwatchQuote.group} insightfully remarked: "${stopwatchQuote.quote}". If one team stopped the timer 2s late, and another stirred slightly faster, single-group data varies. How does the 8-group average balance out random positive and negative errors like a scale?`,
-                    bodyZh: `${stopwatchQuote.group} 在探究中敏銳指出：「${stopwatchQuote.quote}」。若某組按停碼錶慢了 2 秒，另一組攪拌稍快，單組數據都有偏差。全班平均值如何像天平一樣互相抵消正負誤差、提高科學信度 (Reliability)？`,
-                    goalEn: `Deepen understanding of large-sample averages, random error cancellation, and scientific reliability.`,
-                    goalZh: `深刻理解大樣本平均值消除隨機誤差的本質與科學信度 Reliability。`
-                },
-                {
                     category: "discrepancy",
-                    badgeText: "HOTS 3 • Discrepancy & Fair Test / 異常排查與公平測試",
+                    score: scoreDiscrepancy,
+                    priorityRationale: rationaleDiscrepancy,
+                    badgeText: "HOTS • Discrepancy & Fair Test / 異常排查與公平測試",
                     icon: "alert-triangle",
                     titleEn: `${fastestGroup.name} (${fastestGroup.time}s) vs ${slowestGroup.name} (${slowestGroup.time}s): What hidden variables caused this ${extremeDiff}s gap?`,
                     titleZh: `【實測對比】${fastestGroup.name} (${fastestGroup.time}秒) vs ${slowestGroup.name} (${slowestGroup.time}秒)：相差 ${extremeDiff} 秒！有哪些未控制的隱藏變因？`,
@@ -4073,7 +4279,9 @@ Crucial Formatting & Output Rules:
                 },
                 {
                     category: "concepts",
-                    badgeText: "HOTS 4 • Conceptual Shift / 概念轉變：溶解 vs 融化",
+                    score: scoreConcepts,
+                    priorityRationale: rationaleConcepts,
+                    badgeText: "HOTS • Conceptual Shift / 概念轉變：溶解 vs 融化",
                     icon: "brain",
                     titleEn: `Do salt crystals "melt" in hot water, or "dissolve"? How do particle models distinguish them?`,
                     titleZh: `食鹽在熱水中是「融化」還是「溶解」？微觀粒子模型如何區分兩者？`,
@@ -4083,8 +4291,23 @@ Crucial Formatting & Output Rules:
                     goalZh: `運用微觀粒子理論徹底辨析「溶解」與「融化」的本質差異，實現科學概念轉變。`
                 },
                 {
+                    category: "kinetics",
+                    score: scoreKinetics,
+                    priorityRationale: rationaleKinetics,
+                    badgeText: "HOTS • Microscopic Kinetics / 微觀分子動力學",
+                    icon: "atom",
+                    titleEn: `Class Avg 80°C is ~${avgDiff}s faster (~${speedRatio}x)! How does particle collision explain this?`,
+                    titleZh: `全班平均 80°C 比 25°C 快約 ${avgDiff} 秒（快約 ${speedRatio} 倍）！微觀分子能量如何解釋？`,
+                    bodyEn: `Observe the particle simulation. ${kineticQuote.group} noted during inquiry: "${kineticQuote.quote}". Water molecules at 80°C move violently with high kinetic energy. How does this high-speed bombardment dismantle the solid NaCl crystal lattice?`,
+                    bodyZh: `請觀察「分子動能模擬」。${kineticQuote.group} 在對話中敏銳提出：「${kineticQuote.quote}」。80°C 熱水分子具有極高動能、碰撞頻繁，這種高頻劇烈撞擊如何加速把固態食鹽晶格拆解開？`,
+                    goalEn: `Connect macro timing differences to micro water molecule kinetic energy and collision theory.`,
+                    goalZh: `將巨觀「秒數差異」昇華至微觀「水分子動能與碰撞拆解理論」。`
+                },
+                {
                     category: "engineering",
-                    badgeText: "HOTS 5 • STEM Engineering / STEM 工程改良與自動化",
+                    score: scoreEngineering,
+                    priorityRationale: rationaleEngineering,
+                    badgeText: "HOTS • STEM Engineering / STEM 工程改良與自動化",
                     icon: "lightbulb",
                     titleEn: `How to design an automated apparatus with "zero human stirring error"?`,
                     titleZh: `如何設計「零人為攪拌誤差」的自動化科學實驗裝置？`,
@@ -4092,37 +4315,81 @@ Crucial Formatting & Output Rules:
                     bodyZh: `${stirringQuote.group} 在實驗中提到：「${stirringQuote.quote}」。手動攪拌難免疲勞波動，肉眼判斷終點也存在主觀時差。若引入「定速磁力攪拌器」或「光電濁度傳感器」，可以如何徹底固定控制變因？`,
                     goalEn: `Develop STEM engineering thinking, automated sensing, and fair test evaluation.`,
                     goalZh: `啟發 STEM 工程思維、自動化監測與真實科研公平測試極致評估。`
+                },
+                {
+                    category: "reliability",
+                    score: scoreReliability,
+                    priorityRationale: rationaleReliability,
+                    badgeText: "HOTS • Error & Reliability / 誤差抵消與實驗信度",
+                    icon: "scale",
+                    titleEn: `Why does calculating the 8-group class average eliminate individual stopwatch delay?`,
+                    titleZh: `為什麼計算全班 8 組平均值能「消除」個人隨機誤差？`,
+                    bodyEn: `${stopwatchQuote.group} insightfully remarked: "${stopwatchQuote.quote}". If one team stopped the timer 2s late, and another stirred slightly faster, single-group data varies. How does the 8-group average balance out random positive and negative errors like a scale?`,
+                    bodyZh: `${stopwatchQuote.group} 在探究中敏銳指出：「${stopwatchQuote.quote}」。若某組按停碼錶慢了 2 秒，另一組攪拌稍快，單組數據都有偏差。全班平均值如何像天平一樣互相抵消正負誤差、提高科學信度 (Reliability)？`,
+                    goalEn: `Deepen understanding of large-sample averages, random error cancellation, and scientific reliability.`,
+                    goalZh: `深刻理解大樣本平均值消除隨機誤差的本質與科學信度 Reliability。`
                 }
             ];
 
-            container.innerHTML = questions.map(q => `
-                <div class="hotq-card bg-white p-4 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col justify-between transition hover:shadow-md hover:border-amber-400 ${activeDiscussionFilter !== 'all' && activeDiscussionFilter !== q.category ? 'hidden' : ''}" data-category="${q.category}">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between pb-1.5 border-b border-amber-100">
-                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md flex items-center gap-1">
-                                ${q.badgeText}
-                            </span>
-                            <i data-lucide="${q.icon}" class="w-4 h-4 text-amber-600"></i>
+            // 6. Sort by Priority Score Descending
+            questions.sort((a, b) => b.score - a.score);
+
+            const rankConfigs = [
+                { text: "🔥 第 1 優先研討 (Priority 1)", cls: "bg-rose-100 text-rose-800 border-rose-300 font-extrabold shadow-xs" },
+                { text: "⭐ 第 2 優先研討 (Priority 2)", cls: "bg-amber-100 text-amber-900 border-amber-300 font-bold" },
+                { text: "📌 第 3 優先研討 (Priority 3)", cls: "bg-blue-100 text-blue-900 border-blue-300 font-bold" },
+                { text: "第 4 順位研討 (Standard)", cls: "bg-slate-100 text-slate-700 border-slate-300 font-medium" },
+                { text: "第 5 順位研討 (Extension)", cls: "bg-slate-100 text-slate-600 border-slate-200 font-medium" }
+            ];
+
+            // 7. Render Prioritized HOTQ Cards
+            container.innerHTML = questions.map((q, idx) => {
+                const rank = rankConfigs[idx] || rankConfigs[4];
+                const isTop1 = idx === 0;
+                return `
+                <div class="hotq-card bg-white p-4 sm:p-5 rounded-2xl border ${isTop1 ? 'border-amber-400 ring-2 ring-amber-300/40 shadow-md' : 'border-amber-200/90 shadow-sm'} flex flex-col justify-between transition hover:shadow-md hover:border-amber-400 ${activeDiscussionFilter !== 'all' && activeDiscussionFilter !== q.category ? 'hidden' : ''}" data-category="${q.category}">
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-amber-100 flex-wrap gap-1.5">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[10px] px-2.5 py-0.5 rounded-full border ${rank.cls} flex items-center gap-1">
+                                    ${rank.text}
+                                </span>
+                                <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">
+                                    ${q.badgeText}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[9px] font-mono font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">Score: ${q.score}</span>
+                                <i data-lucide="${q.icon}" class="w-4 h-4 text-amber-600"></i>
+                            </div>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900 leading-snug">
+
+                        <!-- Priority Rationale Banner -->
+                        <div class="text-[10px] sm:text-[11px] bg-amber-50 text-amber-950 p-2 sm:p-2.5 rounded-xl border border-amber-200/80 font-medium flex items-start gap-1.5">
+                            <span class="font-bold flex-shrink-0 text-amber-800">🎯 排序依據:</span>
+                            <span class="leading-relaxed">${q.priorityRationale}</span>
+                        </div>
+
+                        <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
                             ${q.titleEn}
                         </h4>
-                        <p class="text-[11px] text-amber-950 font-bold leading-snug">
+                        <p class="text-[11px] sm:text-xs text-amber-950 font-bold leading-snug">
                             ${q.titleZh}
                         </p>
-                        <p class="text-[11px] text-slate-600 leading-relaxed pt-1">
+                        <p class="text-[11px] text-slate-600 leading-relaxed pt-0.5">
                             ${q.bodyEn}
                         </p>
-                        <p class="text-[11px] text-slate-700 leading-relaxed font-medium bg-amber-50/60 p-2 rounded-xl border border-amber-100">
+                        <p class="text-[11px] text-slate-700 leading-relaxed font-medium bg-amber-50/60 p-2 sm:p-2.5 rounded-xl border border-amber-100">
                             ${q.bodyZh}
                         </p>
                     </div>
-                    <div class="pt-2.5 mt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium flex items-start gap-1">
+                    <div class="pt-2.5 mt-2.5 border-t border-slate-100 text-[10px] text-amber-800 font-medium flex items-start gap-1">
                         <span class="font-bold flex-shrink-0">💡 核心目標:</span>
                         <span>${q.goalZh}</span>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
             if (window.lucide) lucide.createIcons();
         }
@@ -4404,6 +4671,375 @@ Crucial Formatting & Output Rules:
 
         function closeGroupDialogueInspectionModal() {
             const modal = document.getElementById('groupDialogueInspectionModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // ================= SCIENTIFIC INQUIRY WORKSHEET TEACHER MONITORING =================
+        function normalizeVariableId(id) {
+            if (!id) return '';
+            if (id === 'var_temp' || id === 'temp') return 'var_temp';
+            if (id === 'var_vol' || id === 'water_vol' || id === 'vol') return 'var_vol';
+            if (id === 'var_mass' || id === 'salt_mass' || id === 'mass') return 'var_mass';
+            if (id === 'var_stir' || id === 'stirring' || id === 'stir') return 'var_stir';
+            if (id === 'var_time' || id === 'time') return 'var_time';
+            return id;
+        }
+
+        function getGroupWorksheetSummary(groupKey) {
+            const gObj = classData[groupKey] || {};
+            const hyp = gObj.hypothesis || null;
+            let hypLabel = "未選擇假設 (Not selected)";
+            let hypCorrect = false;
+            if (hyp === 'faster') {
+                hypLabel = "80°C 水溶解得更快 (Faster)";
+                hypCorrect = true;
+            } else if (hyp === 'slower') {
+                hypLabel = "80°C 水溶解得更慢 (Slower)";
+                hypCorrect = false;
+            } else if (hyp === 'same') {
+                hypLabel = "兩者速度相同 (Same speed)";
+                hypCorrect = false;
+            }
+
+            const vars = gObj.variables || { changed: [], constant: [], compared: [] };
+            const changed = Array.isArray(vars.changed) ? vars.changed : [];
+            const constant = Array.isArray(vars.constant) ? vars.constant : [];
+            const compared = Array.isArray(vars.compared) ? vars.compared : [];
+
+            const totalPlaced = changed.length + constant.length + compared.length;
+
+            const changedNorm = changed.map(normalizeVariableId);
+            const constantNorm = constant.map(normalizeVariableId);
+            const comparedNorm = compared.map(normalizeVariableId);
+
+            const checks = {
+                temp: changedNorm.includes('var_temp'),
+                mass: constantNorm.includes('var_mass'),
+                vol: constantNorm.includes('var_vol'),
+                stir: constantNorm.includes('var_stir'),
+                time: comparedNorm.includes('var_time')
+            };
+
+            let correctCount = 0;
+            if (checks.temp) correctCount++;
+            if (checks.mass) correctCount++;
+            if (checks.vol) correctCount++;
+            if (checks.stir) correctCount++;
+            if (checks.time) correctCount++;
+
+            const isComplete = (gObj.worksheetCompleted === true) || (totalPlaced >= 5 && hyp !== null);
+
+            let statusText = "Pending (未開始)";
+            let statusClass = "bg-slate-100 text-slate-500 border-slate-200";
+
+            if (isComplete) {
+                if (correctCount === 5 && hypCorrect) {
+                    statusText = "5/5 滿分配對 (Full Mastery)";
+                    statusClass = "bg-emerald-100 text-emerald-800 border-emerald-300";
+                } else if (correctCount === 5) {
+                    statusText = "5/5 變因 (需確認假設)";
+                    statusClass = "bg-sky-100 text-sky-800 border-sky-300";
+                } else {
+                    statusText = `${correctCount}/5 需留意變因`;
+                    statusClass = "bg-amber-100 text-amber-800 border-amber-300";
+                }
+            } else if (totalPlaced > 0 || hyp !== null) {
+                statusText = `In Progress (${totalPlaced}/5 填寫中)`;
+                statusClass = "bg-blue-100 text-blue-800 border-blue-200";
+            }
+
+            return {
+                groupKey,
+                hyp,
+                hypLabel,
+                hypCorrect,
+                vars: { changed, constant, compared },
+                totalPlaced,
+                correctCount,
+                checks,
+                isComplete,
+                statusText,
+                statusClass
+            };
+        }
+
+        function renderTeacherWorksheetBoard() {
+            const statsContainer = document.getElementById('worksheetSummaryStats');
+            const cardsGrid = document.getElementById('teacherWorksheetCardsGrid');
+            if (!cardsGrid) return;
+
+            let completedCount = 0;
+            let fullScoreCount = 0;
+            let totalScore = 0;
+            let groupsNeedingAttention = [];
+
+            const variableNames = {
+                var_temp: { zh: "水溫", en: "Water Temp" },
+                var_mass: { zh: "鹽量", en: "Salt Mass" },
+                var_vol: { zh: "水量", en: "Water Vol" },
+                var_stir: { zh: "攪拌", en: "Stirring" },
+                var_time: { zh: "溶解時間", en: "Time" },
+                temp: { zh: "水溫", en: "Water Temp" },
+                salt_mass: { zh: "鹽量", en: "Salt Mass" },
+                water_vol: { zh: "水量", en: "Water Vol" },
+                stirring: { zh: "攪拌", en: "Stirring" },
+                time: { zh: "溶解時間", en: "Time" }
+            };
+
+            cardsGrid.innerHTML = '';
+
+            for (let i = 1; i <= 8; i++) {
+                const gKey = `Group ${i}`;
+                const summary = getGroupWorksheetSummary(gKey);
+
+                if (summary.isComplete) completedCount++;
+                if (summary.correctCount === 5 && summary.hypCorrect) fullScoreCount++;
+                totalScore += summary.correctCount;
+
+                if (summary.correctCount < 5 || (summary.hyp && !summary.hypCorrect)) {
+                    groupsNeedingAttention.push(gKey);
+                }
+
+                // Render card
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs hover:border-teal-400 hover:shadow-md transition flex flex-col justify-between space-y-3 cursor-pointer group";
+                card.onclick = () => openGroupWorksheetModal(gKey);
+
+                const changedLabels = summary.vars.changed.map(v => variableNames[v]?.zh || v).join(', ') || '未放置';
+                const constantCount = summary.vars.constant.length;
+                const comparedLabels = summary.vars.compared.map(v => variableNames[v]?.zh || v).join(', ') || '未放置';
+
+                card.innerHTML = `
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-bold text-sm text-slate-800 font-fun">${gKey}</span>
+                                <span class="opacity-0 group-hover:opacity-100 text-[10px] text-teal-600 transition font-medium flex items-center gap-0.5">🔍 檢視</span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${summary.statusClass}">
+                                ${summary.statusText}
+                            </span>
+                        </div>
+
+                        <!-- Hypothesis snippet -->
+                        <div class="bg-slate-50 p-2 rounded-xl border border-slate-100 space-y-0.5">
+                            <span class="text-[10px] text-slate-400 block font-medium">假設 (Hypothesis):</span>
+                            <span class="text-xs font-bold ${summary.hypCorrect ? 'text-teal-700' : (summary.hyp ? 'text-amber-700' : 'text-slate-500')} truncate block">
+                                ${summary.hypLabel}
+                            </span>
+                        </div>
+
+                        <!-- Variables Mini Breakdown -->
+                        <div class="space-y-1 text-[11px] bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+                            <div class="flex items-center justify-between py-0.5 border-b border-dashed border-slate-200/60">
+                                <span class="text-slate-500">改變變因:</span>
+                                <span class="font-bold ${summary.checks.temp ? 'text-teal-700' : 'text-amber-700'}">${changedLabels} ${summary.checks.temp ? '✓' : '⚠️'}</span>
+                            </div>
+                            <div class="flex items-center justify-between py-0.5 border-b border-dashed border-slate-200/60">
+                                <span class="text-slate-500">控制變因:</span>
+                                <span class="font-bold ${constantCount === 3 && summary.checks.mass && summary.checks.vol && summary.checks.stir ? 'text-teal-700' : 'text-amber-700'}">${constantCount}/3 項 ${constantCount === 3 && summary.checks.mass && summary.checks.vol && summary.checks.stir ? '✓' : ''}</span>
+                            </div>
+                            <div class="flex items-center justify-between py-0.5">
+                                <span class="text-slate-500">測量結果:</span>
+                                <span class="font-bold ${summary.checks.time ? 'text-teal-700' : 'text-amber-700'}">${comparedLabels} ${summary.checks.time ? '✓' : '⚠️'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card footer -->
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                        <span class="text-slate-500">配對得分: <strong class="text-slate-800 font-bold">${summary.correctCount}/5</strong></span>
+                        <span class="text-teal-600 font-bold group-hover:underline flex items-center gap-0.5">詳細工作紙 →</span>
+                    </div>
+                `;
+
+                cardsGrid.appendChild(card);
+            }
+
+            // Render Stats Header Badges
+            if (statsContainer) {
+                const avgAcc = Math.round((totalScore / 40) * 100);
+                let attentionAlert = "";
+                if (groupsNeedingAttention.length > 0) {
+                    attentionAlert = `<span class="bg-amber-100 text-amber-900 border border-amber-300 font-bold px-2.5 py-1 rounded-xl">⚠️ 需輔導變因: ${groupsNeedingAttention.join(', ')}</span>`;
+                } else {
+                    attentionAlert = `<span class="bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold px-2.5 py-1 rounded-xl">🎉 全班變因分類完全精準 (100% Fair Test Mastery)</span>`;
+                }
+
+                statsContainer.innerHTML = `
+                    <span class="bg-teal-100 text-teal-900 border border-teal-200 font-bold px-2.5 py-1 rounded-xl">
+                        已完成: <strong>${completedCount} / 8 組</strong>
+                    </span>
+                    <span class="bg-sky-100 text-sky-900 border border-sky-200 font-bold px-2.5 py-1 rounded-xl">
+                        變因平均配對率: <strong>${avgAcc}%</strong> (${fullScoreCount}/8 滿分)
+                    </span>
+                    ${attentionAlert}
+                `;
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function openGroupWorksheetModal(groupKey) {
+            const modal = document.getElementById('groupWorksheetInspectionModal');
+            if (!modal) return;
+
+            const summary = getGroupWorksheetSummary(groupKey);
+            const titleEl = document.getElementById('inspectWorksheetGroupTitle');
+            const badgeEl = document.getElementById('inspectWorksheetScoreBadge');
+            const contentEl = document.getElementById('inspectWorksheetContent');
+
+            if (titleEl) titleEl.innerText = `${groupKey} • 科學探究工作紙詳情 (Worksheet Review)`;
+            if (badgeEl) {
+                badgeEl.className = `text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${summary.statusClass}`;
+                badgeEl.innerText = `${summary.correctCount}/5 變因正確 • ${summary.statusText}`;
+            }
+
+            const variableDisplayNames = {
+                var_temp: { titleZh: "水溫 (Water Temp)", desc: "自變因 (Independent Variable)" },
+                var_mass: { titleZh: "食鹽質量 (Mass of Salt - 5.0 g)", desc: "控制變因 (Controlled Variable)" },
+                var_vol: { titleZh: "水量 (Volume of Water - 100 mL)", desc: "控制變因 (Controlled Variable)" },
+                var_stir: { titleZh: "攪拌速度與方式 (Stirring Speed)", desc: "控制變因 (Controlled Variable)" },
+                var_time: { titleZh: "溶解所需時間 (Time to Dissolve)", desc: "應變因 (Dependent Variable)" },
+                temp: { titleZh: "水溫 (Water Temp)", desc: "自變因 (Independent Variable)" },
+                salt_mass: { titleZh: "食鹽質量 (Mass of Salt - 5.0 g)", desc: "控制變因 (Controlled Variable)" },
+                water_vol: { titleZh: "水量 (Volume of Water - 100 mL)", desc: "控制變因 (Controlled Variable)" },
+                stirring: { titleZh: "攪拌速度與方式 (Stirring Speed)", desc: "控制變因 (Controlled Variable)" },
+                time: { titleZh: "溶解所需時間 (Time to Dissolve)", desc: "應變因 (Dependent Variable)" }
+            };
+
+            function renderTagList(keys, expectedZone) {
+                if (!keys || keys.length === 0) {
+                    return `<div class="text-[11px] text-slate-400 italic p-2 bg-white/60 rounded-xl text-center">未放入任何變因卡片</div>`;
+                }
+                return keys.map(k => {
+                    const normK = normalizeVariableId(k);
+                    const info = variableDisplayNames[normK] || { titleZh: k, desc: "" };
+                    let isCorrect = false;
+                    if (expectedZone === 'changed' && normK === 'var_temp') isCorrect = true;
+                    if (expectedZone === 'constant' && ['var_mass', 'var_vol', 'var_stir'].includes(normK)) isCorrect = true;
+                    if (expectedZone === 'compared' && normK === 'var_time') isCorrect = true;
+
+                    return `
+                        <div class="p-2 rounded-xl border ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : 'bg-rose-50 border-rose-200 text-rose-950'} flex items-center justify-between">
+                            <div>
+                                <span class="font-bold block text-xs">${info.titleZh}</span>
+                                <span class="text-[10px] ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${info.desc}</span>
+                            </div>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                ${isCorrect ? '✓ 正確' : '⚠️ 放置錯誤'}
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Pedagogical Commentary
+            let teacherFeedbackHtml = "";
+            if (summary.correctCount === 5 && summary.hypCorrect) {
+                teacherFeedbackHtml = `
+                    <div class="bg-emerald-50 p-3 sm:p-3.5 rounded-2xl border border-emerald-200 space-y-1">
+                        <span class="font-bold text-xs text-emerald-900 flex items-center gap-1">🌟 教師教學實證點評 (Pedagogical Commentary):</span>
+                        <p class="text-xs text-emerald-800 leading-relaxed">
+                            該組能完全準確分辨<strong>唯一自變因 (水溫)</strong>、嚴格固定<strong>三個控制變因 (鹽量、水量、攪拌)</strong>，並將<strong>溶解時間</strong>正確歸類為應變因！科學假設符合實證預期，公平測試 (Fair Test) 概念極度清晰。
+                        </p>
+                    </div>
+                `;
+            } else {
+                teacherFeedbackHtml = `
+                    <div class="bg-amber-50 p-3 sm:p-3.5 rounded-2xl border border-amber-200 space-y-1.5">
+                        <span class="font-bold text-xs text-amber-900 flex items-center gap-1">💬 教師針對性巡堂引導建議 (Targeted Facilitation):</span>
+                        <p class="text-xs text-amber-900 leading-relaxed">
+                            本組在變因分類上仍有混淆。教師可巡視至該組引導提問：<br>
+                            <em>「在公平測試中，如果我們想知道『水溫』對溶解的影響，除了水溫以外，其他所有條件（如攪拌速度、水量）應該保持怎樣？為什麼時間是我們觀察測量的結果？」</em>
+                        </p>
+                    </div>
+                `;
+            }
+
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <!-- Question 1: Scientific Inquiry Question -->
+                    <div class="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-slate-700">1. 探究問題 (Inquiry Question)</span>
+                            <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-bold">Standard</span>
+                        </div>
+                        <p class="text-xs text-slate-800 font-medium">
+                            水溫會如何影響食鹽在水中的溶解速度？(How does water temperature affect the rate of salt dissolving?)
+                        </p>
+                    </div>
+
+                    <!-- Question 2: Scientific Hypothesis -->
+                    <div class="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-slate-700">2. 本組科學假設 (Group Hypothesis)</span>
+                            <span class="text-[10px] ${summary.hypCorrect ? 'bg-teal-100 text-teal-800' : 'bg-amber-100 text-amber-800'} px-2 py-0.5 rounded-full font-bold">
+                                ${summary.hypCorrect ? '✓ 合理科學預測' : '⚠️ 需引導討論'}
+                            </span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white border border-slate-200 flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-900">${summary.hypLabel}</span>
+                            <span class="text-[11px] text-slate-500">${summary.hyp === 'faster' ? '（預測高溫分子動能較大）' : '（非典型預測）'}</span>
+                        </div>
+                    </div>
+
+                    <!-- Question 3: Controlled Variables Classification -->
+                    <div class="space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-slate-700">3. 控制變因卡片配對 (Fair Test Variable Matching)</span>
+                            <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                                配對得分: ${summary.correctCount} / 5
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                            <!-- Column 1: Changed -->
+                            <div class="bg-amber-50/70 p-3 rounded-2xl border border-amber-200 space-y-2">
+                                <div class="border-b border-amber-200 pb-1 flex items-center justify-between">
+                                    <span class="font-bold text-[11px] text-amber-900">改變的變因 (唯一)</span>
+                                    <span class="text-[9px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-bold">自變因</span>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${renderTagList(summary.vars.changed, 'changed')}
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Constant -->
+                            <div class="bg-sky-50/70 p-3 rounded-2xl border border-sky-200 space-y-2">
+                                <div class="border-b border-sky-200 pb-1 flex items-center justify-between">
+                                    <span class="font-bold text-[11px] text-sky-900">保持不變的變因</span>
+                                    <span class="text-[9px] bg-sky-100 text-sky-800 px-1.5 py-0.2 rounded font-bold">控制變因 (3項)</span>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${renderTagList(summary.vars.constant, 'constant')}
+                                </div>
+                            </div>
+
+                            <!-- Column 3: Compared -->
+                            <div class="bg-indigo-50/70 p-3 rounded-2xl border border-indigo-200 space-y-2">
+                                <div class="border-b border-indigo-200 pb-1 flex items-center justify-between">
+                                    <span class="font-bold text-[11px] text-indigo-900">比較或測量的結果</span>
+                                    <span class="text-[9px] bg-indigo-100 text-indigo-800 px-1.5 py-0.2 rounded font-bold">應變因</span>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${renderTagList(summary.vars.compared, 'compared')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Feedback -->
+                    ${teacherFeedbackHtml}
+                `;
+            }
+
+            modal.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeGroupWorksheetModal() {
+            const modal = document.getElementById('groupWorksheetInspectionModal');
             if (modal) modal.classList.add('hidden');
         }
 
