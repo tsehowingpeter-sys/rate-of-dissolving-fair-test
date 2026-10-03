@@ -51,6 +51,79 @@
             background-color: #e0f2fe !important;
             border-color: #0284c7 !important;
         }
+
+        /* 5-Step Scaffolding Progressive Unlock Styles */
+        .step-wrapper {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .step-locked {
+            filter: grayscale(0.2);
+            user-select: none;
+            position: relative;
+        }
+        .step-locked > * {
+            pointer-events: none !important;
+            opacity: 0.42;
+        }
+        .step-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(248, 250, 252, 0.92);
+            backdrop-filter: blur(4px);
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 1.25rem;
+            border: 2px dashed #94a3b8;
+            pointer-events: auto !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .step-tab {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .step-tab.active {
+            background-color: #0d9488 !important;
+            color: #ffffff !important;
+            border-color: #0f766e !important;
+            box-shadow: 0 4px 10px -1px rgba(13, 148, 136, 0.35);
+            transform: translateY(-1px);
+        }
+        .step-tab.active .tab-title {
+            color: #ffffff !important;
+        }
+        .step-tab.active .tab-sub {
+            color: #ccfbf1 !important;
+        }
+        .step-tab.completed {
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+            border-color: #86efac !important;
+        }
+        .step-tab.completed .tab-title {
+            color: #15803d !important;
+        }
+        .step-tab.completed .tab-sub {
+            color: #166534 !important;
+        }
+        .step-tab.locked {
+            background-color: #f8fafc !important;
+            color: #94a3b8 !important;
+            border-color: #e2e8f0 !important;
+            opacity: 0.75;
+            cursor: not-allowed;
+        }
+        .step-tab.locked .tab-title {
+            color: #94a3b8 !important;
+        }
+        .step-tab.locked .tab-sub {
+            color: #cbd5e1 !important;
+        }
     </style>
 </head>
 <body class="text-slate-800 pb-12">
@@ -124,212 +197,324 @@
     <!-- MAIN CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 mt-6">
 
+        <!-- 5-STEP SCAFFOLDING INQUIRY TRACKER -->
+        <div id="scaffoldingStepperBar" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 mb-6 transition-all">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-700 flex items-center justify-center font-bold text-base shadow-sm">🪜</span>
+                    <div>
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
+                            <span>5-Step Inquiry Quest / 5 步循序科學探究</span>
+                            <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-full">Scaffolding Workflow</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-500">一步一步解鎖探究任務，深入探索微觀粒子與數據公平性 (Progressive Task Unlock System)</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="stepProgressBadge" class="text-xs px-3 py-1 bg-teal-50 text-teal-800 border border-teal-200 rounded-full font-bold">
+                        當前進度：第 1 步 / Step 1 of 5
+                    </span>
+                </div>
+            </div>
+            
+            <!-- 5 Stepper Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs" id="stepperTabsContainer">
+                <button type="button" onclick="scrollToStep(1)" id="stepTab-1" class="step-tab active p-2.5 rounded-xl border flex flex-col items-center justify-center text-center font-semibold">
+                    <span class="text-base mb-0.5">📋</span>
+                    <span class="tab-title text-[11px] leading-tight font-bold">1. 工作紙 Worksheet</span>
+                    <span class="tab-sub text-[9px] text-slate-400">假設與變因配對</span>
+                </button>
+                <button type="button" onclick="scrollToStep(2)" id="stepTab-2" class="step-tab locked p-2.5 rounded-xl border flex flex-col items-center justify-center text-center font-semibold">
+                    <span class="text-base mb-0.5">⏱️</span>
+                    <span class="tab-title text-[11px] leading-tight font-bold">2. 填寫數據 Data</span>
+                    <span class="tab-sub text-[9px] text-slate-400">輸入本組冷熱水秒數</span>
+                </button>
+                <button type="button" onclick="scrollToStep(3)" id="stepTab-3" class="step-tab locked p-2.5 rounded-xl border flex flex-col items-center justify-center text-center font-semibold">
+                    <span class="text-base mb-0.5">📊</span>
+                    <span class="tab-title text-[11px] leading-tight font-bold">3. 柱狀圖 & 粒子</span>
+                    <span class="tab-sub text-[9px] text-slate-400">對比全班平均與動能</span>
+                </button>
+                <button type="button" onclick="scrollToStep(4)" id="stepTab-4" class="step-tab locked p-2.5 rounded-xl border flex flex-col items-center justify-center text-center font-semibold">
+                    <span class="text-base mb-0.5">💧</span>
+                    <span class="tab-title text-[11px] leading-tight font-bold">4. 水精靈導師 AI</span>
+                    <span class="tab-sub text-[9px] text-slate-400">啟發式對話與誤差探討</span>
+                </button>
+                <button type="button" onclick="scrollToStep(5)" id="stepTab-5" class="step-tab locked p-2.5 rounded-xl border flex flex-col items-center justify-center text-center font-semibold">
+                    <span class="text-base mb-0.5">💡</span>
+                    <span class="tab-title text-[11px] leading-tight font-bold">5. 反思與小結</span>
+                    <span class="tab-sub text-[9px] text-slate-400">觀點轉變與重點整理</span>
+                </button>
+            </div>
+        </div>
+
         <!-- ================= STUDENT VIEW ================= -->
         <div id="studentViewSection" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Left Column: Worksheet, Data Entry, Chart & Table (7 Cols) -->
             <section class="lg:col-span-7 space-y-6">
                 
-                <!-- 1. Interactive Scientific Inquiry Worksheet -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-600"></i>
-                            <span>1. Scientific Inquiry Worksheet / 科學探究工作紙</span>
-                        </h2>
-                        <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-md">SRL Step 1: Planning / 階段一：規劃</span>
-                    </div>
-
-                    <div class="space-y-4 text-xs">
-                        <!-- Problem & Hypothesis -->
-                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
-                            <p class="font-bold text-slate-700 mb-1">
-                                (a) Problem to be investigated / 待探究的問題：
-                            </p>
-                            <p class="text-slate-600 italic font-medium">Does hot water dissolve salt faster than cold water? / 熱水溶解食鹽的速度是否比冷水快？</p>
+                <!-- STEP 1 CONTAINER: Interactive Scientific Inquiry Worksheet -->
+                <div id="stepContainer-1" class="step-wrapper">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card">
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-600"></i>
+                                <span>1. Scientific Inquiry Worksheet / 科學探究工作紙</span>
+                            </h2>
+                            <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-md">SRL Step 1: Planning / 階段一：規劃</span>
                         </div>
 
-                        <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
-                            <label class="font-bold text-slate-700 block mb-1">
-                                (b) My Hypothesis / 我的科學假設：
-                            </label>
-                            <select id="studentHypothesis" onchange="saveWorksheetProgress()" class="w-full p-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none text-xs font-medium">
-                                <option value="">-- Select Hypothesis / 請選擇假設 --</option>
-                                <option value="faster">Hot water dissolves salt FASTER than cold water. (熱水比冷水更快溶解食鹽。)</option>
-                                <option value="slower">Hot water dissolves salt SLOWER than cold water. (熱水比冷水更慢溶解食鹽。)</option>
-                                <option value="same">Water temperature has NO EFFECT on dissolving speed. (水溫對溶解速度沒有影響。)</option>
-                            </select>
-                        </div>
-
-                        <!-- (c) Drag & Drop Identification of Variables -->
-                        <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <p class="font-bold text-slate-700">(c) Identification of Variables (Drag or Click to Assign) / 控制變因拖拽配對：</p>
-                                <button type="button" onclick="checkVariableAnswers()" class="bg-teal-600 hover:bg-teal-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow transition flex items-center gap-1">
-                                    <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Check Answer / 檢查答案
-                                </button>
+                        <div class="space-y-4 text-xs">
+                            <!-- Problem & Hypothesis -->
+                            <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
+                                <p class="font-bold text-slate-700 mb-1">
+                                    (a) Problem to be investigated / 待探究的問題：
+                                </p>
+                                <p class="text-slate-600 italic font-medium">Does hot water dissolve salt faster than cold water? / 熱水溶解食鹽的速度是否比冷水快？</p>
                             </div>
 
-                            <!-- Variable Items Bank -->
-                            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
-                                <p class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Variable Cards Pool / 待分類變因卡片 (Drag to targets below / 拖拽或點選目標):</p>
-                                <div id="variablePool" class="flex flex-wrap gap-2 min-h-[36px]">
-                                    <div draggable="true" ondragstart="drag(event)" id="var_temp" onclick="selectCardToMove('var_temp')" class="drag-item bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
-                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-amber-600"></i> Water Temp (水溫: 25°C vs 80°C)
-                                    </div>
-                                    <div draggable="true" ondragstart="drag(event)" id="var_vol" onclick="selectCardToMove('var_vol')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
-                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Water Volume (水體積: 50 cm³)
-                                    </div>
-                                    <div draggable="true" ondragstart="drag(event)" id="var_mass" onclick="selectCardToMove('var_mass')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
-                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Salt Mass (食鹽質量: 5 g)
-                                    </div>
-                                    <div draggable="true" ondragstart="drag(event)" id="var_stir" onclick="selectCardToMove('var_stir')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
-                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Stirring Speed & Rod (攪拌速度)
-                                    </div>
-                                    <div draggable="true" ondragstart="drag(event)" id="var_time" onclick="selectCardToMove('var_time')" class="drag-item bg-indigo-100 hover:bg-indigo-200 border border-indigo-300 text-indigo-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
-                                        <i data-lucide="grip-vertical" class="w-3 h-3 text-indigo-600"></i> Dissolving Time (完全溶解時間)
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-200">
+                                <label class="font-bold text-slate-700 block mb-1">
+                                    (b) My Hypothesis / 我的科學假設：
+                                </label>
+                                <select id="studentHypothesis" onchange="saveWorksheetProgress()" class="w-full p-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none text-xs font-medium">
+                                    <option value="">-- Select Hypothesis / 請選擇假設 --</option>
+                                    <option value="faster">Hot water dissolves salt FASTER than cold water. (熱水比冷水更快溶解食鹽。)</option>
+                                    <option value="slower">Hot water dissolves salt SLOWER than cold water. (熱水比冷水更慢溶解食鹽。)</option>
+                                    <option value="same">Water temperature has NO EFFECT on dissolving speed. (水溫對溶解速度沒有影響。)</option>
+                                </select>
                             </div>
 
-                            <!-- Target Drop Zones -->
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                                <!-- Zone 1: Changed -->
-                                <div ondrop="drop(event, 'changed')" ondragover="allowDrop(event)" onclick="dropSelectedCard('changed')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-teal-200 hover:border-teal-400">
-                                    <span class="font-bold text-teal-700 block mb-1">Variable to be changed / 改變的變因</span>
-                                    <div id="zone_changed" class="space-y-1"></div>
+                            <!-- (c) Drag & Drop Identification of Variables -->
+                            <div class="bg-slate-50/80 p-3.5 rounded-xl border border-slate-200 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <p class="font-bold text-slate-700">(c) Identification of Variables (Drag or Click to Assign) / 控制變因拖拽配對：</p>
+                                    <button type="button" onclick="checkVariableAnswers()" class="bg-teal-600 hover:bg-teal-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold shadow transition flex items-center gap-1">
+                                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Check Answer / 檢查答案
+                                    </button>
                                 </div>
-                                <!-- Zone 2: Constant -->
-                                <div ondrop="drop(event, 'constant')" ondragover="allowDrop(event)" onclick="dropSelectedCard('constant')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-sky-200 hover:border-sky-400">
-                                    <span class="font-bold text-sky-700 block mb-1">Variables kept constant / 保持不變的變因</span>
-                                    <div id="zone_constant" class="space-y-1"></div>
+
+                                <!-- Variable Items Bank -->
+                                <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                                    <p class="text-[10px] text-slate-400 font-bold mb-1.5 uppercase">Variable Cards Pool / 待分類變因卡片 (Drag to targets below / 拖拽或點選目標):</p>
+                                    <div id="variablePool" class="flex flex-wrap gap-2 min-h-[36px]">
+                                        <div draggable="true" ondragstart="drag(event)" id="var_temp" onclick="selectCardToMove('var_temp')" class="drag-item bg-amber-100 hover:bg-amber-200 border border-amber-300 text-amber-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                            <i data-lucide="grip-vertical" class="w-3 h-3 text-amber-600"></i> Water Temp (水溫: 25°C vs 80°C)
+                                        </div>
+                                        <div draggable="true" ondragstart="drag(event)" id="var_vol" onclick="selectCardToMove('var_vol')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                            <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Water Volume (水體積: 50 cm³)
+                                        </div>
+                                        <div draggable="true" ondragstart="drag(event)" id="var_mass" onclick="selectCardToMove('var_mass')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                            <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Salt Mass (食鹽質量: 5 g)
+                                        </div>
+                                        <div draggable="true" ondragstart="drag(event)" id="var_stir" onclick="selectCardToMove('var_stir')" class="drag-item bg-sky-100 hover:bg-sky-200 border border-sky-300 text-sky-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                            <i data-lucide="grip-vertical" class="w-3 h-3 text-sky-600"></i> Stirring Speed & Rod (攪拌速度)
+                                        </div>
+                                        <div draggable="true" ondragstart="drag(event)" id="var_time" onclick="selectCardToMove('var_time')" class="drag-item bg-indigo-100 hover:bg-indigo-200 border border-indigo-300 text-indigo-900 font-semibold px-2.5 py-1 rounded-lg text-[11px] shadow-sm flex items-center gap-1">
+                                            <i data-lucide="grip-vertical" class="w-3 h-3 text-indigo-600"></i> Dissolving Time (完全溶解時間)
+                                        </div>
+                                    </div>
                                 </div>
-                                <!-- Zone 3: Compared -->
-                                <div ondrop="drop(event, 'compared')" ondragover="allowDrop(event)" onclick="dropSelectedCard('compared')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-indigo-200 hover:border-indigo-400">
-                                    <span class="font-bold text-indigo-700 block mb-1">Variable to be compared / 比較的變因</span>
-                                    <div id="zone_compared" class="space-y-1"></div>
+
+                                <!-- Target Drop Zones -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                                    <!-- Zone 1: Changed -->
+                                    <div ondrop="drop(event, 'changed')" ondragover="allowDrop(event)" onclick="dropSelectedCard('changed')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-teal-200 hover:border-teal-400">
+                                        <span class="font-bold text-teal-700 block mb-1">Variable to be changed / 改變的變因</span>
+                                        <div id="zone_changed" class="space-y-1"></div>
+                                    </div>
+                                    <!-- Zone 2: Constant -->
+                                    <div ondrop="drop(event, 'constant')" ondragover="allowDrop(event)" onclick="dropSelectedCard('constant')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-sky-200 hover:border-sky-400">
+                                        <span class="font-bold text-sky-700 block mb-1">Variables kept constant / 保持不變的變因</span>
+                                        <div id="zone_constant" class="space-y-1"></div>
+                                    </div>
+                                    <!-- Zone 3: Compared -->
+                                    <div ondrop="drop(event, 'compared')" ondragover="allowDrop(event)" onclick="dropSelectedCard('compared')" class="drop-zone bg-white p-2 rounded-xl border-2 border-dashed border-indigo-200 hover:border-indigo-400">
+                                        <span class="font-bold text-indigo-700 block mb-1">Variable to be compared / 比較的變因</span>
+                                        <div id="zone_compared" class="space-y-1"></div>
+                                    </div>
+                                </div>
+
+                                <div id="variableCheckFeedback" class="hidden text-center text-xs font-bold p-2 rounded-lg"></div>
+
+                                <!-- Step 1 Advance Button -->
+                                <div class="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between flex-wrap gap-2" id="step1UnlockButtonContainer">
+                                    <span class="text-xs text-slate-500 font-medium">✨ Check variables, then proceed to enter data / 完成變因配對後解鎖第 2 步</span>
+                                    <button type="button" onclick="completeStep1AndUnlockStep2()" id="btnUnlockStep2" class="bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold py-2 px-3.5 rounded-xl text-xs shadow transition flex items-center gap-1.5 min-h-[38px]">
+                                        <i data-lucide="unlock" class="w-4 h-4"></i> Unlock Step 2: Data Entry (解鎖第 2 步：輸入數據)
+                                    </button>
                                 </div>
                             </div>
-
-                            <div id="variableCheckFeedback" class="hidden text-center text-xs font-bold p-2 rounded-lg"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. Data Entry Form -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <i data-lucide="edit-3" class="w-5 h-5 text-teal-600"></i>
-                            <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
-                        </h2>
-                        <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
-                        </span>
-                    </div>
-
-                    <form id="dataForm" onsubmit="event.preventDefault(); submitGroupData();" class="space-y-3">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                                <label class="block text-xs font-bold text-slate-700">25 °C Cold Water (冷水)</label>
-                                <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
-                                <div class="flex items-center gap-2">
-                                    <input type="number" id="t25" placeholder="e.g. 180" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
-                                    <span class="text-xs font-bold text-slate-500">sec (秒)</span>
-                                </div>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                                <label class="block text-xs font-bold text-slate-700">80 °C Hot Water (熱水)</label>
-                                <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
-                                <div class="flex items-center gap-2">
-                                    <input type="number" id="t80" placeholder="e.g. 60" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
-                                    <span class="text-xs font-bold text-slate-500">sec (秒)</span>
-                                </div>
-                            </div>
+                <!-- STEP 2 CONTAINER: Data Entry Form -->
+                <div id="stepContainer-2" class="step-wrapper relative">
+                    <!-- Lock Overlay for Step 2 -->
+                    <div id="lockOverlay-2" class="step-lock-overlay hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-xl mb-2 shadow-inner">
+                            🔒
                         </div>
-
-                        <div class="pt-1">
-                            <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow transition flex items-center justify-center gap-2 min-h-[46px]">
-                                <i data-lucide="upload" class="w-4 h-4"></i> Submit Data / 上傳數據
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 3. Bar Chart Visualization & Interactive Particle Visualizer -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                            <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-600"></i>
-                            <span>3. Class Data Bar Chart Comparison / 數據對比柱狀圖</span>
-                        </h2>
-                        <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">SRL Step 2: Monitoring / 階段二：監控</span>
-                    </div>
-                    <p class="text-xs text-slate-500">Comparing My Group (Blue Bar) vs Class Average (Green Bar) / 對比本組數據 (藍色柱) 與全班平均值 (綠色柱)。</p>
-                    <div class="relative h-64 w-full">
-                        <canvas id="classBarChart"></canvas>
-                    </div>
-
-                    <!-- Particle Theory Dynamic Visualizer (Microscopic Kinetic Energy) -->
-                    <div class="border-t border-slate-100 pt-3">
-                        <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-                            <h3 class="text-xs sm:text-sm font-bold text-indigo-900 flex items-center gap-1.5">
-                                <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
-                            </h3>
-                            <div class="flex items-center gap-2">
-                                <button onclick="toggleParticleSim()" id="particleToggleBtn" class="text-xs bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-3 py-1 rounded-lg flex items-center gap-1.5 transition min-h-[34px]">
-                                    <i data-lucide="pause" class="w-3.5 h-3.5 text-indigo-600"></i> 暫停模擬 (Pause)
-                                </button>
-                                <span class="text-xs bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2.5 py-1 rounded-lg">分子動能模擬 (Kinetic Simulation)</span>
-                            </div>
-                        </div>
-                        <p class="text-[11px] text-slate-500 mb-2">
-                            溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格速度越快：
+                        <h4 class="text-sm font-bold text-slate-800 mb-1">Step 2 Locked / 第 2 步未解鎖</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mb-3">
+                            Please complete Step 1 (Scientific Inquiry Worksheet & Variable Matching) first!<br>
+                            請先完成第 1 步「科學探究工作紙」與變因配對！
                         </p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div class="bg-sky-50 rounded-2xl p-3.5 border border-sky-200 shadow-sm">
-                                <div class="flex justify-between items-center mb-1.5">
-                                    <span class="font-bold text-xs sm:text-sm text-sky-800">25°C 冷水 (Cold Water)</span>
-                                    <span class="text-[10px] text-sky-600 font-medium">低動能 • 慢速 (Low Kinetic E)</span>
-                                </div>
-                                <canvas id="particleCanvasCold" width="320" height="200" class="w-full h-48 sm:h-52 bg-sky-100/60 rounded-xl border border-sky-200 shadow-inner block"></canvas>
-                            </div>
-                            <div class="bg-rose-50 rounded-2xl p-3.5 border border-rose-200 shadow-sm">
-                                <div class="flex justify-between items-center mb-1.5">
-                                    <span class="font-bold text-xs sm:text-sm text-rose-800">80°C 熱水 (Hot Water)</span>
-                                    <span class="text-[10px] text-rose-600 font-medium">高動能 • 快速 (High Kinetic E)</span>
-                                </div>
-                                <canvas id="particleCanvasHot" width="320" height="200" class="w-full h-48 sm:h-52 bg-rose-100/60 rounded-xl border border-rose-200 shadow-inner block"></canvas>
-                            </div>
+                        <button type="button" onclick="scrollToStep(1)" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i> 前往第 1 步 (Go to Step 1)
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="edit-3" class="w-5 h-5 text-teal-600"></i>
+                                <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
+                            </h2>
+                            <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
+                                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
+                            </span>
                         </div>
+
+                        <form id="dataForm" onsubmit="event.preventDefault(); submitGroupData();" class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <label class="block text-xs font-bold text-slate-700">25 °C Cold Water (冷水)</label>
+                                    <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="t25" placeholder="e.g. 180" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
+                                        <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                    <label class="block text-xs font-bold text-slate-700">80 °C Hot Water (熱水)</label>
+                                    <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="t80" placeholder="e.g. 60" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
+                                        <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-1">
+                                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow transition flex items-center justify-center gap-2 min-h-[46px]">
+                                    <i data-lucide="upload" class="w-4 h-4"></i> Submit Data & Unlock Step 3 / 上傳數據並解鎖第 3 步
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <!-- 4. Class Data Overview Table -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 overflow-x-auto">
-                    <h2 class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
-                        <span>8 Groups Data Matrix / 全班 8 組數據總覽表</span>
-                        <span id="submittedCount" class="text-teal-600 font-semibold">0/8 Groups Submitted</span>
-                    </h2>
-                    <table class="w-full text-[11px] text-center border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-600">
-                                <th class="p-1.5 border">Temperature / 水溫</th>
-                                <th class="p-1.5 border" id="th-G1">G1</th>
-                                <th class="p-1.5 border" id="th-G2">G2</th>
-                                <th class="p-1.5 border" id="th-G3">G3</th>
-                                <th class="p-1.5 border" id="th-G4">G4</th>
-                                <th class="p-1.5 border" id="th-G5">G5</th>
-                                <th class="p-1.5 border" id="th-G6">G6</th>
-                                <th class="p-1.5 border" id="th-G7">G7</th>
-                                <th class="p-1.5 border" id="th-G8">G8</th>
-                                <th class="p-1.5 border bg-teal-50 text-teal-800 font-bold">AVG (平均)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody" class="text-slate-700">
-                            <!-- Dynamic Rows -->
-                        </tbody>
-                    </table>
+                <!-- STEP 3 CONTAINER: Bar Chart Visualization, Particle Visualizer & 8 Groups Matrix -->
+                <div id="stepContainer-3" class="step-wrapper relative space-y-6">
+                    <!-- Lock Overlay for Step 3 -->
+                    <div id="lockOverlay-3" class="step-lock-overlay hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl mb-2 shadow-inner">
+                            🔒
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 mb-1">Step 3 Locked / 第 3 步未解鎖</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mb-3">
+                            Please submit your group experiment data in Step 2 to view the class comparison chart and particle simulation!<br>
+                            請先在第 2 步提交本組冷熱水實驗數據以解鎖圖表與粒子模擬！
+                        </p>
+                        <button type="button" onclick="scrollToStep(2)" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i> 前往第 2 步輸入數據 (Go to Step 2)
+                        </button>
+                    </div>
+
+                    <!-- 3. Bar Chart Visualization & Interactive Particle Visualizer -->
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-600"></i>
+                                <span>3. Class Data Bar Chart Comparison / 數據對比柱狀圖</span>
+                            </h2>
+                            <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">SRL Step 2: Monitoring / 階段二：監控</span>
+                        </div>
+                        <p class="text-xs text-slate-500">Comparing My Group (Blue Bar) vs Class Average (Green Bar) / 對比本組數據 (藍色柱) 與全班平均值 (綠色柱)。</p>
+                        <div class="relative h-64 w-full">
+                            <canvas id="classBarChart"></canvas>
+                        </div>
+
+                        <!-- Particle Theory Dynamic Visualizer (Microscopic Kinetic Energy) -->
+                        <div class="border-t border-slate-100 pt-3">
+                            <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                                <h3 class="text-xs sm:text-sm font-bold text-indigo-900 flex items-center gap-1.5">
+                                    <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
+                                </h3>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="toggleParticleSim()" id="particleToggleBtn" class="text-xs bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-3 py-1 rounded-lg flex items-center gap-1.5 transition min-h-[34px]">
+                                        <i data-lucide="pause" class="w-3.5 h-3.5 text-indigo-600"></i> 暫停模擬 (Pause)
+                                    </button>
+                                    <span class="text-xs bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2.5 py-1 rounded-lg">分子動能模擬 (Kinetic Simulation)</span>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mb-2">
+                                溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格速度越快：
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-sky-50 rounded-2xl p-3.5 border border-sky-200 shadow-sm">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="font-bold text-xs sm:text-sm text-sky-800">25°C 冷水 (Cold Water)</span>
+                                        <span class="text-[10px] text-sky-600 font-medium">低動能 • 慢速 (Low Kinetic E)</span>
+                                    </div>
+                                    <canvas id="particleCanvasCold" width="320" height="200" class="w-full h-48 sm:h-52 bg-sky-100/60 rounded-xl border border-sky-200 shadow-inner block"></canvas>
+                                </div>
+                                <div class="bg-rose-50 rounded-2xl p-3.5 border border-rose-200 shadow-sm">
+                                    <div class="flex justify-between items-center mb-1.5">
+                                        <span class="font-bold text-xs sm:text-sm text-rose-800">80°C 熱水 (Hot Water)</span>
+                                        <span class="text-[10px] text-rose-600 font-medium">高動能 • 快速 (High Kinetic E)</span>
+                                    </div>
+                                    <canvas id="particleCanvasHot" width="320" height="200" class="w-full h-48 sm:h-52 bg-rose-100/60 rounded-xl border border-rose-200 shadow-inner block"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Class Data Overview Table -->
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 overflow-x-auto">
+                        <h2 class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+                            <span>8 Groups Data Matrix / 全班 8 組數據總覽表</span>
+                            <span id="submittedCount" class="text-teal-600 font-semibold">0/8 Groups Submitted</span>
+                        </h2>
+                        <table class="w-full text-[11px] text-center border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600">
+                                    <th class="p-1.5 border">Temperature / 水溫</th>
+                                    <th class="p-1.5 border" id="th-G1">G1</th>
+                                    <th class="p-1.5 border" id="th-G2">G2</th>
+                                    <th class="p-1.5 border" id="th-G3">G3</th>
+                                    <th class="p-1.5 border" id="th-G4">G4</th>
+                                    <th class="p-1.5 border" id="th-G5">G5</th>
+                                    <th class="p-1.5 border" id="th-G6">G6</th>
+                                    <th class="p-1.5 border" id="th-G7">G7</th>
+                                    <th class="p-1.5 border" id="th-G8">G8</th>
+                                    <th class="p-1.5 border bg-teal-50 text-teal-800 font-bold">AVG (平均)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody" class="text-slate-700">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Proceed to Step 4 Action Banner -->
+                    <div class="bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200 rounded-2xl p-4 flex items-center justify-between flex-wrap gap-3 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow">
+                                💧
+                            </div>
+                            <div>
+                                <h4 class="text-xs sm:text-sm font-bold text-sky-950">Chart & Particle Observed? / 已觀察圖表與粒子模擬？</h4>
+                                <p class="text-[11px] text-slate-600">Discuss findings with AI Agent Water! / 立即與水精靈 AI 探討實驗數據與誤差！</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="unlockAndScrollToStep(4)" class="bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold py-2.5 px-4 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-1.5 min-h-[42px]">
+                            <span>Proceed to Step 4: Chat with Agent Water (前往第 4 步：與水精靈對話)</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>
 
             </section>
@@ -337,123 +522,159 @@
             <!-- Right Column: Agent Water AI Companion & Reflection (5 Cols) -->
             <section class="lg:col-span-5 flex flex-col space-y-6">
                 
-                <!-- Agent Water Chat Section -->
-                <div class="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
-                    <!-- Agent Header -->
-                    <div class="bg-gradient-to-r from-sky-500 to-blue-600 p-4 text-white flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-xl shadow">
-                                💧
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-sm sm:text-base font-fun">Agent Water (水精靈 AI 導師)</h3>
-                                <p class="text-[11px] text-sky-100">SRL Science Thinking Buddy • 探究思考引導夥伴</p>
-                            </div>
+                <!-- STEP 4 CONTAINER: Agent Water Chat Section -->
+                <div id="stepContainer-4" class="step-wrapper relative">
+                    <!-- Lock Overlay for Step 4 -->
+                    <div id="lockOverlay-4" class="step-lock-overlay hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center text-xl mb-2 shadow-inner">
+                            🔒
                         </div>
-                        <span id="studentGroupTag" class="text-[11px] font-bold bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">Group 1</span>
-                    </div>
-
-                    <!-- Chat Messages Window -->
-                    <div id="chatContainer" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
-                        <!-- Initial Welcome -->
-                    </div>
-
-                    <!-- SRL Guidance Options & Chat Input -->
-                    <div class="p-3 bg-white border-t border-slate-100 space-y-2">
-                        <div id="optionsContainer" class="grid grid-cols-1 gap-1.5 max-h-36 overflow-y-auto pr-1">
-                            <p class="text-[10px] text-slate-400 italic text-center">Submit your group data to start chat with Agent Water! / 請先提交數據以開啟對話！</p>
-                        </div>
-
-                        <form id="chatForm" onsubmit="handleCustomTextSubmit(event)" class="flex gap-2 pt-1 border-t border-slate-100">
-                            <input type="text" id="userInput" placeholder="Or type your thoughts... / 或輸入你的想法..." class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-400 focus:outline-none">
-                            <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send / 發送
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Key Learning Points Summary Card (Personalized based on Group Data & Dialogue) -->
-                <div id="learningPointsSummaryCard" class="hidden bg-gradient-to-br from-amber-50 to-orange-50/90 rounded-2xl p-5 shadow-sm border border-amber-200/90 space-y-3.5 transition-all">
-                    <div class="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">📝</span>
-                            <div>
-                                <h3 class="text-sm font-bold text-amber-950 font-fun">Key Learning Points Summary / 關鍵學習小結</h3>
-                                <p class="text-[11px] text-amber-700">Jot these down on your worksheet / 請將以下重點抄錄於工作紙上：</p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="copyPersonalizedSummary()" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[10px] font-bold shadow-sm transition flex items-center gap-1">
-                            <i data-lucide="copy" class="w-3 h-3 text-amber-700"></i> 複製小結 (Copy)
+                        <h4 class="text-sm font-bold text-slate-800 mb-1">Step 4 Locked / 第 4 步未解鎖</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mb-3">
+                            Please view your data chart in Step 3, then proceed to chat with Agent Water!<br>
+                            請先在第 3 步查看數據柱狀圖與粒子動能，再開啟水精靈對話！
+                        </p>
+                        <button type="button" onclick="scrollToStep(3)" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> 前往第 3 步查看圖表 (Go to Step 3)
                         </button>
                     </div>
 
-                    <div id="personalizedSummaryContent" class="space-y-3 text-xs text-slate-700">
-                        <!-- Dynamically filled with Group's personalized empirical data, average comparison, and error analysis -->
-                    </div>
+                    <!-- Agent Water Chat Section -->
+                    <div class="flex flex-col h-[600px] bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+                        <!-- Agent Header -->
+                        <div class="bg-gradient-to-r from-sky-500 to-blue-600 p-4 text-white flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-xl shadow">
+                                    💧
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm sm:text-base font-fun">Agent Water (水精靈 AI 導師)</h3>
+                                    <p class="text-[11px] text-sky-100">SRL Science Thinking Buddy • 探究思考引導夥伴</p>
+                                </div>
+                            </div>
+                            <span id="studentGroupTag" class="text-[11px] font-bold bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">Group 1</span>
+                        </div>
 
-                    <div class="p-2.5 bg-white/70 rounded-xl border border-amber-200/60 text-center">
-                        <p class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1.5">
-                            <span>✨ Well done! Agent Water is so proud of your scientific thinking! / 太棒了！水精靈為你們的科學思維感到驕傲！</span>
-                        </p>
+                        <!-- Chat Messages Window -->
+                        <div id="chatContainer" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/50">
+                            <!-- Initial Welcome -->
+                        </div>
+
+                        <!-- SRL Guidance Options & Chat Input -->
+                        <div class="p-3 bg-white border-t border-slate-100 space-y-2">
+                            <div id="optionsContainer" class="grid grid-cols-1 gap-1.5 max-h-36 overflow-y-auto pr-1">
+                                <p class="text-[10px] text-slate-400 italic text-center">Submit your group data to start chat with Agent Water! / 請先提交數據以開啟對話！</p>
+                            </div>
+
+                            <form id="chatForm" onsubmit="handleCustomTextSubmit(event)" class="flex gap-2 pt-1 border-t border-slate-100">
+                                <input type="text" id="userInput" placeholder="Or type your thoughts... / 或輸入你的想法..." class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                                <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
+                                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Send / 發送
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-                <!-- SRL Step 3: Reflection Card with Scaffolding Guidance -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card space-y-3.5">
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                            <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i>
-                            <span>SRL Reflection / 探究反思與觀點轉變</span>
-                        </h3>
-                        <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-md">SRL Step 3: Reflection / 階段三：反思</span>
+                <!-- STEP 5 CONTAINER: Key Learning Points & SRL Reflection -->
+                <div id="stepContainer-5" class="step-wrapper relative space-y-6">
+                    <!-- Lock Overlay for Step 5 -->
+                    <div id="lockOverlay-5" class="step-lock-overlay hidden">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-xl mb-2 shadow-inner">
+                            🔒
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 mb-1">Step 5 Locked / 第 5 步未解鎖</h4>
+                        <p class="text-xs text-slate-500 max-w-sm mb-3">
+                            Inquire with Agent Water in Step 4 to unlock your Key Learning Points and Reflection Card!<br>
+                            在第 4 步與水精靈完成探究對話後，即可解鎖關鍵小結與反思卡！
+                        </p>
+                        <button type="button" onclick="scrollToStep(4)" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5">
+                            <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i> 前往第 4 步與水精靈對話 (Go to Step 4)
+                        </button>
                     </div>
 
-                    <div class="space-y-3 text-xs">
-                        <!-- Scaffolding Section 1: I used to think -->
-                        <div class="space-y-2">
-                            <label class="font-bold text-slate-800 block text-xs">
-                                I used to think... (我以前以為...)
-                            </label>
-                            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-600 space-y-1">
-                                <span class="font-bold text-slate-700 flex items-center gap-1">
-                                    <i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-500"></i>
-                                    <span>💡 思考方向引導 (Scaffolding Questions to guide your writing):</span>
-                                </span>
-                                <ul class="list-disc pl-4 space-y-0.5 leading-relaxed text-slate-600">
-                                    <li>實驗前，你有否以為單憑肉眼感覺就能判斷溶解快慢？<span class="text-slate-400 italic">(Did you think feeling alone was enough?)</span></li>
-                                    <li>你有否忽略了「攪拌速度」或「水量」也必須嚴格保持一致？<span class="text-slate-400 italic">(Did you overlook stirring/volume controls?)</span></li>
-                                    <li>你有否曾以為只做 1 組實驗就足以得出科學結論？<span class="text-slate-400 italic">(Did you think testing just 1 group was enough?)</span></li>
-                                </ul>
+                    <!-- Key Learning Points Summary Card (Personalized based on Group Data & Dialogue) -->
+                    <div id="learningPointsSummaryCard" class="hidden bg-gradient-to-br from-amber-50 to-orange-50/90 rounded-2xl p-5 shadow-sm border border-amber-200/90 space-y-3.5 transition-all">
+                        <div class="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">📝</span>
+                                <div>
+                                    <h3 class="text-sm font-bold text-amber-950 font-fun">Key Learning Points Summary / 關鍵學習小結</h3>
+                                    <p class="text-[11px] text-amber-700">Jot these down on your worksheet / 請將以下重點抄錄於工作紙上：</p>
+                                </div>
                             </div>
-                            <textarea id="usedToThink" rows="3" placeholder="例如：Before the experiment, I thought... (例如：實驗前，我以為單憑肉眼感覺就可知道熱水溶得較快，也沒有注意手動攪拌速度是否均勻...)" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed text-slate-800 placeholder-slate-400"></textarea>
-                        </div>
-
-                        <!-- Scaffolding Section 2: Now I think -->
-                        <div class="space-y-2">
-                            <label class="font-bold text-indigo-950 block text-xs">
-                                Now I think... (現在我知道...)
-                            </label>
-                            <div class="p-2.5 bg-indigo-50/70 border border-indigo-200 rounded-xl text-[11px] text-indigo-900 space-y-1">
-                                <span class="font-bold text-indigo-900 flex items-center gap-1">
-                                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
-                                    <span>🔬 科學實證引導 (Scientific Guiding Questions to guide your writing):</span>
-                                </span>
-                                <ul class="list-disc pl-4 space-y-0.5 leading-relaxed text-indigo-800">
-                                    <li>碼錶計時數據如何客觀證實水溫對溶解速率的影響？<span class="text-indigo-600/80 italic">(How did stopwatch timings prove temperature effects?)</span></li>
-                                    <li>從水分子動能與碰撞理論看，熱水如何更快拆散鹽粒？<span class="text-indigo-600/80 italic">(How do faster water molecules hit and break salt apart?)</span></li>
-                                    <li>為什麼必須嚴格控制變因並計算全班 8 組平均值？<span class="text-indigo-600/80 italic">(Why do we need fair test controls and 8-group average?)</span></li>
-                                </ul>
-                            </div>
-                            <textarea id="nowIThink" rows="3" placeholder="例如：Now I understand that... (例如：現在我知道熱水中的水分子運動得更快、碰撞更劇烈，能更快瓦解鹽粒；而且全班8組平均值能抵消個人計時誤差...)" class="w-full p-2.5 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed text-slate-800 placeholder-indigo-300"></textarea>
-                        </div>
-
-                        <!-- Reflection Submit Button -->
-                        <div class="flex items-center justify-between pt-1 border-t border-slate-100 flex-wrap gap-2">
-                            <span id="reflectionStatus" class="text-[10px] text-slate-400 italic">Not submitted yet / 尚未提交</span>
-                            <button type="button" onclick="submitGroupReflection()" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-2 min-h-[44px]">
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit / Update Reflection (提交/更新反思)
+                            <button type="button" onclick="copyPersonalizedSummary()" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[10px] font-bold shadow-sm transition flex items-center gap-1">
+                                <i data-lucide="copy" class="w-3 h-3 text-amber-700"></i> 複製小結 (Copy)
                             </button>
+                        </div>
+
+                        <div id="personalizedSummaryContent" class="space-y-3 text-xs text-slate-700">
+                            <!-- Dynamically filled with Group's personalized empirical data, average comparison, and error analysis -->
+                        </div>
+
+                        <div class="p-2.5 bg-white/70 rounded-xl border border-amber-200/60 text-center">
+                            <p class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1.5">
+                                <span>✨ Well done! Agent Water is so proud of your scientific thinking! / 太棒了！水精靈為你們的科學思維感到驕傲！</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- SRL Step 3: Reflection Card with Scaffolding Guidance -->
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 srl-card space-y-3.5">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i>
+                                <span>SRL Reflection / 探究反思與觀點轉變</span>
+                            </h3>
+                            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-md">SRL Step 3: Reflection / 階段三：反思</span>
+                        </div>
+
+                        <div class="space-y-3 text-xs">
+                            <!-- Scaffolding Section 1: I used to think -->
+                            <div class="space-y-2">
+                                <label class="font-bold text-slate-800 block text-xs">
+                                    I used to think... (我以前以為...)
+                                </label>
+                                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-600 space-y-1">
+                                    <span class="font-bold text-slate-700 flex items-center gap-1">
+                                        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-indigo-500"></i>
+                                        <span>💡 思考方向引導 (Scaffolding Questions to guide your writing):</span>
+                                    </span>
+                                    <ul class="list-disc pl-4 space-y-0.5 leading-relaxed text-slate-600">
+                                        <li>實驗前，你有否以為單憑肉眼感覺就能判斷溶解快慢？<span class="text-slate-400 italic">(Did you think feeling alone was enough?)</span></li>
+                                        <li>你有否忽略了「攪拌速度」或「水量」也必須嚴格保持一致？<span class="text-slate-400 italic">(Did you overlook stirring/volume controls?)</span></li>
+                                        <li>你有否曾以為只做 1 組實驗就足以得出科學結論？<span class="text-slate-400 italic">(Did you think testing just 1 group was enough?)</span></li>
+                                    </ul>
+                                </div>
+                                <textarea id="usedToThink" rows="3" placeholder="例如：Before the experiment, I thought... (例如：實驗前，我以為單憑肉眼感覺就可知道熱水溶得較快，也沒有注意手動攪拌速度是否均勻...)" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed text-slate-800 placeholder-slate-400"></textarea>
+                            </div>
+
+                            <!-- Scaffolding Section 2: Now I think -->
+                            <div class="space-y-2">
+                                <label class="font-bold text-indigo-950 block text-xs">
+                                    Now I think... (現在我知道...)
+                                </label>
+                                <div class="p-2.5 bg-indigo-50/70 border border-indigo-200 rounded-xl text-[11px] text-indigo-900 space-y-1">
+                                    <span class="font-bold text-indigo-900 flex items-center gap-1">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-600"></i>
+                                        <span>🔬 科學實證引導 (Scientific Guiding Questions to guide your writing):</span>
+                                    </span>
+                                    <ul class="list-disc pl-4 space-y-0.5 leading-relaxed text-indigo-800">
+                                        <li>碼錶計時數據如何客觀證實水溫對溶解速率的影響？<span class="text-indigo-600/80 italic">(How did stopwatch timings prove temperature effects?)</span></li>
+                                        <li>從水分子動能與碰撞理論看，熱水如何更快拆散鹽粒？<span class="text-indigo-600/80 italic">(How do faster water molecules hit and break salt apart?)</span></li>
+                                        <li>為什麼必須嚴格控制變因並計算全班 8 組平均值？<span class="text-indigo-600/80 italic">(Why do we need fair test controls and 8-group average?)</span></li>
+                                    </ul>
+                                </div>
+                                <textarea id="nowIThink" rows="3" placeholder="例如：Now I understand that... (例如：現在我知道熱水中的水分子運動得更快、碰撞更劇烈，能更快瓦解鹽粒；而且全班8組平均值能抵消個人計時誤差...)" class="w-full p-2.5 bg-white border border-indigo-200 rounded-xl focus:ring-2 focus:ring-indigo-300 focus:outline-none text-xs leading-relaxed text-slate-800 placeholder-indigo-300"></textarea>
+                            </div>
+
+                            <!-- Reflection Submit Button -->
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100 flex-wrap gap-2">
+                                <span id="reflectionStatus" class="text-[10px] text-slate-400 italic">Not submitted yet / 尚未提交</span>
+                                <button type="button" onclick="submitGroupReflection()" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold px-4 py-2.5 rounded-xl text-xs sm:text-sm shadow transition flex items-center gap-2 min-h-[44px]">
+                                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Submit / Update Reflection (提交/更新反思)
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -700,9 +921,10 @@
                                         <span class="text-[9px] text-teal-400 font-semibold">全班統一調用</span>
                                     </div>
                                     <select id="adminModelSelect" onchange="handleAdminModelChange()" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-purple-400 focus:outline-none cursor-pointer">
-                                        <option value="gemini-2.5-flash" selected>gemini-2.5-flash (推薦 • 極速推理 • 高免費額度)</option>
-                                        <option value="gemini-1.5-flash">gemini-1.5-flash (穩定 • 輕量化推理)</option>
+                                        <option value="gemini-3.6-flash">gemini-3.6-flash (旗艦推理 • 極速反應)</option>
+                                        <option value="gemini-2.5-flash" selected>gemini-2.5-flash (推薦 • 穩定 • 高免費額度)</option>
                                         <option value="gemini-2.0-flash">gemini-2.0-flash (最新二代 • 快速反應)</option>
+                                        <option value="gemini-1.5-flash">gemini-1.5-flash (輕量化推理)</option>
                                         <option value="gemini-1.5-pro">gemini-1.5-pro (深度推理 • 複雜思維分析)</option>
                                         <option value="custom">✏️ 自訂模型 (Custom Model Name)...</option>
                                     </select>
@@ -1201,6 +1423,7 @@
                     variables: { changed: [], constant: [], compared: [] },
                     chatLogs: [],
                     stage: 0,
+                    stepProgress: 1, // 1: Worksheet, 2: Data Entry, 3: Charts/Sim, 4: Agent Water, 5: Reflection
                     summaryEn: "Awaiting experiment data submission...",
                     summaryZh: "尚未上傳實驗數據...",
                     strengthEn: "Ready for inquiry",
@@ -1213,6 +1436,118 @@
         }
 
         let classData = createFreshClassData();
+
+        // ================= 5-STEP SCAFFOLDING PROGRESSIVE UNLOCK ENGINE =================
+        function getGroupStepProgress(groupKey) {
+            if (groupKey === 'Teacher' || groupKey === 'Admin') return 5;
+            const g = classData[groupKey];
+            if (!g) return 1;
+            let prog = g.stepProgress || 1;
+            // Robust auto-unlock for existing/restored data
+            if (g.reflectionSubmitted || (g.stage && g.stage >= 4)) prog = Math.max(prog, 5);
+            else if (g.stage && g.stage >= 1) prog = Math.max(prog, 4);
+            else if (g.data && (g.data[25] !== undefined || g.data[80] !== undefined)) prog = Math.max(prog, 3);
+            return prog;
+        }
+
+        let currentActiveStep = 1;
+
+        function updateStepLockingUI() {
+            const isStaff = (currentRole === 'Teacher' || currentRole === 'Admin');
+            const stepperBar = document.getElementById('scaffoldingStepperBar');
+            if (stepperBar) {
+                if (isStaff) {
+                    stepperBar.classList.add('hidden');
+                } else {
+                    stepperBar.classList.remove('hidden');
+                }
+            }
+
+            const currentProg = getGroupStepProgress(currentRole);
+            const badge = document.getElementById('stepProgressBadge');
+            if (badge) {
+                const stepNames = [
+                    "",
+                    "第 1 步：科學探究工作紙 (Worksheet)",
+                    "第 2 步：輸入本組實驗數據 (Data Entry)",
+                    "第 3 步：柱狀圖與粒子模擬 (Charts & Sim)",
+                    "第 4 步：與水精靈對話 (Agent Water AI)",
+                    "第 5 步：反思與關鍵小結 (Reflection & Summary)"
+                ];
+                badge.innerText = isStaff ? "👑 教師/管理員模式 (全功能開放)" : `當前進度：Step ${currentProg}/5 (${stepNames[currentProg] || ''})`;
+            }
+
+            // Update Steps 1 to 5
+            for (let step = 1; step <= 5; step++) {
+                const container = document.getElementById(`stepContainer-${step}`);
+                const overlay = document.getElementById(`lockOverlay-${step}`);
+                const tab = document.getElementById(`stepTab-${step}`);
+
+                const isUnlocked = isStaff || (currentProg >= step);
+
+                if (container) {
+                    if (isUnlocked) {
+                        container.classList.remove('step-locked');
+                    } else {
+                        container.classList.add('step-locked');
+                    }
+                }
+
+                if (overlay) {
+                    if (isUnlocked) {
+                        overlay.classList.add('hidden');
+                    } else {
+                        overlay.classList.remove('hidden');
+                    }
+                }
+
+                if (tab) {
+                    tab.classList.remove('active', 'completed', 'locked');
+                    if (isStaff) {
+                        tab.classList.add(currentActiveStep === step ? 'active' : 'completed');
+                    } else if (currentProg > step) {
+                        tab.classList.add('completed');
+                    } else if (currentProg === step) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.add('locked');
+                    }
+                }
+            }
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function scrollToStep(stepNum) {
+            const isStaff = (currentRole === 'Teacher' || currentRole === 'Admin');
+            const prog = getGroupStepProgress(currentRole);
+            if (!isStaff && stepNum > prog) {
+                alert(`🔒 第 ${stepNum} 步尚未解鎖！\n請先完成第 ${prog} 步探究任務即可解鎖。\n(Step ${stepNum} is locked. Complete Step ${prog} first!)`);
+                return;
+            }
+            currentActiveStep = stepNum;
+            const targetEl = document.getElementById(`stepContainer-${stepNum}`);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            updateStepLockingUI();
+        }
+
+        function unlockAndScrollToStep(targetStep) {
+            if (classData[currentRole]) {
+                classData[currentRole].stepProgress = Math.max(classData[currentRole].stepProgress || 1, targetStep);
+                broadcastData();
+            }
+            updateStepLockingUI();
+            setTimeout(() => {
+                scrollToStep(targetStep);
+            }, 100);
+        }
+
+        function completeStep1AndUnlockStep2() {
+            checkVariableAnswers();
+            unlockAndScrollToStep(2);
+        }
 
         // SRL Dialogue Flow Setup for Agent Water
         const dialogueStages = {
@@ -1355,7 +1690,7 @@
 
             if (score === total) {
                 feedbackEl.classList.add('bg-emerald-100', 'text-emerald-800');
-                feedbackEl.innerHTML = `🎉 Correct! (${score}/${total}) Excellent understanding of controlled variables! / 完全正確！精準掌控實驗變因！`;
+                feedbackEl.innerHTML = `🎉 Correct! (${score}/${total}) Excellent understanding of controlled variables! / 完全正確！精準掌控實驗變因！<div class="mt-2"><button type="button" onclick="unlockAndScrollToStep(2)" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs shadow transition">🔓 Proceed to Step 2: Data Entry (解鎖並前往第 2 步)</button></div>`;
             } else {
                 feedbackEl.classList.add('bg-amber-100', 'text-amber-800');
                 feedbackEl.innerHTML = `💡 Score: ${score}/${total}. Some variables are misplaced! Try moving them again! / 得分：${score}/${total}。部分變因擺放有誤，請再調整！`;
@@ -1566,6 +1901,11 @@
                         classData[gKey].chatLogs = incoming.chatLogs;
                         hasChanged = true;
                     }
+                }
+                // Merge stepProgress
+                if (incoming.stepProgress && incoming.stepProgress > (classData[gKey].stepProgress || 1)) {
+                    classData[gKey].stepProgress = incoming.stepProgress;
+                    hasChanged = true;
                 }
             }
             if (hasChanged) {
@@ -2293,6 +2633,7 @@
             }
 
             classData[currentRole].data = { 25: t25, 80: t80 };
+            classData[currentRole].stepProgress = Math.max(classData[currentRole].stepProgress || 1, 3);
             
             // Initiate SRL Stage 1 AI dialogue
             if (classData[currentRole].stage === 0) {
@@ -2306,6 +2647,11 @@
             updateAllUI();
             renderStudentChatHistory();
             renderPersonalizedLearningSummary(currentRole);
+
+            // Automatically unlock and smoothly scroll to Step 3 so student immediately sees their bar chart & particles!
+            setTimeout(() => {
+                unlockAndScrollToStep(3);
+            }, 300);
         }
 
         function generateSimulatedClassData() {
@@ -2326,6 +2672,7 @@
                     };
                     const sample = sampleSummaries[(i - 1) % sampleSummaries.length];
                     classData[gName].stage = sample.stage;
+                    classData[gName].stepProgress = 5;
                     classData[gName].hypothesis = "faster";
                     classData[gName].usedToThink = sample.used;
                     classData[gName].nowIThink = sample.now;
@@ -2431,6 +2778,9 @@
             if (currentRole === "Teacher") {
                 renderTeacherDashboardUI();
             }
+
+            // Update Progressive Step Locking & Stepper Bar
+            updateStepLockingUI();
         }
 
         function appendAIBubbleToGroup(groupKey, en, zh) {
@@ -2519,11 +2869,16 @@
             if (!stageData || stage >= 4) {
                 if (stage >= 4) {
                     container.innerHTML = `
-                        <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-center space-y-2">
                             <p class="text-xs font-bold text-emerald-800">🎉 SRL Inquiry Completed! / 探究反思順利完成！</p>
-                            <p class="text-[10px] text-emerald-600">Great job! Remember to complete and submit your SRL Reflection Card below.</p>
+                            <p class="text-[10px] text-emerald-600">Great job! Step 5 (Key Learning Points & Reflection) is now unlocked below.<br>太棒了！已解鎖第 5 步關鍵學習小結與探究反思卡！</p>
+                            <button type="button" onclick="unlockAndScrollToStep(5)" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow transition flex items-center justify-center gap-1.5 mx-auto">
+                                <span>Proceed to Step 5: Reflection (前往第 5 步：反思與小結)</span>
+                                <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+                            </button>
                         </div>
                     `;
+                    if (window.lucide) lucide.createIcons();
                 } else {
                     container.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center">Submit your group data to start chat with Agent Water! / 請先提交數據！</p>`;
                 }
@@ -2566,6 +2921,10 @@
                 classData[currentRole].summaryEn = opt.summaryEn;
                 classData[currentRole].summaryZh = opt.summaryZh;
 
+                if (opt.nextStage >= 4) {
+                    classData[currentRole].stepProgress = Math.max(classData[currentRole].stepProgress || 1, 5);
+                }
+
                 broadcastData();
                 updateAllUI();
                 renderPersonalizedLearningSummary(currentRole);
@@ -2586,56 +2945,199 @@
             }, 400);
         }
 
-        // ================= GEMINI AI CHAT ENGINE FOR AGENT WATER =================
+        // ================= GEMINI AI CHAT ENGINE & PARSERS FOR AGENT WATER =================
+        function cleanMetaSpeech(text) {
+            if (!text || typeof text !== 'string') return "";
+            let cleaned = text;
+
+            // Remove <thought> tags
+            cleaned = cleaned.replace(/<thought>[\s\S]*?<\/thought>/gi, '');
+
+            // Remove leaked goal or prompt prefixes like /Goal:*, Goal:*, Prompt:*, etc.
+            cleaned = cleaned.replace(/^\s*\/?[Gg]oal\s*:[^\n]*/gm, '');
+            cleaned = cleaned.replace(/^\s*\/?[Pp]rompt\s*:[^\n]*/gm, '');
+
+            // Remove leaked field headers like "對應的解釋與提問*:", "English:", "Chinese:", "繁體中文:"
+            cleaned = cleaned.replace(/^\s*(對應的解釋與提問|解釋與提問|解釋|提問|English|Chinese|繁體中文|廣東話)\s*[*：:]\s*/gim, '');
+            cleaned = cleaned.replace(/\*\*(對應的解釋與提問|解釋與提問|English|Chinese|繁體中文)\*\*\s*[:：]?/gim, '');
+
+            // Clean leading/trailing markdown quotes or asterisks wrapping the whole string
+            cleaned = cleaned.trim().replace(/^["']|["']$/g, '').trim();
+
+            return cleaned;
+        }
+
+        function generateContextualChinese(enText, userText, groupKey) {
+            const combined = `${userText || ''} ${enText || ''}`.toLowerCase();
+
+            if (combined.includes('hello') || combined.includes('hi') || combined.includes('你好') || combined.includes('早晨') || combined.includes('哈囉')) {
+                return "你好！我是水精靈！很高興能與你們組一起探索食鹽溶解速率的科學奧秘！💧";
+            }
+            if (combined.includes('help') || combined.includes('幫助') || combined.includes('幫我') || combined.includes('點做') || combined.includes('點算')) {
+                return "當然可以！水精靈會一步一步引導你！對比冷水與熱水，食鹽完全溶解所需的時間有何不同？💧";
+            }
+            if (combined.includes('average') || combined.includes('error') || combined.includes('reliable') || combined.includes('誤差') || combined.includes('平均') || combined.includes('準')) {
+                return "非常深刻的科學洞察！計算全班 8 組平均值能有效抵銷按碼錶的微小時差，讓數據更加客觀可靠！🎯";
+            }
+            if (combined.includes('stir') || combined.includes('speed') || combined.includes('攪拌')) {
+                return "觀察入微！手動攪拌速度在不同同學之間極難完全均勻，因此攪拌速率是必須嚴格控制的關鍵變因！🥣";
+            }
+            if (combined.includes('hot') || combined.includes('temp') || combined.includes('faster') || combined.includes('particle') || combined.includes('熱') || combined.includes('動能') || combined.includes('粒子')) {
+                return "切中微觀本質！水溫越高，水分子動能越大、運動越劇烈，能更快碰撞並拆解食鹽晶格！🔥";
+            }
+
+            return "你的觀察與思考很有啟發性！水精靈正陪伴你們組深入探究水溫與食鹽溶解速率的科學關係！💧";
+        }
+
+        function parseBilingualResponse(rawText, userText, groupKey) {
+            if (!rawText) return null;
+
+            let en = "";
+            let zh = "";
+
+            // Attempt JSON parse
+            let jsonCandidate = rawText.trim();
+            const fenceMatch = jsonCandidate.match(/```(?:json)?\s*([\s\S]*?)```/i);
+            if (fenceMatch) {
+                jsonCandidate = fenceMatch[1].trim();
+            }
+
+            const firstBrace = jsonCandidate.indexOf('{');
+            const lastBrace = jsonCandidate.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+                try {
+                    const parsed = JSON.parse(jsonCandidate.substring(firstBrace, lastBrace + 1));
+                    if (parsed && (parsed.en || parsed.zh)) {
+                        en = cleanMetaSpeech(parsed.en || "");
+                        zh = cleanMetaSpeech(parsed.zh || "");
+                    }
+                } catch(e) {
+                    // JSON parse error, fallback to paragraph analysis
+                }
+            }
+
+            // Fallback: parse plain text if JSON not matched
+            if (!en && !zh) {
+                const cleaned = cleanMetaSpeech(rawText);
+                const paras = cleaned.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+                if (paras.length >= 2) {
+                    const hasChineseP0 = /[\u4e00-\u9fa5]/.test(paras[0]);
+                    const hasChineseP1 = /[\u4e00-\u9fa5]/.test(paras[1]);
+                    if (!hasChineseP0 && hasChineseP1) {
+                        en = paras[0];
+                        zh = paras.slice(1).join('\n\n');
+                    } else if (hasChineseP0 && !hasChineseP1) {
+                        zh = paras[0];
+                        en = paras.slice(1).join('\n\n');
+                    } else {
+                        en = paras[0];
+                        zh = paras.slice(1).join('\n\n');
+                    }
+                } else {
+                    const lines = cleaned.split('\n').map(l => l.trim()).filter(Boolean);
+                    if (lines.length >= 2) {
+                        en = lines[0];
+                        zh = lines.slice(1).join(' ');
+                    } else {
+                        en = cleaned;
+                        zh = "";
+                    }
+                }
+            }
+
+            en = cleanMetaSpeech(en);
+            zh = cleanMetaSpeech(zh);
+
+            // Crucial integrity check: ensure zh actually contains Traditional Chinese characters and is not duplicate English
+            if (!zh || !/[\u4e00-\u9fa5]/.test(zh) || zh.toLowerCase() === en.toLowerCase()) {
+                zh = generateContextualChinese(en, userText, groupKey);
+            }
+
+            if (!en) {
+                en = "Great observation! Keep exploring how water temperature affects dissolving rate! 💧";
+            }
+
+            return { en: en, zh: zh };
+        }
+
         async function callAgentWaterGemini(userText, callerGroup) {
             const adminConfig = getAdminConfig();
             const apiKey = adminConfig.apiKey || sharedAiConfig.apiKey;
-            const model = adminConfig.model || sharedAiConfig.model || 'gemini-2.5-flash';
+            let model = adminConfig.model || sharedAiConfig.model || 'gemini-2.5-flash';
+            if (model === 'custom' && adminConfig.customModel) {
+                model = adminConfig.customModel.trim();
+            }
 
             if (!apiKey) return null;
 
             const systemInstruction = `You are "Agent Water (水精靈 AI 導師)", an encouraging, scientifically precise S1 Integrated Science AI tutor for secondary school students conducting "Exp 1.2: Rate of Dissolving Table Salt (水溫對食鹽溶解速率的影響)".
-Your mission:
-1. Guide students with Socratic inquiry on why hot water (80°C) dissolves table salt much faster than cold water (25°C).
-2. Connect to the Particle Theory of Matter: at higher temperatures, water molecules have greater kinetic energy, move faster, and collide more violently and frequently with the sodium chloride (NaCl) crystal lattice, breaking it apart much faster.
-3. Emphasize fair testing: only water temperature is changed; water volume (100 mL), salt mass (5.0 g), and stirring speed/method must be kept constant.
-4. Explain why taking the class average of 8 groups cancels out random errors (such as human reaction time delay when clicking the timer or slight stirring rate variations).
-Formatting requirements:
-- Always reply with two concise paragraphs:
-  First paragraph in English (encouraging, clear, 2-3 sentences).
-  Second paragraph in 繁體中文 (Traditional Chinese, corresponding explanation, 2-3 sentences).
-- Include 1-2 cheerful science emojis (e.g. 💧, 🔬, ⏱️, ✨).
-- Keep total response concise and age-appropriate for Grade 7 / Secondary 1 students.`;
+Target Audience: Grade 7 / Secondary 1 students (11-13 years old).
+Mission:
+1. Warmly answer student greetings (e.g. "hello", "你好") and questions asking for guidance or help.
+2. Guide students with Socratic inquiry on why hot water (80°C) dissolves table salt much faster than cold water (25°C).
+3. Connect observations to the Particle Theory of Matter: at higher temperatures, water molecules have greater kinetic energy, move faster, and collide more violently and frequently with the sodium chloride (NaCl) crystal lattice, breaking it apart much faster.
+4. Emphasize fair testing: only water temperature is changed; water volume (100 mL), salt mass (5.0 g), and stirring speed/method must be kept constant.
+5. Explain why taking the class average of 8 groups cancels out random errors (such as human stopwatch reaction delay or slight stirring rate variations).
+Crucial Formatting & Output Rules:
+- Return ONLY a valid JSON object with EXACTLY two fields:
+  "en": English response (concise, encouraging, 2-3 sentences, with 1-2 emojis like 💧, 🔬, ⏱️, ✨).
+  "zh": Traditional Chinese (繁體中文) response (corresponding natural explanation, 2-3 sentences, age-appropriate for S1).
+- DO NOT output any internal thoughts, goals, prompt meta-tags (e.g. NEVER write "/Goal:*", "Goal:", or "Prompt:").
+- DO NOT duplicate English into the "zh" field. The "zh" field MUST contain natural Traditional Chinese characters.`;
 
             const gData = classData[callerGroup];
             let contextExtra = "";
             if (gData && gData.data) {
-                contextExtra = ` [Group ${callerGroup} recorded 25°C: ${gData.data[25]}s, 80°C: ${gData.data[80]}s]`;
+                contextExtra = ` [Group ${callerGroup} recorded 25°C Cold Water: ${gData.data[25]}s, 80°C Hot Water: ${gData.data[80]}s]`;
             }
 
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
             const startTime = Date.now();
 
             try {
-                const resp = await fetch(endpoint, {
+                let requestBody = {
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    contents: [
+                        { role: "user", parts: [{ text: `Current group: ${callerGroup}.${contextExtra}\nStudent says: "${userText}"\nRemember: Reply in valid JSON with {"en": "...", "zh": "..."} where zh MUST be Traditional Chinese.` }] }
+                    ],
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1000,
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                en: { type: "STRING", description: "English response for S1 student" },
+                                zh: { type: "STRING", description: "Traditional Chinese response for S1 student" }
+                            },
+                            required: ["en", "zh"]
+                        }
+                    }
+                };
+
+                let resp = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        systemInstruction: { parts: [{ text: systemInstruction }] },
-                        contents: [
-                            { role: "user", parts: [{ text: `Current group: ${callerGroup}.${contextExtra} Student says: "${userText}"` }] }
-                        ],
-                        generationConfig: {
-                            temperature: 0.7,
-                            maxOutputTokens: 350
-                        }
-                    })
+                    body: JSON.stringify(requestBody)
                 });
+
+                // Fallback attempt without responseSchema if HTTP 400 (older models or custom endpoints)
+                if (!resp.ok && resp.status === 400) {
+                    delete requestBody.generationConfig.responseSchema;
+                    delete requestBody.generationConfig.responseMimeType;
+                    resp = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+                }
+
                 const latency = Date.now() - startTime;
 
                 if (!resp.ok) {
                     const err = await resp.json().catch(() => ({}));
-                    recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', err.error?.message || `HTTP ${resp.status}`);
+                    const errMsg = err.error?.message || `HTTP ${resp.status}`;
+                    recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', errMsg);
                     return null;
                 }
 
@@ -2650,24 +3152,12 @@ Formatting requirements:
 
                 recordApiActivity(callerGroup, model, promptT, candT, totalT, 'SUCCESS', 'OK', latency);
 
-                return parseBilingualResponse(text);
+                return parseBilingualResponse(text, userText, callerGroup);
             } catch(e) {
                 console.warn("Gemini call exception:", e);
                 recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', e.message);
                 return null;
             }
-        }
-
-        function parseBilingualResponse(rawText) {
-            const paras = rawText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-            if (paras.length >= 2) {
-                return { en: paras[0], zh: paras.slice(1).join('\n\n') };
-            }
-            const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-            if (lines.length >= 2) {
-                return { en: lines[0], zh: lines.slice(1).join(' ') };
-            }
-            return { en: rawText, zh: rawText };
         }
 
         function appendThinkingBubble(group) {
@@ -2696,11 +3186,17 @@ Formatting requirements:
         }
 
         function executeLocalRuleBasedReply(val) {
-            const lower = val.toLowerCase();
+            const lower = val.toLowerCase().trim();
             let aiReplyEn = "";
             let aiReplyZh = "";
 
-            if (lower.includes("error") || lower.includes("accurate") || lower.includes("reliable") || lower.includes("precision") || lower.includes("average") || lower.includes("random") || lower.includes("誤差") || lower.includes("準確") || lower.includes("平均") || lower.includes("可靠") || lower.includes("隨機")) {
+            if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey") || lower.includes("你好") || lower.includes("早晨") || lower.includes("哈囉")) {
+                aiReplyEn = "👋 Hello my young scientist! I am Agent Water! I'm ready to explore the salt dissolving experiment with your group!";
+                aiReplyZh = "👋 你好！我是水精靈！很高興與你們組一起探索食鹽溶解速率的科學奧秘！";
+            } else if (lower.includes("help") || lower.includes("可以幫助") || lower.includes("幫我") || lower.includes("點做") || lower.includes("點算") || lower.includes("點樣")) {
+                aiReplyEn = "💧 Of course! I am here to guide you step-by-step. Look at your bar chart timings: does hot or cold water dissolve salt faster?";
+                aiReplyZh = "💧 當然可以！水精靈會一步一步引導你。看看柱狀圖的計時：到底是熱水還是冷水溶解得更快呢？";
+            } else if (lower.includes("error") || lower.includes("accurate") || lower.includes("reliable") || lower.includes("precision") || lower.includes("average") || lower.includes("random") || lower.includes("準啲") || lower.includes("誤差") || lower.includes("準確") || lower.includes("平均") || lower.includes("可靠") || lower.includes("隨機")) {
                 aiReplyEn = "🎯 Excellent scientific insight on data reliability! Taking averages cancels out human timing delays and individual experimental noise!";
                 aiReplyZh = "🎯 非常深刻的科學洞察！計算全班平均值能有效抵銷個人按表延遲與隨機實驗誤差！";
             } else if (lower.includes("hot") || lower.includes("cold") || lower.includes("temp") || lower.includes("heat") || lower.includes("fast") || lower.includes("energy") || lower.includes("particle") || lower.includes("更快") || lower.includes("熱水") || lower.includes("冷水") || lower.includes("溫度") || lower.includes("能量") || lower.includes("粒子") || lower.includes("動能")) {
@@ -3226,6 +3722,7 @@ Formatting requirements:
                 variables: { changed: [], constant: [], compared: [] },
                 chatLogs: [],
                 stage: 0,
+                stepProgress: 1,
                 summaryEn: "Awaiting experiment data submission...",
                 summaryZh: "尚未上傳實驗數據...",
                 strengthEn: "Ready for inquiry",
