@@ -81,6 +81,12 @@
             
             <!-- Quick Actions: QR Code Share + Class Selector + Mode Switcher -->
             <div class="flex items-center gap-2 flex-wrap">
+                <!-- Select Class & Group Quick Button -->
+                <button onclick="openStartupModal()" class="bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/30 transition flex items-center gap-1.5 shadow" title="Select Class & Group / 選擇班別與組別">
+                    <i data-lucide="users" class="w-3.5 h-3.5 text-sky-200"></i>
+                    <span>選組 / Select</span>
+                </button>
+
                 <!-- Share QR Button -->
                 <button onclick="openShareModal()" class="bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/30 transition flex items-center gap-1.5 shadow">
                     <i data-lucide="qr-code" class="w-3.5 h-3.5 text-amber-300"></i>
@@ -89,14 +95,14 @@
 
                 <!-- Class Input / Switcher -->
                 <div class="bg-slate-900/40 px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow-inner">
-                    <span class="text-[11px] text-teal-200 font-bold">班別:</span>
+                    <span class="text-[11px] text-teal-200 font-bold">班別 Class:</span>
                     <input type="text" id="classInput" value="Class 1A" onchange="handleClassChange(this.value)" class="bg-white/90 text-slate-900 text-xs font-bold px-2 py-0.5 rounded w-20 focus:outline-none focus:ring-1 focus:ring-teal-400 text-center">
                 </div>
 
-                <!-- Selector Dropdown with Teacher Password Access -->
+                <!-- Selector Dropdown with Teacher & Admin Password Access -->
                 <div class="bg-slate-900/40 px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-2 shadow-inner">
                     <label class="text-xs font-semibold text-teal-100 whitespace-nowrap flex items-center gap-1">
-                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> 切換:
+                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> 切換 Switch:
                     </label>
                     <select id="groupSelect" onchange="handleRoleChange()" class="bg-white text-slate-800 text-xs font-bold px-2.5 py-1 rounded-lg focus:outline-none shadow cursor-pointer">
                         <option value="Group 1">Group 1 (第 1 組)</option>
@@ -108,6 +114,7 @@
                         <option value="Group 7">Group 7 (第 7 組)</option>
                         <option value="Group 8">Group 8 (第 8 組)</option>
                         <option value="Teacher" class="font-bold text-amber-600 bg-amber-50">🔒 Teacher Mode (教師智慧指揮中心)</option>
+                        <option value="Admin" class="font-bold text-purple-700 bg-purple-50">🛠️ Admin Mode (AI 系統管理後台)</option>
                     </select>
                 </div>
             </div>
@@ -130,7 +137,7 @@
                             <i data-lucide="clipboard-list" class="w-5 h-5 text-teal-600"></i>
                             <span>1. Scientific Inquiry Worksheet / 科學探究工作紙</span>
                         </h2>
-                        <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-md">SRL Step 1: Planning</span>
+                        <span class="text-[10px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-md">SRL Step 1: Planning / 階段一：規劃</span>
                     </div>
 
                     <div class="space-y-4 text-xs">
@@ -217,7 +224,7 @@
                             <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
                         </h2>
                         <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
                         </span>
                     </div>
 
@@ -259,41 +266,41 @@
                             <i data-lucide="bar-chart-3" class="w-5 h-5 text-sky-600"></i>
                             <span>3. Class Data Bar Chart Comparison / 數據對比柱狀圖</span>
                         </h2>
-                        <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">SRL Step 2: Monitoring</span>
+                        <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">SRL Step 2: Monitoring / 階段二：監控</span>
                     </div>
-                    <p class="text-xs text-slate-500">Comparing My Group (Blue Bar) vs Class Average (Green Bar).</p>
+                    <p class="text-xs text-slate-500">Comparing My Group (Blue Bar) vs Class Average (Green Bar) / 對比本組數據 (藍色柱) 與全班平均值 (綠色柱)。</p>
                     <div class="relative h-64 w-full">
                         <canvas id="classBarChart"></canvas>
                     </div>
 
                     <!-- Particle Theory Dynamic Visualizer (Microscopic Kinetic Energy) -->
                     <div class="border-t border-slate-100 pt-3">
-                        <div class="flex items-center justify-between mb-1.5">
+                        <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
                             <h3 class="text-xs font-bold text-indigo-900 flex items-center gap-1.5">
                                 <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
                             </h3>
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleParticleSim()" id="particleToggleBtn" class="text-[10px] bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 transition">
-                                    <i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬
+                                    <i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬 (Pause)
                                 </button>
-                                <span class="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded-md">分子動能模擬</span>
+                                <span class="text-[10px] bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded-md">分子動能模擬 (Kinetic Simulation)</span>
                             </div>
                         </div>
                         <p class="text-[11px] text-slate-500 mb-2">
-                            溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格（NaCl）的速度越快：
+                            溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格速度越快：
                         </p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="bg-sky-50 rounded-xl p-3 border border-sky-200">
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="font-bold text-xs text-sky-800">25°C 冷水 (Cold Water)</span>
-                                    <span class="text-[10px] text-sky-600">低動能 • 慢速碰撞</span>
+                                    <span class="text-[10px] text-sky-600 font-medium">低動能 • 慢速 (Low Kinetic E)</span>
                                 </div>
                                 <canvas id="particleCanvasCold" width="240" height="90" class="w-full h-24 bg-sky-100/60 rounded-lg border border-sky-200"></canvas>
                             </div>
                             <div class="bg-rose-50 rounded-xl p-3 border border-rose-200">
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="font-bold text-xs text-rose-800">80°C 熱水 (Hot Water)</span>
-                                    <span class="text-[10px] text-rose-600">高動能 • 高速劇烈碰撞</span>
+                                    <span class="text-[10px] text-rose-600 font-medium">高動能 • 快速 (High Kinetic E)</span>
                                 </div>
                                 <canvas id="particleCanvasHot" width="240" height="90" class="w-full h-24 bg-rose-100/60 rounded-lg border border-rose-200"></canvas>
                             </div>
@@ -363,7 +370,7 @@
                         <form id="chatForm" onsubmit="handleCustomTextSubmit(event)" class="flex gap-2 pt-1 border-t border-slate-100">
                             <input type="text" id="userInput" placeholder="Or type your thoughts... / 或輸入你的想法..." class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-sky-400 focus:outline-none">
                             <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send
+                                <i data-lucide="send" class="w-3.5 h-3.5"></i> Send / 發送
                             </button>
                         </form>
                     </div>
@@ -380,7 +387,7 @@
                             </div>
                         </div>
                         <button type="button" onclick="copyPersonalizedSummary()" class="px-2.5 py-1 bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[10px] font-bold shadow-sm transition flex items-center gap-1">
-                            <i data-lucide="copy" class="w-3 h-3 text-amber-700"></i> 複製小結
+                            <i data-lucide="copy" class="w-3 h-3 text-amber-700"></i> 複製小結 (Copy)
                         </button>
                     </div>
 
@@ -390,7 +397,7 @@
 
                     <div class="p-2.5 bg-white/70 rounded-xl border border-amber-200/60 text-center">
                         <p class="text-[11px] font-bold text-amber-900 flex items-center justify-center gap-1.5">
-                            <span>✨ Well done! Agent Water is so proud of your scientific thinking!</span>
+                            <span>✨ Well done! Agent Water is so proud of your scientific thinking! / 太棒了！水精靈為你們的科學思維感到驕傲！</span>
                         </p>
                     </div>
                 </div>
@@ -402,7 +409,7 @@
                             <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-600"></i>
                             <span>SRL Reflection / 探究反思與觀點轉變</span>
                         </h3>
-                        <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-md">SRL Step 3: Reflection</span>
+                        <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-md">SRL Step 3: Reflection / 階段三：反思</span>
                     </div>
 
                     <div class="space-y-3 text-xs">
@@ -412,7 +419,7 @@
                                 <label class="font-bold text-slate-700 block text-[11px]">
                                     I used to think... (我以前以為...)
                                 </label>
-                                <span class="text-[10px] text-indigo-600 font-semibold">💡 點擊下方鷹架句型快速套用：</span>
+                                <span class="text-[10px] text-indigo-600 font-semibold">💡 點擊下方鷹架句型快速套用 (Apply Scaffolding)：</span>
                             </div>
                             <div class="flex flex-wrap gap-1.5">
                                 <button type="button" onclick="applyScaffold('used', 'I thought hot water dissolves salt faster just by feeling.')" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 rounded-md text-[10px] border border-slate-200 transition">
@@ -492,13 +499,13 @@
 
                     <div class="flex items-center gap-2 flex-wrap">
                         <button onclick="openShareModal()" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-white/20">
-                            <i data-lucide="qr-code" class="w-4 h-4 text-amber-300"></i> 投屏 QR Code
+                            <i data-lucide="qr-code" class="w-4 h-4 text-amber-300"></i> 投屏 QR Code (Project QR)
                         </button>
                         <button onclick="renderTeacherDashboardUI()" class="bg-teal-600/80 hover:bg-teal-500 active:scale-95 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-teal-400/40">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 刷新實時看板
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> 刷新實時看板 (Refresh)
                         </button>
                         <button onclick="fillDemoDataForClass()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-1.5 border border-white/20">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-amber-100"></i> 填入示範數據 (Demo)
+                            <i data-lucide="sparkles" class="w-4 h-4 text-amber-100"></i> 填入示範數據 (Demo Data)
                         </button>
                     </div>
                 </div>
@@ -536,11 +543,11 @@
                                 Real-time SRL Discussion Questions / 依據全班數據即時生成之大組討論議題
                             </h3>
                             <p class="text-xs text-amber-800">
-                                Facilitation questions automatically generated based on live group timings and AI chat diagnostics.
+                                Facilitation questions automatically generated based on live group timings and AI chat diagnostics. / 依據實時數據與 AI 探究診斷自動生成之課堂提問。
                             </p>
                         </div>
                     </div>
-                    <span class="hidden sm:inline-block text-[10px] bg-amber-200 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-300">Pedagogical Facilitation</span>
+                    <span class="hidden sm:inline-block text-[10px] bg-amber-200 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-300">Pedagogical Facilitation / 教學引導</span>
                 </div>
 
                 <div id="wholeClassDiscussionContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -559,10 +566,10 @@
                             <h3 class="text-base font-bold text-slate-800 font-fun">
                                 Cross-Group SRL Reflection Gallery / 全班 8 組反思與觀點轉變對比牆
                             </h3>
-                            <p class="text-xs text-slate-500">Live side-by-side comparison of "I used to think" vs "Now I think" for classroom discussion.</p>
+                            <p class="text-xs text-slate-500">Live side-by-side comparison of "I used to think" vs "Now I think" for classroom discussion. / 實時對比「我以前以為」與「現在我知道」以促進全班高階思維研討。</p>
                         </div>
                     </div>
-                    <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full border border-indigo-200">Interactive Reflection Wall</span>
+                    <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full border border-indigo-200">Interactive Reflection Wall / 互動反思牆</span>
                 </div>
 
                 <div id="teacherReflectionGallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -633,9 +640,358 @@
 
         </div>
 
+        <!-- ================= AI SYSTEM ADMIN VIEW (IMAGE 5) ================= -->
+        <div id="adminViewSection" class="hidden space-y-6">
+
+            <!-- Admin Top Projection Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 shadow-xl border border-purple-500/30 relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                            <span class="px-2.5 py-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold text-[10px] rounded-full uppercase tracking-wider flex items-center gap-1 shadow">
+                                <i data-lucide="shield-check" class="w-3 h-3 text-purple-200"></i> AI SYSTEM ADMIN / 系統管理員專屬後台
+                            </span>
+                            <span class="px-2.5 py-0.5 bg-white/10 text-purple-200 border border-purple-400/30 text-[10px] rounded-full">
+                                管理員專屬後台 (Protected by System Password)
+                            </span>
+                            <span id="adminClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">Class 1A</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-bold font-fun tracking-wide text-white">
+                            AI Engine & Token Budget Admin • 系統管理控制台
+                        </h2>
+                        <p class="text-slate-300 text-xs md:text-sm mt-1">
+                            管理 Google Gemini API Key、學生端推理模型派發與全班 Token 使用量審計監控 (Manage Gemini API, Model Dispatch & Token Budget)
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button type="button" onclick="switchToTeacherFromAdmin()" class="bg-amber-600/80 hover:bg-amber-500 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-amber-400/40">
+                            <i data-lucide="arrow-left" class="w-4 h-4 text-amber-200"></i> 返回教師指揮中心
+                        </button>
+                        <button type="button" onclick="switchToStudentFromAdmin()" class="bg-white/10 hover:bg-white/20 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5 border border-white/20">
+                            <i data-lucide="user" class="w-4 h-4 text-teal-300"></i> 返回學生視窗
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Admin Dashboard Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Card: AI Engine & Model Setup (6 Cols) -->
+                <div class="lg:col-span-6 bg-slate-900 text-white rounded-3xl p-6 shadow-xl border border-slate-800 flex flex-col justify-between space-y-5">
+                    <div>
+                        <!-- Header with Chip Icon & Status Badge -->
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4 flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow">
+                                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm md:text-base font-fun text-white">
+                                        AI Engine & Model Setup / AI 引擎與模型配置
+                                    </h3>
+                                    <p class="text-[11px] text-slate-400">注入 API Key 即可啟動水精靈即時 LLM 推理</p>
+                                </div>
+                            </div>
+                            <span id="adminAiStatusBadge" class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="adminAiStatusText">Gemini AI 在線 (gemini-2.5-flash)</span>
+                            </span>
+                        </div>
+
+                        <!-- Form Fields -->
+                        <div class="space-y-4 text-xs">
+                            <!-- Provider & Model Dropdowns in 2 cols -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-300 font-bold mb-1 text-[11px]">
+                                        API 服務商 (Provider)
+                                    </label>
+                                    <div class="bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 font-medium truncate">
+                                        Google Gemini API (推薦 • 多模態視覺)
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-slate-300 font-bold text-[11px]">
+                                            推論模型 (Model for Students)
+                                        </label>
+                                        <span class="text-[9px] text-teal-400 font-semibold">全班統一調用</span>
+                                    </div>
+                                    <select id="adminModelSelect" onchange="handleAdminModelChange()" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-purple-400 focus:outline-none cursor-pointer">
+                                        <option value="gemini-2.5-flash" selected>gemini-2.5-flash (推薦 • 極速推理 • 高免費額度)</option>
+                                        <option value="gemini-1.5-flash">gemini-1.5-flash (穩定 • 輕量化推理)</option>
+                                        <option value="gemini-2.0-flash">gemini-2.0-flash (最新二代 • 快速反應)</option>
+                                        <option value="gemini-1.5-pro">gemini-1.5-pro (深度推理 • 複雜思維分析)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- API Key Input Field -->
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="text-slate-300 font-bold text-[11px] flex items-center gap-1">
+                                        <span>API 金鑰 (API Key)</span>
+                                        <span class="text-[10px] text-slate-400 font-normal">保存於老師本機 (Local Storage)</span>
+                                    </label>
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 text-[11px] font-bold flex items-center gap-0.5 transition">
+                                        獲取免費 Gemini Key <i data-lucide="external-link" class="w-3 h-3"></i>
+                                    </a>
+                                </div>
+                                <div class="relative">
+                                    <input type="password" id="adminApiKeyInput" placeholder="AIzaSy... (貼上你的 Google Gemini API Key)" class="w-full bg-slate-800/90 text-white border border-slate-700 rounded-xl pl-3 pr-10 py-2.5 font-mono text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none placeholder:text-slate-500">
+                                    <button type="button" onclick="togglePasswordVisibility('adminApiKeyInput', 'adminApiKeyEyeIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200">
+                                        <i data-lucide="eye" id="adminApiKeyEyeIcon" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Student Auto Sync Checkbox Box -->
+                            <div class="p-3 bg-slate-800/60 border border-slate-700/80 rounded-2xl flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30 flex items-center justify-center flex-shrink-0">
+                                        <i data-lucide="radio" class="w-4 h-4"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-white text-xs">全班自動同步 (Sync to Students)</p>
+                                        <p class="text-[10px] text-slate-400">學生平板無需手動輸入 Key，連線後自動共享此模型進行水精靈對話</p>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="adminSyncCheckbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons & Notification -->
+                    <div class="space-y-3 pt-2 border-t border-slate-800">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="testGeminiConnection()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 text-amber-300 font-bold px-4 py-2 rounded-xl text-xs border border-slate-700 transition flex items-center gap-1.5 shadow">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> 測試連線 (Test)
+                                </button>
+                                <button type="button" onclick="saveAdminConfig()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 active:scale-95 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-lg transition flex items-center gap-1.5">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i> 儲存配置 (Save)
+                                </button>
+                            </div>
+                            <button type="button" onclick="clearAdminApiKey()" class="text-rose-400 hover:text-rose-300 text-xs font-semibold underline underline-offset-2 transition">
+                                清除金鑰
+                            </button>
+                        </div>
+
+                        <!-- Feedback Banner -->
+                        <div id="adminConfigNotice" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+                    </div>
+                </div>
+
+                <!-- Right Card: AI Token Monitor (6 Cols) -->
+                <div class="lg:col-span-6 bg-slate-900 text-white rounded-3xl p-6 shadow-xl border border-slate-800 flex flex-col justify-between space-y-4">
+                    <div>
+                        <!-- Header with Pulse Wave Icon & Reset Button -->
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4 flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-2xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center text-teal-300 shadow">
+                                    <i data-lucide="activity" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm md:text-base font-fun text-white">
+                                        AI Token Monitor / Token 使用量監控
+                                    </h3>
+                                    <p class="text-[11px] text-slate-400">即時統計水精靈對話之 Token 消耗及費用預估</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="resetTokenStats()" class="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 border border-slate-700 px-2 py-1 rounded-lg transition">
+                                <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重設統計
+                            </button>
+                        </div>
+
+                        <!-- 4 Stat Counters (2x2 Grid) -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                            <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80">
+                                <p class="text-[10px] text-slate-400 font-medium">總調用次數 (Calls)</p>
+                                <p id="tokenStatCalls" class="text-xl font-bold text-teal-400 mt-0.5">0</p>
+                                <p class="text-[9px] text-slate-500 mt-0.5">API Requests</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80">
+                                <p class="text-[10px] text-slate-400 font-medium">總 Tokens 消耗</p>
+                                <p id="tokenStatTotal" class="text-xl font-bold text-amber-400 mt-0.5">0</p>
+                                <p class="text-[9px] text-slate-500 mt-0.5">Tokens Total</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80">
+                                <p class="text-[10px] text-slate-400 font-medium">輸入 / 輸出明細</p>
+                                <p id="tokenStatBreakdown" class="text-sm font-bold text-sky-300 mt-1 truncate">0 / 0</p>
+                                <p class="text-[9px] text-slate-500 mt-0.5">Prompt / Output</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-3 rounded-2xl border border-slate-700/80">
+                                <p class="text-[10px] text-slate-400 font-medium">預估費用 (Cost)</p>
+                                <p id="tokenStatCost" class="text-sm font-bold text-emerald-400 mt-1 truncate">約 $0.0000 <span class="text-[9px]">USD</span></p>
+                                <p class="text-[9px] text-slate-500 mt-0.5">Google AI Studio</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity Log Table -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <p class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                                    <i data-lucide="list-ordered" class="w-3.5 h-3.5 text-teal-400"></i> 實時調用明細記錄 (Recent Activity)
+                                </p>
+                                <span class="text-[10px] text-slate-500">最近 10 筆</span>
+                            </div>
+
+                            <div class="bg-slate-800/50 rounded-2xl border border-slate-700/80 overflow-hidden max-h-48 overflow-y-auto">
+                                <table class="w-full text-[11px] text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-800 text-slate-400 border-b border-slate-700 text-[10px]">
+                                            <th class="py-2 px-3">時間 (Time)</th>
+                                            <th class="py-2 px-3">來源 (Caller)</th>
+                                            <th class="py-2 px-3">模型 (Model)</th>
+                                            <th class="py-2 px-3 text-right">Tokens</th>
+                                            <th class="py-2 px-3 text-center">狀態</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminActivityTableBody" class="divide-y divide-slate-700/50 text-slate-300">
+                                        <tr>
+                                            <td colspan="5" class="py-4 text-center text-slate-500 text-xs italic">
+                                                尚無調用記錄 (No API calls yet)
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Tip -->
+                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 flex-wrap gap-2">
+                        <span class="flex items-center gap-1">
+                            💡 提示：Gemini Flash 模型享有極大免費額度，適合課堂高頻率互動。
+                        </span>
+                        <span class="text-teal-400 font-mono text-[10px]">v2.5 Ready</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
     </main>
 
-    <!-- SHARE QR CODE MODAL -->
+    <!-- ================= STARTUP CLASS & GROUP SELECTION MODAL (IMAGE 3) ================= -->
+    <div id="startupModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-200/80 relative text-slate-800 my-auto">
+            <!-- Top Gradient App Icon & Header -->
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-teal-400 via-sky-400 to-cyan-300 rounded-3xl p-1 flex items-center justify-center shadow-lg shadow-sky-400/20">
+                    <div class="w-full h-full bg-gradient-to-br from-cyan-400 to-sky-500 rounded-2xl flex items-center justify-center text-3xl">
+                        💧
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold font-fun text-slate-900 tracking-wide pt-1">
+                    歡迎進入科學探究課堂！
+                </h2>
+                <p class="text-xs text-slate-500 font-medium">
+                    Exp 1.2: Rate of Dissolving Table Salt • 學生端啟動 (Student Launch)
+                </p>
+                <p class="text-[11px] text-slate-500 max-w-md mx-auto leading-relaxed">
+                    請先確認你的<span class="font-bold text-slate-800">班別</span>與<span class="font-bold text-slate-800">組別</span>，系統將為你啟動專屬的實驗記錄與水精靈對話通道：
+                </p>
+            </div>
+
+            <!-- Step 1: Select Class -->
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2.5">
+                <div class="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                    <span>🏫</span> 1. 選擇你的班別 (Select Class)
+                </div>
+                <div class="flex items-center gap-2 flex-wrap" id="startupClassChips">
+                    <button type="button" onclick="selectStartupClass('Class 1A')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1A</button>
+                    <button type="button" onclick="selectStartupClass('Class 1B')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1B</button>
+                    <button type="button" onclick="selectStartupClass('Class 1C')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1C</button>
+                    <button type="button" onclick="selectStartupClass('Class 1D')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1D</button>
+                </div>
+                <div class="flex items-center gap-2 pt-1 text-xs text-slate-600">
+                    <span class="text-[11px] text-slate-400 whitespace-nowrap">或自訂班別:</span>
+                    <input type="text" id="startupCustomClassInput" placeholder="Class 1A" oninput="handleStartupCustomClassInput(this.value)" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Step 2: Select Group 1 - 8 Cards -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="users" class="w-4 h-4 text-sky-600"></i> 2. 選擇你的組別 (Select Group 1 ~ 8)
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-normal">點擊卡片選取</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2.5" id="startupGroupGrid">
+                    <!-- 8 Group Cards generated dynamically -->
+                </div>
+            </div>
+
+            <!-- Big Confirmation Button -->
+            <button type="button" onclick="confirmStartupWorkspace()" class="w-full py-3.5 bg-gradient-to-r from-teal-500 via-sky-600 to-indigo-600 hover:opacity-95 active:scale-[0.99] text-white font-bold rounded-2xl text-sm shadow-xl shadow-sky-600/20 transition flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-200"></i>
+                <span>確認並啟動本組實驗通道 (Activate Workspace)</span>
+            </button>
+
+            <!-- Bottom Privileged Access Links -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+                <button type="button" onclick="openPasswordModal('Teacher')" class="text-slate-500 hover:text-amber-700 font-semibold flex items-center gap-1 transition">
+                    🔒 我是授課老師 (Teacher Login)
+                </button>
+                <button type="button" onclick="openPasswordModal('Admin')" class="text-slate-500 hover:text-purple-700 font-semibold flex items-center gap-1 transition">
+                    🛠️ AI 系統管理 (Admin Login)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MASKED PASSWORD MODAL (IMAGE 4) ================= -->
+    <div id="passwordModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-200/80 text-slate-800 relative">
+            <!-- Icon & Title -->
+            <div class="flex items-center gap-3">
+                <div id="passwordModalIconBox" class="w-11 h-11 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl shadow-sm flex-shrink-0">
+                    🛠️
+                </div>
+                <div>
+                    <h3 id="passwordModalTitle" class="font-bold text-base text-slate-900 font-fun">
+                        AI 系統管理員權限驗證
+                    </h3>
+                    <p id="passwordModalSubtitle" class="text-[11px] text-slate-500">
+                        AI System Admin Verification
+                    </p>
+                </div>
+            </div>
+
+            <p id="passwordModalDesc" class="text-xs text-slate-600 leading-relaxed">
+                請輸入系統管理員授權密碼，以進入 AI 引擎與模型配置後台：
+            </p>
+
+            <!-- Password Input with Masking & Eye Toggle -->
+            <div class="space-y-1">
+                <div class="relative">
+                    <input type="password" id="maskedPasswordInput" placeholder="••••••••••••" onkeydown="handlePasswordKeyDown(event)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-4 pr-10 py-3 text-sm font-mono tracking-widest text-slate-800 focus:ring-2 focus:ring-purple-400 focus:outline-none">
+                    <button type="button" onclick="togglePasswordVisibility('maskedPasswordInput', 'maskedPasswordEyeIcon')" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600">
+                        <i data-lucide="eye" id="maskedPasswordEyeIcon" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <p id="passwordErrorMsg" class="hidden text-xs text-rose-500 font-semibold pt-1"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3 pt-2">
+                <button type="button" onclick="closePasswordModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition">
+                    取消 / Cancel
+                </button>
+                <button type="button" id="passwordConfirmBtn" onclick="confirmPasswordModal()" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl text-xs shadow-md transition">
+                    確認進入 / Confirm
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="shareModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-4 shadow-2xl border border-slate-200">
             <div class="flex items-center justify-between border-b pb-3">
@@ -670,6 +1026,19 @@
         let currentRole = "Group 1"; // Default role
         let lastSelectedRole = "Group 1";
         let selectedCardForClickMove = null;
+
+        // Startup Modal State (Image 3)
+        let startupSelectedClass = currentClass;
+        let startupSelectedGroup = "Group 1";
+
+        // Password Modal State (Image 4)
+        let pendingTargetRole = null;
+
+        // AI Engine & Gemini API Configuration State (Image 5)
+        let sharedAiConfig = {
+            apiKey: '',
+            model: 'gemini-2.5-flash'
+        };
 
         // Broadcast Channel for Multi-tab Local Sync
         const localBroadcastChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('salt_dissolving_srl') : null;
@@ -909,15 +1278,36 @@
                 mqttClient.on('connect', () => {
                     isMqttConnected = true;
                     updateSyncBadgeUI(true, "Cloud Sync Active (EMQX)");
-                    const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
+                    const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/#`;
                     mqttClient.subscribe(topic, { qos: 0 });
                 });
 
                 mqttClient.on('message', (topic, message) => {
                     try {
                         const parsed = JSON.parse(message.toString());
-                        if (parsed && parsed.payload) {
-                            mergeIncomingClassData(parsed.payload);
+                        if (parsed) {
+                            if (parsed.payload && !parsed.type) {
+                                mergeIncomingClassData(parsed.payload);
+                            } else if (parsed.type === 'AI_CONFIG_SYNC') {
+                                sharedAiConfig = {
+                                    apiKey: parsed.apiKey || '',
+                                    model: parsed.model || 'gemini-2.5-flash'
+                                };
+                                updateAdminAiStatusBadge();
+                            } else if (parsed.type === 'TOKEN_LOG_BROADCAST') {
+                                if (parsed.payload && parsed.payload.stats) {
+                                    localStorage.setItem('salt_gemini_token_stats', JSON.stringify(parsed.payload.stats));
+                                    if (parsed.payload.recentLog) {
+                                        const logs = getApiActivityLog();
+                                        logs.unshift(parsed.payload.recentLog);
+                                        if (logs.length > 10) logs.pop();
+                                        localStorage.setItem('salt_gemini_activity_log', JSON.stringify(logs));
+                                    }
+                                    if (currentRole === 'Admin') {
+                                        updateAdminStatsUI();
+                                    }
+                                }
+                            }
                         }
                     } catch(err) {
                         console.error("MQTT parse err:", err);
@@ -958,12 +1348,14 @@
             document.getElementById('classInput').value = currentClass;
             const tBadge = document.getElementById('teacherClassBadge');
             if (tBadge) tBadge.innerText = currentClass;
+            const aBadge = document.getElementById('adminClassBadge');
+            if (aBadge) aBadge.innerText = currentClass;
             
             loadFromStorage();
             updateAllUI();
 
             if (mqttClient && isMqttConnected) {
-                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/#`;
                 mqttClient.subscribe(topic, { qos: 0 });
             }
         }
@@ -1061,28 +1453,251 @@
             }
         }
 
-        // Role Switcher with Password Prompt
+        // ================= STARTUP MODAL FUNCTIONS (IMAGE 3) =================
+        function openStartupModal() {
+            startupSelectedClass = currentClass;
+            startupSelectedGroup = (currentRole && currentRole.startsWith('Group')) ? currentRole : 'Group 1';
+            
+            updateStartupClassChipsUI();
+            
+            const customInput = document.getElementById('startupCustomClassInput');
+            if (customInput) customInput.value = startupSelectedClass;
+
+            renderStartupGroupCards();
+
+            const modal = document.getElementById('startupModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeStartupModal() {
+            const modal = document.getElementById('startupModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function updateStartupClassChipsUI() {
+            const chips = document.querySelectorAll('.startup-class-chip');
+            chips.forEach(chip => {
+                if (chip.innerText.trim() === startupSelectedClass) {
+                    chip.className = "startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-sky-500 bg-[#0284c7] text-white shadow-sm";
+                } else {
+                    chip.className = "startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100";
+                }
+            });
+        }
+
+        function selectStartupClass(className) {
+            startupSelectedClass = className;
+            updateStartupClassChipsUI();
+            const customInput = document.getElementById('startupCustomClassInput');
+            if (customInput) customInput.value = className;
+        }
+
+        function handleStartupCustomClassInput(val) {
+            startupSelectedClass = val.trim() || "Class 1A";
+            updateStartupClassChipsUI();
+        }
+
+        function renderStartupGroupCards() {
+            const container = document.getElementById('startupGroupGrid');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const gName = `Group ${i}`;
+                const isSelected = (startupSelectedGroup === gName);
+                const card = document.createElement('div');
+                card.id = `startup-card-G${i}`;
+                card.onclick = () => selectStartupGroup(gName);
+                card.className = isSelected ?
+                    "startup-group-card p-3 rounded-2xl cursor-pointer text-center transition bg-[#0284c7] text-white shadow-md ring-2 ring-sky-300 border border-sky-500" :
+                    "startup-group-card p-3 rounded-2xl cursor-pointer text-center transition bg-white text-slate-800 border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50";
+                card.innerHTML = `
+                    <p class="font-bold text-xs sm:text-sm">第 ${i} 組</p>
+                    <p class="${isSelected ? 'text-sky-100' : 'text-slate-400'} text-[10px] font-medium">Group ${i}</p>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        function selectStartupGroup(groupName) {
+            startupSelectedGroup = groupName;
+            renderStartupGroupCards();
+        }
+
+        function confirmStartupWorkspace() {
+            currentClass = startupSelectedClass;
+            currentRole = startupSelectedGroup;
+            lastSelectedRole = currentRole;
+
+            localStorage.setItem('salt_exp_class', currentClass);
+            localStorage.setItem('salt_has_selected_group', 'true');
+
+            // Update UI elements
+            const classInput = document.getElementById('classInput');
+            if (classInput) classInput.value = currentClass;
+            const tBadge = document.getElementById('teacherClassBadge');
+            if (tBadge) tBadge.innerText = currentClass;
+            const aBadge = document.getElementById('adminClassBadge');
+            if (aBadge) aBadge.innerText = currentClass;
+
+            const groupSelect = document.getElementById('groupSelect');
+            if (groupSelect) groupSelect.value = currentRole;
+
+            loadFromStorage();
+            updateAllUI();
+
+            if (mqttClient && isMqttConnected) {
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/#`;
+                mqttClient.subscribe(topic, { qos: 0 });
+            }
+
+            closeStartupModal();
+            handleRoleChange();
+        }
+
+        // ================= MASKED PASSWORD MODAL FUNCTIONS (IMAGE 4) =================
+        function openPasswordModal(targetRole) {
+            pendingTargetRole = targetRole;
+            const modal = document.getElementById('passwordModal');
+            const titleEl = document.getElementById('passwordModalTitle');
+            const subEl = document.getElementById('passwordModalSubtitle');
+            const descEl = document.getElementById('passwordModalDesc');
+            const iconBox = document.getElementById('passwordModalIconBox');
+            const confirmBtn = document.getElementById('passwordConfirmBtn');
+            const pwdInput = document.getElementById('maskedPasswordInput');
+            const errEl = document.getElementById('passwordErrorMsg');
+
+            if (errEl) errEl.classList.add('hidden');
+            if (pwdInput) pwdInput.value = '';
+
+            if (targetRole === 'Teacher') {
+                if (iconBox) {
+                    iconBox.className = "w-11 h-11 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shadow-sm flex-shrink-0";
+                    iconBox.innerText = "🔐";
+                }
+                if (titleEl) titleEl.innerText = "教師智慧指揮中心權限驗證";
+                if (subEl) subEl.innerText = "Teacher Command Center Verification";
+                if (descEl) descEl.innerText = "請輸入教師指揮中心授權密碼，以進入觀課投屏與教學診斷控制台：";
+                if (confirmBtn) confirmBtn.className = "flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-2xl text-xs shadow-md transition";
+            } else {
+                if (iconBox) {
+                    iconBox.className = "w-11 h-11 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center text-xl shadow-sm flex-shrink-0";
+                    iconBox.innerText = "🛠️";
+                }
+                if (titleEl) titleEl.innerText = "AI 系統管理員權限驗證";
+                if (subEl) subEl.innerText = "AI System Admin Verification";
+                if (descEl) descEl.innerText = "請輸入系統管理員授權密碼，以進入 AI 引擎與模型配置後台：";
+                if (confirmBtn) confirmBtn.className = "flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl text-xs shadow-md transition";
+            }
+
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (pwdInput) setTimeout(() => pwdInput.focus(), 100);
+            }
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            if (modal) modal.classList.add('hidden');
+            const select = document.getElementById('groupSelect');
+            if (select) select.value = lastSelectedRole;
+        }
+
+        function handlePasswordKeyDown(e) {
+            if (e.key === 'Enter') {
+                confirmPasswordModal();
+            } else if (e.key === 'Escape') {
+                closePasswordModal();
+            }
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                if (icon) icon.setAttribute('data-lucide', 'eye');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function confirmPasswordModal() {
+            const pwdInput = document.getElementById('maskedPasswordInput');
+            const errEl = document.getElementById('passwordErrorMsg');
+            const pwd = pwdInput ? pwdInput.value.trim() : '';
+
+            if (pendingTargetRole === 'Teacher') {
+                if (pwd === 'teacherwater') {
+                    currentRole = "Teacher";
+                    lastSelectedRole = "Teacher";
+                    document.getElementById('roleBadge').innerText = "Teacher Command Center / 教師模式";
+                    document.getElementById('roleBadge').className = "text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
+                    
+                    document.getElementById('studentViewSection').classList.add('hidden');
+                    document.getElementById('adminViewSection').classList.add('hidden');
+                    document.getElementById('teacherViewSection').classList.remove('hidden');
+                    
+                    const select = document.getElementById('groupSelect');
+                    if (select) select.value = "Teacher";
+
+                    renderTeacherDashboardUI();
+                    closePasswordModal();
+                    closeStartupModal();
+                } else {
+                    if (errEl) {
+                        errEl.innerText = "❌ 密碼錯誤！請重新輸入 (Incorrect Password!)";
+                        errEl.classList.remove('hidden');
+                    }
+                    if (pwdInput) {
+                        pwdInput.focus();
+                        pwdInput.select();
+                    }
+                }
+            } else if (pendingTargetRole === 'Admin') {
+                if (pwd === 'adminwater') {
+                    currentRole = "Admin";
+                    lastSelectedRole = "Admin";
+                    document.getElementById('roleBadge').innerText = "AI System Admin / 系統管理員";
+                    document.getElementById('roleBadge').className = "text-[10px] bg-purple-500 text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
+                    
+                    document.getElementById('studentViewSection').classList.add('hidden');
+                    document.getElementById('teacherViewSection').classList.add('hidden');
+                    document.getElementById('adminViewSection').classList.remove('hidden');
+                    
+                    const select = document.getElementById('groupSelect');
+                    if (select) select.value = "Admin";
+
+                    loadAdminUI();
+                    closePasswordModal();
+                    closeStartupModal();
+                } else {
+                    if (errEl) {
+                        errEl.innerText = "❌ 管理員密碼錯誤！請重新輸入 (Incorrect Admin Password!)";
+                        errEl.classList.remove('hidden');
+                    }
+                    if (pwdInput) {
+                        pwdInput.focus();
+                        pwdInput.select();
+                    }
+                }
+            }
+        }
+
+        // Role Switcher
         function handleRoleChange() {
             const select = document.getElementById('groupSelect');
             const selectedVal = select.value;
 
             if (selectedVal === 'Teacher') {
-                setTimeout(() => {
-                    const pwd = prompt("🔒 請輸入教師智慧指揮中心密碼 / Enter Teacher Password:");
-                    if (pwd === "teacherwater") {
-                        currentRole = "Teacher";
-                        document.getElementById('roleBadge').innerText = "Teacher Command Center / 教師模式";
-                        document.getElementById('roleBadge').className = "text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
-                        
-                        document.getElementById('studentViewSection').classList.add('hidden');
-                        document.getElementById('teacherViewSection').classList.remove('hidden');
-                        
-                        renderTeacherDashboardUI();
-                    } else {
-                        alert("❌ 密碼錯誤！ / Incorrect Password!");
-                        select.value = lastSelectedRole;
-                    }
-                }, 50);
+                openPasswordModal('Teacher');
+            } else if (selectedVal === 'Admin') {
+                openPasswordModal('Admin');
             } else {
                 lastSelectedRole = selectedVal;
                 currentRole = selectedVal;
@@ -1091,6 +1706,7 @@
                 
                 document.getElementById('studentGroupTag').innerText = currentRole;
                 document.getElementById('teacherViewSection').classList.add('hidden');
+                document.getElementById('adminViewSection').classList.add('hidden');
                 document.getElementById('studentViewSection').classList.remove('hidden');
 
                 // Reload fields for selected group
@@ -1120,6 +1736,307 @@
                 renderStudentChatHistory();
                 renderPersonalizedLearningSummary(currentRole);
                 updateAllUI();
+            }
+        }
+
+        function switchToTeacherFromAdmin() {
+            currentRole = "Teacher";
+            lastSelectedRole = "Teacher";
+            const select = document.getElementById('groupSelect');
+            if (select) select.value = "Teacher";
+            document.getElementById('roleBadge').innerText = "Teacher Command Center / 教師模式";
+            document.getElementById('roleBadge').className = "text-[10px] bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider";
+            document.getElementById('studentViewSection').classList.add('hidden');
+            document.getElementById('adminViewSection').classList.add('hidden');
+            document.getElementById('teacherViewSection').classList.remove('hidden');
+            renderTeacherDashboardUI();
+        }
+
+        function switchToStudentFromAdmin() {
+            const target = (lastSelectedRole && lastSelectedRole.startsWith('Group')) ? lastSelectedRole : 'Group 1';
+            currentRole = target;
+            lastSelectedRole = target;
+            const select = document.getElementById('groupSelect');
+            if (select) select.value = target;
+            handleRoleChange();
+        }
+
+        // ================= AI SYSTEM ADMIN CONSOLE & TOKEN MONITOR =================
+        function getAdminConfig() {
+            const def = { apiKey: '', model: 'gemini-2.5-flash', syncToStudents: true };
+            try {
+                const saved = localStorage.getItem('salt_gemini_config');
+                return saved ? Object.assign(def, JSON.parse(saved)) : def;
+            } catch(e) {
+                return def;
+            }
+        }
+
+        function getTokenStats() {
+            const def = { calls: 0, totalTokens: 0, promptTokens: 0, candidateTokens: 0, costUsd: 0.0 };
+            try {
+                const saved = localStorage.getItem('salt_gemini_token_stats');
+                return saved ? Object.assign(def, JSON.parse(saved)) : def;
+            } catch(e) {
+                return def;
+            }
+        }
+
+        function getApiActivityLog() {
+            try {
+                const saved = localStorage.getItem('salt_gemini_activity_log');
+                return saved ? JSON.parse(saved) : [];
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function loadAdminUI() {
+            const config = getAdminConfig();
+            const keyInput = document.getElementById('adminApiKeyInput');
+            const modelSelect = document.getElementById('adminModelSelect');
+            const syncCheckbox = document.getElementById('adminSyncCheckbox');
+            const classBadge = document.getElementById('adminClassBadge');
+
+            if (keyInput) keyInput.value = config.apiKey || '';
+            if (modelSelect) modelSelect.value = config.model || 'gemini-2.5-flash';
+            if (syncCheckbox) syncCheckbox.checked = (config.syncToStudents !== false);
+            if (classBadge) classBadge.innerText = currentClass;
+
+            updateAdminAiStatusBadge();
+            updateAdminStatsUI();
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function updateAdminAiStatusBadge() {
+            const config = getAdminConfig();
+            const activeKey = config.apiKey || sharedAiConfig.apiKey;
+            const activeModel = config.model || sharedAiConfig.model || 'gemini-2.5-flash';
+
+            const badge = document.getElementById('adminAiStatusBadge');
+            const text = document.getElementById('adminAiStatusText');
+            if (!badge || !text) return;
+
+            if (activeKey) {
+                badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1";
+                text.innerText = `Gemini AI 在線 (${activeModel})`;
+            } else {
+                badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1";
+                text.innerText = "本地規則引擎 (Local Fallback)";
+            }
+        }
+
+        function handleAdminModelChange() {
+            updateAdminAiStatusBadge();
+        }
+
+        function saveAdminConfig(silent = false) {
+            const keyInput = document.getElementById('adminApiKeyInput');
+            const modelSelect = document.getElementById('adminModelSelect');
+            const syncCheckbox = document.getElementById('adminSyncCheckbox');
+
+            const apiKey = keyInput ? keyInput.value.trim() : '';
+            const model = modelSelect ? modelSelect.value : 'gemini-2.5-flash';
+            const syncToStudents = syncCheckbox ? syncCheckbox.checked : true;
+
+            const config = { apiKey, model, syncToStudents };
+            localStorage.setItem('salt_gemini_config', JSON.stringify(config));
+
+            updateAdminAiStatusBadge();
+
+            // Broadcast to all student iPads via MQTT
+            if (syncToStudents && apiKey && mqttClient && isMqttConnected) {
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/ai_sync`;
+                mqttClient.publish(topic, JSON.stringify({
+                    type: 'AI_CONFIG_SYNC',
+                    apiKey: apiKey,
+                    model: model,
+                    timestamp: Date.now()
+                }), { qos: 0, retain: true });
+            }
+
+            if (!silent) {
+                const noticeEl = document.getElementById('adminConfigNotice');
+                if (noticeEl) {
+                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    noticeEl.innerHTML = `💾 配置已成功儲存！${syncToStudents ? '已自動派發至全班學生端 (Synced to students)！' : ''}`;
+                    noticeEl.classList.remove('hidden');
+                    setTimeout(() => noticeEl.classList.add('hidden'), 4000);
+                }
+            }
+        }
+
+        function clearAdminApiKey() {
+            if (confirm("確定要清除儲存的 Gemini API Key 嗎？\n(Clear saved API Key?)")) {
+                localStorage.removeItem('salt_gemini_config');
+                const keyInput = document.getElementById('adminApiKeyInput');
+                if (keyInput) keyInput.value = '';
+                updateAdminAiStatusBadge();
+                const noticeEl = document.getElementById('adminConfigNotice');
+                if (noticeEl) {
+                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    noticeEl.innerHTML = "🗑️ API Key 已清除，系統已切換為本地規則模式。(Key cleared, switched to local fallback)";
+                    noticeEl.classList.remove('hidden');
+                    setTimeout(() => noticeEl.classList.add('hidden'), 4000);
+                }
+            }
+        }
+
+        function resetTokenStats() {
+            if (confirm("確定要重設 Token 使用量與調用記錄嗎？\n(Reset all token stats and activity log?)")) {
+                const blankStats = { calls: 0, totalTokens: 0, promptTokens: 0, candidateTokens: 0, costUsd: 0.0 };
+                localStorage.setItem('salt_gemini_token_stats', JSON.stringify(blankStats));
+                localStorage.setItem('salt_gemini_activity_log', JSON.stringify([]));
+                updateAdminStatsUI();
+            }
+        }
+
+        function recordApiActivity(caller, model, promptTokens, candidateTokens, totalTokens, status, details = '', latency = 0) {
+            const stats = getTokenStats();
+            stats.calls += 1;
+            stats.totalTokens += totalTokens;
+            stats.promptTokens += promptTokens;
+            stats.candidateTokens += candidateTokens;
+
+            const callCost = (promptTokens * 0.000000075) + (candidateTokens * 0.00000030);
+            stats.costUsd = parseFloat((stats.costUsd + callCost).toFixed(6));
+            localStorage.setItem('salt_gemini_token_stats', JSON.stringify(stats));
+
+            const logs = getApiActivityLog();
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            logs.unshift({
+                time: timeStr,
+                caller: caller || 'Test',
+                model: model,
+                tokens: totalTokens,
+                status: status,
+                details: details,
+                latency: latency
+            });
+            if (logs.length > 10) logs.pop();
+            localStorage.setItem('salt_gemini_activity_log', JSON.stringify(logs));
+
+            updateAdminStatsUI();
+
+            // Broadcast log over MQTT
+            if (mqttClient && isMqttConnected) {
+                const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/token_log`;
+                mqttClient.publish(topic, JSON.stringify({
+                    type: 'TOKEN_LOG_BROADCAST',
+                    payload: { stats, recentLog: logs[0] }
+                }), { qos: 0 });
+            }
+        }
+
+        function updateAdminStatsUI() {
+            const stats = getTokenStats();
+            const callsEl = document.getElementById('tokenStatCalls');
+            const totalEl = document.getElementById('tokenStatTotal');
+            const bdEl = document.getElementById('tokenStatBreakdown');
+            const costEl = document.getElementById('tokenStatCost');
+
+            if (callsEl) callsEl.innerText = stats.calls;
+            if (totalEl) totalEl.innerText = stats.totalTokens.toLocaleString();
+            if (bdEl) bdEl.innerText = `${stats.promptTokens.toLocaleString()} / ${stats.candidateTokens.toLocaleString()}`;
+            if (costEl) costEl.innerHTML = `約 $${stats.costUsd.toFixed(4)} <span class="text-[9px]">USD</span>`;
+
+            // Render Recent Activity Table
+            const tbody = document.getElementById('adminActivityTableBody');
+            if (!tbody) return;
+            const logs = getApiActivityLog();
+            if (logs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-4 text-center text-slate-500 text-xs italic">
+                            尚無調用記錄 (No API calls yet)
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = '';
+                logs.forEach(log => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/80 transition";
+                    const statusBadge = log.status === 'SUCCESS' ?
+                        `<span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">SUCCESS</span>` :
+                        `<span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">FAILED</span>`;
+                    tr.innerHTML = `
+                        <td class="py-2 px-3 font-mono text-[10px] text-slate-400">${log.time}</td>
+                        <td class="py-2 px-3 font-semibold text-slate-200">${log.caller}</td>
+                        <td class="py-2 px-3 font-mono text-[10px] text-sky-300">${log.model}</td>
+                        <td class="py-2 px-3 text-right font-mono font-bold text-amber-300">${log.tokens} T</td>
+                        <td class="py-2 px-3 text-center">${statusBadge}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        async function testGeminiConnection() {
+            const keyInput = document.getElementById('adminApiKeyInput');
+            const modelSelect = document.getElementById('adminModelSelect');
+            const noticeEl = document.getElementById('adminConfigNotice');
+
+            const apiKey = keyInput ? keyInput.value.trim() : '';
+            const model = modelSelect ? modelSelect.value : 'gemini-2.5-flash';
+
+            if (!apiKey) {
+                if (noticeEl) {
+                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                    noticeEl.innerHTML = "❌ 請先輸入 Google Gemini API Key！(Please enter API Key first)";
+                    noticeEl.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (noticeEl) {
+                noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30";
+                noticeEl.innerHTML = "⏳ 正在測試與 Google Gemini 伺服器連線... (Testing connection...)";
+                noticeEl.classList.remove('hidden');
+            }
+
+            const startTime = Date.now();
+            try {
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                const resp = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Hello! Reply with 'OK' and 3 words in Traditional Chinese." }] }]
+                    })
+                });
+                const latency = Date.now() - startTime;
+
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'OK';
+                    const usage = data.usageMetadata || {};
+                    const promptT = usage.promptTokenCount || 8;
+                    const candT = usage.candidatesTokenCount || 4;
+                    const totalT = usage.totalTokenCount || (promptT + candT);
+
+                    recordApiActivity('連線測試 (Test)', model, promptT, candT, totalT, 'SUCCESS', 'OK', latency);
+
+                    if (noticeEl) {
+                        noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        noticeEl.innerHTML = `✅ Gemini API 連線成功！(Connection OK)<br>延遲 (Latency): ${latency}ms • 消耗: ${totalT} Tokens • 回應: "${text.trim()}"`;
+                    }
+                    saveAdminConfig(true);
+                } else {
+                    const err = await resp.json().catch(() => ({}));
+                    const errMsg = err.error?.message || `HTTP ${resp.status}`;
+                    recordApiActivity('連線測試 (Test)', model, 0, 0, 0, 'FAILED', errMsg);
+                    if (noticeEl) {
+                        noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                        noticeEl.innerHTML = `❌ 連線失敗 (Failed): ${errMsg}`;
+                    }
+                }
+            } catch(e) {
+                recordApiActivity('連線測試 (Test)', model, 0, 0, 0, 'FAILED', e.message);
+                if (noticeEl) {
+                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                    noticeEl.innerHTML = `❌ 網絡或請求錯誤 (Network Error): ${e.message}`;
+                }
             }
         }
 
@@ -1459,16 +2376,116 @@
             }, 400);
         }
 
-        // SMART CONTEXT-AWARE AGENT WATER NLP PARSER
-        function handleCustomTextSubmit(e) {
-            e.preventDefault();
-            const input = document.getElementById('userInput');
-            const val = input.value.trim();
-            if (!val) return;
+        // ================= GEMINI AI CHAT ENGINE FOR AGENT WATER =================
+        async function callAgentWaterGemini(userText, callerGroup) {
+            const adminConfig = getAdminConfig();
+            const apiKey = adminConfig.apiKey || sharedAiConfig.apiKey;
+            const model = adminConfig.model || sharedAiConfig.model || 'gemini-2.5-flash';
 
-            appendUserBubbleToGroup(currentRole, val, val);
-            input.value = '';
+            if (!apiKey) return null;
 
+            const systemInstruction = `You are "Agent Water (水精靈 AI 導師)", an encouraging, scientifically precise S1 Integrated Science AI tutor for secondary school students conducting "Exp 1.2: Rate of Dissolving Table Salt (水溫對食鹽溶解速率的影響)".
+Your mission:
+1. Guide students with Socratic inquiry on why hot water (80°C) dissolves table salt much faster than cold water (25°C).
+2. Connect to the Particle Theory of Matter: at higher temperatures, water molecules have greater kinetic energy, move faster, and collide more violently and frequently with the sodium chloride (NaCl) crystal lattice, breaking it apart much faster.
+3. Emphasize fair testing: only water temperature is changed; water volume (100 mL), salt mass (5.0 g), and stirring speed/method must be kept constant.
+4. Explain why taking the class average of 8 groups cancels out random errors (such as human reaction time delay when clicking the timer or slight stirring rate variations).
+Formatting requirements:
+- Always reply with two concise paragraphs:
+  First paragraph in English (encouraging, clear, 2-3 sentences).
+  Second paragraph in 繁體中文 (Traditional Chinese, corresponding explanation, 2-3 sentences).
+- Include 1-2 cheerful science emojis (e.g. 💧, 🔬, ⏱️, ✨).
+- Keep total response concise and age-appropriate for Grade 7 / Secondary 1 students.`;
+
+            const gData = classData[callerGroup];
+            let contextExtra = "";
+            if (gData && gData.data) {
+                contextExtra = ` [Group ${callerGroup} recorded 25°C: ${gData.data[25]}s, 80°C: ${gData.data[80]}s]`;
+            }
+
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const startTime = Date.now();
+
+            try {
+                const resp = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        systemInstruction: { parts: [{ text: systemInstruction }] },
+                        contents: [
+                            { role: "user", parts: [{ text: `Current group: ${callerGroup}.${contextExtra} Student says: "${userText}"` }] }
+                        ],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 350
+                        }
+                    })
+                });
+                const latency = Date.now() - startTime;
+
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', err.error?.message || `HTTP ${resp.status}`);
+                    return null;
+                }
+
+                const data = await resp.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!text) return null;
+
+                const usage = data.usageMetadata || {};
+                const promptT = usage.promptTokenCount || 60;
+                const candT = usage.candidatesTokenCount || 40;
+                const totalT = usage.totalTokenCount || (promptT + candT);
+
+                recordApiActivity(callerGroup, model, promptT, candT, totalT, 'SUCCESS', 'OK', latency);
+
+                return parseBilingualResponse(text);
+            } catch(e) {
+                console.warn("Gemini call exception:", e);
+                recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', e.message);
+                return null;
+            }
+        }
+
+        function parseBilingualResponse(rawText) {
+            const paras = rawText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+            if (paras.length >= 2) {
+                return { en: paras[0], zh: paras.slice(1).join('\n\n') };
+            }
+            const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+            if (lines.length >= 2) {
+                return { en: lines[0], zh: lines.slice(1).join(' ') };
+            }
+            return { en: rawText, zh: rawText };
+        }
+
+        function appendThinkingBubble(group) {
+            const container = document.getElementById('chatContainer');
+            if (!container) return null;
+            const bubbleId = 'thinking-bubble-' + Date.now();
+            const div = document.createElement('div');
+            div.id = bubbleId;
+            div.className = "flex items-start gap-2.5 animate-pulse";
+            div.innerHTML = `
+                <div class="w-8 h-8 bg-sky-200 text-sky-800 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">💧</div>
+                <div class="chat-bubble-ai p-3 text-xs text-sky-800 max-w-[88%] flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
+                    <span class="font-medium italic">Agent Water is thinking... / 水精靈正在思考中...</span>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return bubbleId;
+        }
+
+        function removeThinkingBubble(bubbleId) {
+            if (!bubbleId) return;
+            const el = document.getElementById(bubbleId);
+            if (el) el.remove();
+        }
+
+        function executeLocalRuleBasedReply(val) {
             const lower = val.toLowerCase();
             let aiReplyEn = "";
             let aiReplyZh = "";
@@ -1492,6 +2509,38 @@
                 broadcastData();
                 updateAllUI();
             }, 600);
+        }
+
+        // SMART CONTEXT-AWARE AGENT WATER NLP PARSER (HYBRID GEMINI + LOCAL)
+        async function handleCustomTextSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('userInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            appendUserBubbleToGroup(currentRole, val, val);
+            input.value = '';
+
+            const thinkingId = appendThinkingBubble(currentRole);
+
+            let repliedWithGemini = false;
+            try {
+                const geminiResp = await callAgentWaterGemini(val, currentRole);
+                removeThinkingBubble(thinkingId);
+                if (geminiResp) {
+                    appendAIBubbleToGroup(currentRole, geminiResp.en, geminiResp.zh);
+                    broadcastData();
+                    updateAllUI();
+                    repliedWithGemini = true;
+                }
+            } catch(err) {
+                console.warn("Gemini call error:", err);
+                removeThinkingBubble(thinkingId);
+            }
+
+            if (!repliedWithGemini) {
+                executeLocalRuleBasedReply(val);
+            }
         }
 
         // Outlier Detector Function
@@ -2017,14 +3066,18 @@
                     this.ctx.fill();
                 });
 
-                // Clear informative overlay
+                // Streamlined informative badge overlay (eliminates crowding & particle collision)
+                this.ctx.fillStyle = this.isHot ? 'rgba(255, 241, 242, 0.88)' : 'rgba(240, 249, 255, 0.88)';
+                this.ctx.fillRect(4, 3, 135, 14);
                 this.ctx.fillStyle = this.isHot ? '#9f1239' : '#0369a1';
                 this.ctx.font = 'bold 9px "Noto Sans TC", sans-serif';
-                this.ctx.fillText(this.isHot ? '🔥 80°C 熱水 • 水分子動能大 • 高速劇烈碰撞' : '❄️ 25°C 冷水 • 水分子動能小 • 慢速平緩碰撞', 6, 12);
+                this.ctx.fillText(this.isHot ? '🔥 80°C • High Kinetic E' : '❄️ 25°C • Low Kinetic E', 7, 13);
                 
+                this.ctx.fillStyle = this.isHot ? 'rgba(255, 241, 242, 0.88)' : 'rgba(240, 249, 255, 0.88)';
+                this.ctx.fillRect(4, this.height - 16, 142, 13);
                 this.ctx.fillStyle = this.isHot ? '#be123c' : '#0284c7';
                 this.ctx.font = '9px "Noto Sans TC", sans-serif';
-                this.ctx.fillText(this.isHot ? '速度: 快速 (2.0) • 碰撞率: 高 (~4×) • 溶解快速' : '速度: 慢速 (0.55) • 碰撞率: 低 • 溶解緩慢', 6, this.height - 6);
+                this.ctx.fillText(this.isHot ? '速度: 2.0 • 碰撞率: 高 (~4×)' : '速度: 0.55 • 碰撞率: 低', 7, this.height - 6);
             }
         }
 
@@ -2053,8 +3106,8 @@
             const btn = document.getElementById('particleToggleBtn');
             if (btn) {
                 btn.innerHTML = isParticlePaused ? 
-                    '<i data-lucide="play" class="w-3 h-3 text-emerald-600"></i> 繼續播放' : 
-                    '<i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬';
+                    '<i data-lucide="play" class="w-3 h-3 text-emerald-600"></i> 繼續播放 (Play)' : 
+                    '<i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬 (Pause)';
                 if (window.lucide) lucide.createIcons();
             }
         }
@@ -2123,14 +3176,17 @@
             if (classInput) classInput.value = currentClass;
             const tBadge = document.getElementById('teacherClassBadge');
             if (tBadge) tBadge.innerText = currentClass;
+            const aBadge = document.getElementById('adminClassBadge');
+            if (aBadge) aBadge.innerText = currentClass;
 
             initChart();
             loadFromStorage();
             initMqtt();
             initParticles();
             animateParticles();
+            loadAdminUI();
 
-            // Set role from URL if present
+            // Check URL parameters or open Startup Modal (Image 3) on entry
             if (urlParams.get('group')) {
                 const gParam = urlParams.get('group').trim();
                 const targetRole = gParam.toLowerCase().startsWith('group') ? gParam : ('Group ' + gParam);
@@ -2145,6 +3201,15 @@
                     gSelect.value = 'Teacher';
                     handleRoleChange();
                 }
+            } else if (urlParams.get('role') === 'admin') {
+                const gSelect = document.getElementById('groupSelect');
+                if (gSelect) {
+                    gSelect.value = 'Admin';
+                    handleRoleChange();
+                }
+            } else {
+                // Open Class & Group selection modal automatically for students
+                openStartupModal();
             }
 
             renderStudentChatHistory();
