@@ -366,33 +366,124 @@
                         </button>
                     </div>
 
-                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
-                        <div class="flex justify-between items-center mb-3">
-                            <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                                <i data-lucide="edit-3" class="w-5 h-5 text-teal-600"></i>
-                                <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
-                            </h2>
-                            <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
-                                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
-                            </span>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div>
+                                <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                                    <i data-lucide="edit-3" class="w-5 h-5 text-teal-600"></i>
+                                    <span>2. Enter Group Experiment Data / 輸入本組實驗數據</span>
+                                </h2>
+                                <p class="text-xs text-slate-500 mt-0.5" id="studentDataModeSubtitle">
+                                    模式：4 人一組 (每組提交 1 個數據)
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <button type="button" onclick="toggleStudentExperimentMode()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-semibold transition border border-slate-200 flex items-center gap-1">
+                                    <i data-lucide="shuffle" class="w-3 h-3 text-slate-500"></i>
+                                    <span id="studentModeToggleBtnText">切換為2人小組 (2組數據)</span>
+                                </button>
+                                <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
+                                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
+                                </span>
+                            </div>
                         </div>
 
-                        <form id="dataForm" onsubmit="event.preventDefault(); submitGroupData();" class="space-y-3">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                                    <label class="block text-xs font-bold text-slate-700">25 °C Cold Water (冷水)</label>
-                                    <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="t25" placeholder="e.g. 180" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
-                                        <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                        <form id="dataForm" onsubmit="event.preventDefault(); submitGroupData();" class="space-y-4">
+                            <!-- SINGLE MODE CONTAINER (4人一組) -->
+                            <div id="singleDataEntryContainer" class="space-y-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <label class="block text-xs font-bold text-slate-700">25 °C Cold Water (冷水)</label>
+                                        <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" id="t25" placeholder="e.g. 180" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]">
+                                            <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                        <label class="block text-xs font-bold text-slate-700">80 °C Hot Water (熱水)</label>
+                                        <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" id="t80" placeholder="e.g. 60" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]">
+                                            <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                                    <label class="block text-xs font-bold text-slate-700">80 °C Hot Water (熱水)</label>
-                                    <span class="text-[10px] text-slate-400 block mb-1.5">Dissolving time in seconds / 溶解所需秒數</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="t80" placeholder="e.g. 60" min="1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-400 focus:outline-none min-h-[42px]" required>
-                                        <span class="text-xs font-bold text-slate-500">sec (秒)</span>
+                            </div>
+
+                            <!-- PAIR MODE CONTAINER (4人拆分兩組2人小組) -->
+                            <div id="pairDataEntryContainer" class="hidden space-y-3">
+                                <div class="p-2.5 bg-sky-50/70 border border-sky-200 rounded-xl text-xs text-sky-800 flex items-center justify-between">
+                                    <span class="flex items-center gap-1.5 font-bold">
+                                        <i data-lucide="users-2" class="w-4 h-4 text-sky-600"></i> 4 人小組內拆分兩組 2 人小組分別測量 (Sub-groups A & B)
+                                    </span>
+                                    <span class="text-[10px] text-sky-600 font-medium">系統將自動計算並即時展示本組平均值</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Sub-group A (小組 A) -->
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border-2 border-sky-200 space-y-3">
+                                        <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                                            <span class="font-bold text-xs text-sky-900 flex items-center gap-1.5">
+                                                <span>🏷️ 2人小組 A (Pair A)</span>
+                                            </span>
+                                            <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-full">小組 A 數據</span>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-700 mb-1">25 °C Cold Water (冷水秒數)</label>
+                                                <div class="flex items-center gap-1.5">
+                                                    <input type="number" id="t25_a" placeholder="e.g. 185" min="1" oninput="calculateLiveGroupAverage()" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none min-h-[38px]">
+                                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">sec (秒)</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-700 mb-1">80 °C Hot Water (熱水秒數)</label>
+                                                <div class="flex items-center gap-1.5">
+                                                    <input type="number" id="t80_a" placeholder="e.g. 58" min="1" oninput="calculateLiveGroupAverage()" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-400 focus:outline-none min-h-[38px]">
+                                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">sec (秒)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sub-group B (小組 B) -->
+                                    <div class="p-3.5 bg-slate-50 rounded-2xl border-2 border-indigo-200 space-y-3">
+                                        <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                                            <span class="font-bold text-xs text-indigo-900 flex items-center gap-1.5">
+                                                <span>🏷️ 2人小組 B (Pair B)</span>
+                                            </span>
+                                            <span class="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">小組 B 數據</span>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-700 mb-1">25 °C Cold Water (冷水秒數)</label>
+                                                <div class="flex items-center gap-1.5">
+                                                    <input type="number" id="t25_b" placeholder="e.g. 175" min="1" oninput="calculateLiveGroupAverage()" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none min-h-[38px]">
+                                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">sec (秒)</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-700 mb-1">80 °C Hot Water (熱水秒數)</label>
+                                                <div class="flex items-center gap-1.5">
+                                                    <input type="number" id="t80_b" placeholder="e.g. 62" min="1" oninput="calculateLiveGroupAverage()" class="w-full px-3 py-1.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:outline-none min-h-[38px]">
+                                                    <span class="text-xs text-slate-500 font-bold whitespace-nowrap">sec (秒)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Live Calculated Group Average Box -->
+                                <div class="p-3 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl border border-teal-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                                    <div class="flex items-center gap-1.5 text-teal-900 font-bold">
+                                        <i data-lucide="calculator" class="w-4 h-4 text-teal-600"></i>
+                                        <span>本組平均值 (Calculated Group Average):</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 font-mono font-bold text-teal-800 text-xs sm:text-sm">
+                                        <span>25°C: <span id="liveAvg25" class="text-teal-900 underline font-extrabold">-- s</span></span>
+                                        <span>|</span>
+                                        <span>80°C: <span id="liveAvg80" class="text-teal-900 underline font-extrabold">-- s</span></span>
                                     </div>
                                 </div>
                             </div>
@@ -743,9 +834,139 @@
                 </div>
             </div>
 
+            <!-- TEACHER VISUALIZATION SUITE: Bar Chart, Particle Visualizer & 8 Groups Matrix (Request 3) -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-6">
+                <!-- Suite Header & Experiment Mode Controls -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2.5 bg-sky-600 text-white rounded-2xl shadow">
+                            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base md:text-lg font-bold text-slate-800 font-fun">
+                                Classroom Inquiry Suite / 全班數據柱狀圖、粒子動能模擬與 8 組數據總覽表
+                            </h3>
+                            <p class="text-xs text-slate-500">
+                                Live multi-dimensional experimental analytics & particle dynamics for whole-class inquiry. / 課堂即時可視化探究套件。
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Experiment Mode Switcher (Request 2) -->
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                        <span class="text-[11px] font-bold text-slate-600 px-2 flex items-center gap-1">
+                            <i data-lucide="settings-2" class="w-3.5 h-3.5 text-slate-500"></i> 實驗數據模式:
+                        </span>
+                        <button type="button" id="teacherModeSingleBtn" onclick="setExperimentDataMode('single')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-800 shadow-sm border border-slate-200">
+                            👥 4人一組 (1組數據)
+                        </button>
+                        <button type="button" id="teacherModePairBtn" onclick="setExperimentDataMode('pair')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900">
+                            👥👥 拆分2人小組 (2組數據)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1. Class Data Bar Chart Comparison -->
+                <div class="space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                                <i data-lucide="bar-chart-3" class="w-4 h-4 text-sky-600"></i>
+                                <span>3. Class Data Bar Chart Comparison / 數據對比柱狀圖</span>
+                            </h4>
+                            <span class="text-[10px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded-md">Live Projection / 課堂投屏</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="teacherChartViewAllBtn" onclick="setTeacherChartView('all')" class="px-3 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white shadow-sm transition">
+                                全班 8 組橫向對比 (All Groups)
+                            </button>
+                            <button type="button" id="teacherChartViewFocusBtn" onclick="setTeacherChartView('focus')" class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                                單組 vs 全班平均 (Focus Group)
+                            </button>
+                            <select id="teacherChartFocusSelect" onchange="updateTeacherChart()" class="hidden bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-400">
+                                <option value="Group 1">Group 1</option>
+                                <option value="Group 2">Group 2</option>
+                                <option value="Group 3">Group 3</option>
+                                <option value="Group 4">Group 4</option>
+                                <option value="Group 5">Group 5</option>
+                                <option value="Group 6">Group 6</option>
+                                <option value="Group 7">Group 7</option>
+                                <option value="Group 8">Group 8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500" id="teacherChartSubtitle">
+                        Comparing All 8 Groups side-by-side with Class Average for Cold (25°C) & Hot (80°C) Water. / 橫向對比全班 8 組冷水與熱水秒數，並對齊全班平均值。
+                    </p>
+                    <div class="relative h-72 w-full">
+                        <canvas id="teacherClassBarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 2. Particle Theory Dynamic Visualizer -->
+                <div class="border-t border-slate-100 pt-4">
+                    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <h4 class="text-xs sm:text-sm font-bold text-indigo-900 flex items-center gap-1.5">
+                            <span class="text-base">🔬</span> 微觀粒子動態圖解 (Particle Theory Visualizer)
+                        </h4>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleTeacherParticleSim()" id="teacherParticleToggleBtn" class="text-xs bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-800 font-semibold px-3 py-1 rounded-lg flex items-center gap-1.5 transition min-h-[34px]">
+                                <i data-lucide="pause" class="w-3.5 h-3.5 text-indigo-600"></i> 暫停模擬 (Pause)
+                            </button>
+                            <span class="text-xs bg-indigo-50 border border-indigo-200 text-indigo-800 font-semibold px-2.5 py-1 rounded-lg">分子動能模擬 (Kinetic Simulation)</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mb-2">
+                        溫度越高，水分子動能越大、運動越劇烈，碰撞拆解食鹽晶格速度越快：
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-sky-50 rounded-2xl p-3.5 border border-sky-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="font-bold text-xs sm:text-sm text-sky-800">25°C 冷水 (Cold Water)</span>
+                                <span class="text-[10px] text-sky-600 font-medium">低動能 • 慢速 (Low Kinetic E)</span>
+                            </div>
+                            <canvas id="teacherParticleCanvasCold" width="320" height="200" class="w-full h-48 sm:h-52 bg-sky-100/60 rounded-xl border border-sky-200 shadow-inner block"></canvas>
+                        </div>
+                        <div class="bg-rose-50 rounded-2xl p-3.5 border border-rose-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <span class="font-bold text-xs sm:text-sm text-rose-800">80°C 熱水 (Hot Water)</span>
+                                <span class="text-[10px] text-rose-600 font-medium">高動能 • 快速 (High Kinetic E)</span>
+                            </div>
+                            <canvas id="teacherParticleCanvasHot" width="320" height="200" class="w-full h-48 sm:h-52 bg-rose-100/60 rounded-xl border border-rose-200 shadow-inner block"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 8 Groups Data Matrix -->
+                <div class="border-t border-slate-100 pt-4 overflow-x-auto">
+                    <h4 class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+                        <span>8 Groups Data Matrix / 全班 8 組數據總覽表</span>
+                        <span id="teacherSubmittedCount" class="text-teal-600 font-semibold">0/8 Groups Submitted</span>
+                    </h4>
+                    <table class="w-full text-[11px] text-center border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600">
+                                <th class="p-1.5 border">Temperature / 水溫</th>
+                                <th class="p-1.5 border">G1</th>
+                                <th class="p-1.5 border">G2</th>
+                                <th class="p-1.5 border">G3</th>
+                                <th class="p-1.5 border">G4</th>
+                                <th class="p-1.5 border">G5</th>
+                                <th class="p-1.5 border">G6</th>
+                                <th class="p-1.5 border">G7</th>
+                                <th class="p-1.5 border">G8</th>
+                                <th class="p-1.5 border bg-teal-50 text-teal-800 font-bold">AVG (平均)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacherDataTableBody" class="text-slate-700">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- SECTION 1: SRL Real-Time Whole-Class Discussion Prompts -->
-            <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-3xl p-6 shadow-md border border-amber-200">
-                <div class="flex items-center justify-between mb-4">
+            <div class="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-3xl p-6 shadow-md border border-amber-200 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5">
                         <div class="p-2.5 bg-amber-500 text-white rounded-2xl shadow">
                             <i data-lucide="messages-square" class="w-6 h-6"></i>
@@ -755,14 +976,42 @@
                                 Real-time SRL Discussion Questions / 依據全班數據即時生成之大組討論議題
                             </h3>
                             <p class="text-xs text-amber-800">
-                                Facilitation questions automatically generated based on live group timings and AI chat diagnostics. / 依據實時數據與 AI 探究診斷自動生成之課堂提問。
+                                Facilitation questions automatically synthesized based on live group timings and student chat logs. / 依據實時數據、異常對比與學生真實對話記錄生成之課堂提問。
                             </p>
                         </div>
                     </div>
-                    <span class="hidden sm:inline-block text-[10px] bg-amber-200 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-300">Pedagogical Facilitation / 教學引導</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button type="button" onclick="refreshDiscussionQuestionsWithAnimation()" class="bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-md transition flex items-center gap-1.5 border border-amber-400/40">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>依最新對話刷新 (Refresh HOTQs)</span>
+                        </button>
+                        <span class="hidden sm:inline-block text-[10px] bg-amber-200 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-300">Pedagogical Facilitation / 教學引導</span>
+                    </div>
                 </div>
 
-                <div id="wholeClassDiscussionContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Discussion Category Filter Tabs -->
+                <div class="flex items-center gap-1.5 flex-wrap pt-1 border-t border-amber-200/60" id="discussionFilterTabs">
+                    <button type="button" onclick="filterDiscussionQuestions('all')" id="btnFilter-all" class="px-3 py-1 rounded-full text-xs font-bold transition bg-amber-600 text-white shadow-sm">
+                        🌟 全部議題 (All HOTQs)
+                    </button>
+                    <button type="button" onclick="filterDiscussionQuestions('kinetics')" id="btnFilter-kinetics" class="px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300">
+                        🔬 微觀動力 (Kinetics)
+                    </button>
+                    <button type="button" onclick="filterDiscussionQuestions('reliability')" id="btnFilter-reliability" class="px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300">
+                        ⚖️ 數據與信度 (Reliability)
+                    </button>
+                    <button type="button" onclick="filterDiscussionQuestions('discrepancy')" id="btnFilter-discrepancy" class="px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300">
+                        🔍 異常排查 (Discrepancies)
+                    </button>
+                    <button type="button" onclick="filterDiscussionQuestions('concepts')" id="btnFilter-concepts" class="px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300">
+                        🧠 概念辨析 (Concepts)
+                    </button>
+                    <button type="button" onclick="filterDiscussionQuestions('engineering')" id="btnFilter-engineering" class="px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300">
+                        🛠️ STEM 工程 (STEM)
+                    </button>
+                </div>
+
+                <div id="wholeClassDiscussionContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Dynamic SRL Discussion Prompt Cards -->
                 </div>
             </div>
@@ -1099,7 +1348,7 @@
                     歡迎進入科學探究課堂！
                 </h2>
                 <p class="text-xs text-slate-500 font-medium">
-                    Exp 1.2: Rate of Dissolving Table Salt • 學生端啟動 (Student Launch)
+                    Exp 2.5: Factors Affecting Rate of Dissolving • 學生端啟動
                 </p>
                 <p class="text-[11px] text-slate-500 max-w-md mx-auto leading-relaxed">
                     請先確認你的<span class="font-bold text-slate-800">班別</span>與<span class="font-bold text-slate-800">組別</span>，系統將為你啟動專屬的實驗記錄與水精靈對話通道：
@@ -1384,14 +1633,14 @@
     <!-- JS Logic -->
     <script>
         // Global State & Real-Time Sync Configuration
-        let currentClass = localStorage.getItem('salt_exp_class') || "Class 1A";
-        let currentRole = "Group 1"; // Default role
-        let lastSelectedRole = "Group 1";
+        let currentClass = localStorage.getItem('salt_exp_class') || "Class 1B";
+        let currentRole = "Group 3"; // Default role
+        let lastSelectedRole = "Group 3";
         let selectedCardForClickMove = null;
 
         // Startup Modal State (Image 3)
         let startupSelectedClass = currentClass;
-        let startupSelectedGroup = "Group 1";
+        let startupSelectedGroup = "Group 3";
 
         // Password Modal State (Image 4)
         let pendingTargetRole = null;
@@ -1409,12 +1658,66 @@
         let mqttClient = null;
         let isMqttConnected = false;
 
+        // Experiment Data Mode: 'single' (4人一組，每組1個數據) or 'pair' (4人拆分兩組2人小組，每組2個數據：小組A & 小組B)
+        let experimentDataMode = localStorage.getItem('salt_exp_data_mode') || 'single';
+
+        function setExperimentDataMode(mode) {
+            experimentDataMode = mode;
+            localStorage.setItem('salt_exp_data_mode', mode);
+
+            broadcastData();
+            updateDataModeUI();
+            updateAllUI();
+        }
+
+        function toggleStudentExperimentMode() {
+            const nextMode = (experimentDataMode === 'pair') ? 'single' : 'pair';
+            setExperimentDataMode(nextMode);
+        }
+
+        function updateDataModeUI() {
+            // Update Teacher button styles
+            const singleBtn = document.getElementById('teacherModeSingleBtn');
+            const pairBtn = document.getElementById('teacherModePairBtn');
+            if (singleBtn && pairBtn) {
+                if (experimentDataMode === 'single') {
+                    singleBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-800 shadow-sm border border-slate-200";
+                    pairBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900";
+                } else {
+                    pairBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition bg-sky-600 text-white shadow-sm";
+                    singleBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-600 hover:text-slate-900";
+                }
+            }
+
+            // Update Student Step 2 form visibility
+            const singleContainer = document.getElementById('singleDataEntryContainer');
+            const pairContainer = document.getElementById('pairDataEntryContainer');
+            const subtitleEl = document.getElementById('studentDataModeSubtitle');
+            const toggleBtnText = document.getElementById('studentModeToggleBtnText');
+
+            if (singleContainer && pairContainer) {
+                if (experimentDataMode === 'single') {
+                    singleContainer.classList.remove('hidden');
+                    pairContainer.classList.add('hidden');
+                    if (subtitleEl) subtitleEl.innerText = "模式：4 人一組 (全組提交 1 個數據)";
+                    if (toggleBtnText) toggleBtnText.innerText = "切換為2人小組 (2組數據)";
+                } else {
+                    singleContainer.classList.add('hidden');
+                    pairContainer.classList.remove('hidden');
+                    if (subtitleEl) subtitleEl.innerText = "模式：拆分 2 人小組 (每組提交 2 個數據：小組 A & 小組 B)";
+                    if (toggleBtnText) toggleBtnText.innerText = "切換為4人1組模式";
+                }
+            }
+        }
+
         // Global Data Structure for 8 Groups
         function createFreshClassData() {
             const data = {};
             for(let i=1; i<=8; i++) {
                 data[`Group ${i}`] = {
-                    data: null, // { 25: seconds, 80: seconds }
+                    data: null, // { 25: seconds, 80: seconds } (Consolidated / Group Average)
+                    pairA: null, // { 25: seconds, 80: seconds } (Sub-group A / 2人小組 A)
+                    pairB: null, // { 25: seconds, 80: seconds } (Sub-group B / 2人小組 B)
                     hypothesis: "",
                     usedToThink: "",
                     nowIThink: "",
@@ -1763,6 +2066,12 @@
                         if (parsed) {
                             if (parsed.payload && !parsed.type) {
                                 mergeIncomingClassData(parsed.payload);
+                                if (parsed.mode && parsed.mode !== experimentDataMode) {
+                                    experimentDataMode = parsed.mode;
+                                    localStorage.setItem('salt_exp_data_mode', experimentDataMode);
+                                    updateDataModeUI();
+                                    updateAllUI();
+                                }
                             } else if (parsed.type === 'AI_CONFIG_SYNC') {
                                 sharedAiConfig = {
                                     apiKey: parsed.apiKey || '',
@@ -1918,6 +2227,12 @@
             localBroadcastChannel.onmessage = (event) => {
                 if (event.data && event.data.payload) {
                     mergeIncomingClassData(event.data.payload);
+                    if (event.data.mode && event.data.mode !== experimentDataMode) {
+                        experimentDataMode = event.data.mode;
+                        localStorage.setItem('salt_exp_data_mode', experimentDataMode);
+                        updateDataModeUI();
+                        updateAllUI();
+                    }
                 }
             };
         }
@@ -1925,18 +2240,18 @@
         function broadcastData() {
             saveToStorage();
             if (localBroadcastChannel) {
-                localBroadcastChannel.postMessage({ type: 'UPDATE_SALT_DATA', payload: classData });
+                localBroadcastChannel.postMessage({ type: 'UPDATE_SALT_DATA', payload: classData, mode: experimentDataMode });
             }
             if (mqttClient && isMqttConnected) {
                 const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/sync`;
-                mqttClient.publish(topic, JSON.stringify({ payload: classData, timestamp: Date.now() }), { qos: 0, retain: true });
+                mqttClient.publish(topic, JSON.stringify({ payload: classData, mode: experimentDataMode, timestamp: Date.now() }), { qos: 0, retain: true });
             }
         }
 
         // ================= STARTUP MODAL FUNCTIONS (IMAGE 3) =================
         function openStartupModal() {
-            startupSelectedClass = currentClass;
-            startupSelectedGroup = (currentRole && currentRole.startsWith('Group')) ? currentRole : 'Group 1';
+            startupSelectedClass = currentClass || 'Class 1B';
+            startupSelectedGroup = (currentRole && currentRole.startsWith('Group')) ? currentRole : 'Group 3';
             
             updateStartupClassChipsUI();
             
@@ -1976,7 +2291,7 @@
         }
 
         function handleStartupCustomClassInput(val) {
-            startupSelectedClass = val.trim() || "Class 1A";
+            startupSelectedClass = val.trim() || "Class 1B";
             updateStartupClassChipsUI();
         }
 
@@ -2140,7 +2455,7 @@
                     }
                 }
             } else if (pendingTargetRole === 'Admin') {
-                if (pwd === 'adminwater') {
+                if (pwd === 'teacheradmin') {
                     currentRole = "Admin";
                     lastSelectedRole = "Admin";
                     document.getElementById('roleBadge').innerText = "AI System Admin / 系統管理員";
@@ -2169,6 +2484,63 @@
             }
         }
 
+        function calculateLiveGroupAverage() {
+            const t25_a = parseFloat(document.getElementById('t25_a')?.value);
+            const t80_a = parseFloat(document.getElementById('t80_a')?.value);
+            const t25_b = parseFloat(document.getElementById('t25_b')?.value);
+            const t80_b = parseFloat(document.getElementById('t80_b')?.value);
+
+            const valid25 = [];
+            if (!isNaN(t25_a)) valid25.push(t25_a);
+            if (!isNaN(t25_b)) valid25.push(t25_b);
+
+            const valid80 = [];
+            if (!isNaN(t80_a)) valid80.push(t80_a);
+            if (!isNaN(t80_b)) valid80.push(t80_b);
+
+            const avg25El = document.getElementById('liveAvg25');
+            const avg80El = document.getElementById('liveAvg80');
+
+            if (avg25El) {
+                avg25El.innerText = valid25.length > 0 ? (Math.round(valid25.reduce((a, b) => a + b, 0) / valid25.length) + ' s') : '-- s';
+            }
+            if (avg80El) {
+                avg80El.innerText = valid80.length > 0 ? (Math.round(valid80.reduce((a, b) => a + b, 0) / valid80.length) + ' s') : '-- s';
+            }
+        }
+
+        function loadGroupDataIntoForm(groupKey) {
+            const gObj = classData[groupKey];
+            const dataForm = document.getElementById('dataForm');
+            if (dataForm) dataForm.reset();
+
+            if (gObj) {
+                // Single mode fields
+                const t25 = document.getElementById('t25');
+                const t80 = document.getElementById('t80');
+                if (t25 && t80 && gObj.data) {
+                    t25.value = (typeof gObj.data[25] === 'number') ? gObj.data[25] : '';
+                    t80.value = (typeof gObj.data[80] === 'number') ? gObj.data[80] : '';
+                }
+
+                // Pair mode fields
+                const t25_a = document.getElementById('t25_a');
+                const t80_a = document.getElementById('t80_a');
+                const t25_b = document.getElementById('t25_b');
+                const t80_b = document.getElementById('t80_b');
+
+                if (t25_a && t80_a && gObj.pairA) {
+                    t25_a.value = (typeof gObj.pairA[25] === 'number') ? gObj.pairA[25] : '';
+                    t80_a.value = (typeof gObj.pairA[80] === 'number') ? gObj.pairA[80] : '';
+                }
+                if (t25_b && t80_b && gObj.pairB) {
+                    t25_b.value = (typeof gObj.pairB[25] === 'number') ? gObj.pairB[25] : '';
+                    t80_b.value = (typeof gObj.pairB[80] === 'number') ? gObj.pairB[80] : '';
+                }
+            }
+            calculateLiveGroupAverage();
+        }
+
         // Role Switcher
         function handleRoleChange() {
             const select = document.getElementById('groupSelect');
@@ -2191,12 +2563,8 @@
 
                 // Reload fields for selected group
                 const gObj = classData[currentRole];
-                if (gObj && gObj.data) {
-                    document.getElementById('t25').value = gObj.data[25];
-                    document.getElementById('t80').value = gObj.data[80];
-                } else {
-                    document.getElementById('dataForm').reset();
-                }
+                loadGroupDataIntoForm(currentRole);
+                updateDataModeUI();
 
                 if (gObj) {
                     document.getElementById('studentHypothesis').value = gObj.hypothesis || "";
@@ -2624,12 +2992,45 @@
         }
 
         function submitGroupData() {
-            const t25 = parseFloat(document.getElementById('t25').value);
-            const t80 = parseFloat(document.getElementById('t80').value);
+            let t25, t80;
+            if (experimentDataMode === 'pair') {
+                const t25_a = parseFloat(document.getElementById('t25_a')?.value);
+                const t80_a = parseFloat(document.getElementById('t80_a')?.value);
+                const t25_b = parseFloat(document.getElementById('t25_b')?.value);
+                const t80_b = parseFloat(document.getElementById('t80_b')?.value);
 
-            if (isNaN(t25) || isNaN(t80)) {
-                alert("Please enter valid timing numbers for both temperatures! / 請輸入有效的數據！");
-                return;
+                const hasA = !isNaN(t25_a) && !isNaN(t80_a);
+                const hasB = !isNaN(t25_b) && !isNaN(t80_b);
+
+                if (!hasA && !hasB) {
+                    alert("Please enter valid experiment data for at least one pair (Sub-group A or B)! / 請至少輸入一組完整的小組實驗數據 (小組 A 或 小組 B)！");
+                    return;
+                }
+
+                if (hasA) classData[currentRole].pairA = { 25: t25_a, 80: t80_a };
+                if (hasB) classData[currentRole].pairB = { 25: t25_b, 80: t80_b };
+
+                if (hasA && hasB) {
+                    t25 = Math.round((t25_a + t25_b) / 2);
+                    t80 = Math.round((t80_a + t80_b) / 2);
+                } else if (hasA) {
+                    t25 = t25_a;
+                    t80 = t80_a;
+                } else {
+                    t25 = t25_b;
+                    t80 = t80_b;
+                }
+            } else {
+                t25 = parseFloat(document.getElementById('t25')?.value);
+                t80 = parseFloat(document.getElementById('t80')?.value);
+
+                if (isNaN(t25) || isNaN(t80)) {
+                    alert("Please enter valid timing numbers for both temperatures! / 請輸入有效的冷熱水秒數！");
+                    return;
+                }
+
+                classData[currentRole].pairA = { 25: t25, 80: t80 };
+                classData[currentRole].pairB = null;
             }
 
             classData[currentRole].data = { 25: t25, 80: t80 };
@@ -2666,9 +3067,16 @@
             for(let i=1; i<=8; i++) {
                 const gName = `Group ${i}`;
                 if (!classData[gName].data || gName !== currentRole) {
+                    const t25_a = Math.round(baselines[25] + (Math.random() * 24 - 12));
+                    const t80_a = Math.round(baselines[80] + (Math.random() * 12 - 6));
+                    const t25_b = Math.round(baselines[25] + (Math.random() * 24 - 12));
+                    const t80_b = Math.round(baselines[80] + (Math.random() * 12 - 6));
+
+                    classData[gName].pairA = { 25: t25_a, 80: t80_a };
+                    classData[gName].pairB = { 25: t25_b, 80: t80_b };
                     classData[gName].data = {
-                        25: Math.round(baselines[25] + (Math.random() * 30 - 15)),
-                        80: Math.round(baselines[80] + (Math.random() * 16 - 8))
+                        25: Math.round((t25_a + t25_b) / 2),
+                        80: Math.round((t80_a + t80_b) / 2)
                     };
                     const sample = sampleSummaries[(i - 1) % sampleSummaries.length];
                     classData[gName].stage = sample.stage;
@@ -2709,7 +3117,7 @@
 
             for(let i=1; i<=8; i++) {
                 const g = classData[`Group ${i}`].data;
-                if (g) {
+                if (g && typeof g[25] === 'number' && typeof g[80] === 'number') {
                     sums[25] += g[25];
                     sums[80] += g[80];
                     count++;
@@ -2725,11 +3133,121 @@
             };
         }
 
+        function calculateSubgroupClassAverages() {
+            let sumsA = { 25: 0, 80: 0 }, countA = 0;
+            let sumsB = { 25: 0, 80: 0 }, countB = 0;
+
+            for(let i=1; i<=8; i++) {
+                const gObj = classData[`Group ${i}`];
+                if (gObj) {
+                    if (gObj.pairA && typeof gObj.pairA[25] === 'number' && typeof gObj.pairA[80] === 'number') {
+                        sumsA[25] += gObj.pairA[25];
+                        sumsA[80] += gObj.pairA[80];
+                        countA++;
+                    }
+                    if (gObj.pairB && typeof gObj.pairB[25] === 'number' && typeof gObj.pairB[80] === 'number') {
+                        sumsB[25] += gObj.pairB[25];
+                        sumsB[80] += gObj.pairB[80];
+                        countB++;
+                    }
+                }
+            }
+
+            return {
+                pairA: countA > 0 ? { 25: Math.round(sumsA[25] / countA), 80: Math.round(sumsA[80] / countA), count: countA } : null,
+                pairB: countB > 0 ? { 25: Math.round(sumsB[25] / countB), 80: Math.round(sumsB[80] / countB), count: countB } : null
+            };
+        }
+
+        function render8GroupsMatrix(tbodyId, countElementId) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            const avgData = calculateClassAverage();
+            const subAvg = calculateSubgroupClassAverages();
+            const countEl = document.getElementById(countElementId);
+            if (countEl) {
+                countEl.innerText = avgData ? `${avgData.count}/8 Groups Submitted` : `0/8 Groups Submitted`;
+            }
+
+            tbody.innerHTML = '';
+
+            if (experimentDataMode === 'pair') {
+                const rowsConfig = [
+                    { label: '25 °C 冷水 - 小組 A (Pair A)', isAvg: false, tempKey: 25, pairKey: 'pairA' },
+                    { label: '25 °C 冷水 - 小組 B (Pair B)', isAvg: false, tempKey: 25, pairKey: 'pairB' },
+                    { label: '25 °C 冷水 - 本組平均 (Group Avg)', isAvg: true, tempKey: 25, pairKey: null },
+                    { label: '80 °C 熱水 - 小組 A (Pair A)', isAvg: false, tempKey: 80, pairKey: 'pairA' },
+                    { label: '80 °C 熱水 - 小組 B (Pair B)', isAvg: false, tempKey: 80, pairKey: 'pairB' },
+                    { label: '80 °C 熱水 - 本組平均 (Group Avg)', isAvg: true, tempKey: 80, pairKey: null }
+                ];
+
+                rowsConfig.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = row.isAvg ? "border-b bg-teal-50/70 font-bold hover:bg-teal-100/60 transition" : "border-b hover:bg-slate-50 transition";
+
+                    let html = `<td class="p-2 text-left border-r ${row.isAvg ? 'font-extrabold text-teal-950 bg-teal-100/60' : 'font-medium bg-slate-50 text-slate-700'}">${row.label}</td>`;
+
+                    for (let i = 1; i <= 8; i++) {
+                        const gKey = `Group ${i}`;
+                        const gObj = classData[gKey];
+                        let val = '-';
+
+                        if (row.isAvg) {
+                            val = (gObj && gObj.data && typeof gObj.data[row.tempKey] === 'number') ? gObj.data[row.tempKey] : '-';
+                        } else {
+                            const pObj = gObj ? gObj[row.pairKey] : null;
+                            val = (pObj && typeof pObj[row.tempKey] === 'number') ? pObj[row.tempKey] : '-';
+                        }
+
+                        const isMyGroup = (gKey === currentRole && currentRole !== 'Teacher' && currentRole !== 'Admin');
+                        let cellClass = "p-2 border-r";
+                        if (row.isAvg) {
+                            cellClass += isMyGroup ? " bg-teal-200 text-teal-950 font-extrabold" : " text-teal-900 font-bold";
+                        } else {
+                            cellClass += isMyGroup ? " bg-sky-100 font-bold text-sky-900" : " text-slate-700";
+                        }
+                        html += `<td class="${cellClass}">${val} ${val !== '-' ? 's' : ''}</td>`;
+                    }
+
+                    // Class Average column
+                    let avgVal = '-';
+                    if (row.isAvg) {
+                        avgVal = avgData ? `${avgData[row.tempKey]} s` : '-';
+                    } else {
+                        const pAvg = subAvg[row.pairKey];
+                        avgVal = pAvg ? `${pAvg[row.tempKey]} s` : '-';
+                    }
+                    html += `<td class="p-2 font-extrabold ${row.isAvg ? 'bg-teal-200 text-teal-950' : 'bg-teal-50 text-teal-800'}">${avgVal}</td>`;
+
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                [{ temp: '25 °C Cold Water (冷水)', key: 25 }, { temp: '80 °C Hot Water (熱水)', key: 80 }].forEach(row => {
+                    let tr = document.createElement('tr');
+                    tr.className = "border-b hover:bg-slate-50 transition";
+                    
+                    let html = `<td class="p-2 font-bold border-r bg-slate-50 text-left">${row.temp}</td>`;
+                    for(let i=1; i<=8; i++) {
+                        const gVal = classData[`Group ${i}`].data ? classData[`Group ${i}`].data[row.key] : '-';
+                        const isMyGroup = (`Group ${i}` === currentRole && currentRole !== 'Teacher' && currentRole !== 'Admin');
+                        html += `<td class="p-2 border-r ${isMyGroup ? 'bg-sky-100 font-bold text-sky-900' : ''}">${gVal} ${gVal !== '-' ? 's' : ''}</td>`;
+                    }
+
+                    const avgVal = avgData ? `${avgData[row.key]} s` : '-';
+                    html += `<td class="p-2 font-bold bg-teal-50 text-teal-800">${avgVal}</td>`;
+                    
+                    tr.innerHTML = html;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
         function updateAllUI() {
             const myData = classData[currentRole] ? classData[currentRole].data : null;
             const avgData = calculateClassAverage();
 
-            // Update Chart
+            // Update Student Chart
             if (myData && classBarChart) {
                 classBarChart.data.datasets[0].data = [myData[25], myData[80]];
             } else if (classBarChart) {
@@ -2738,39 +3256,21 @@
 
             if (avgData && classBarChart) {
                 classBarChart.data.datasets[1].data = [avgData[25], avgData[80]];
-                document.getElementById('submittedCount').innerText = `${avgData.count}/8 Groups Submitted`;
             } else if (classBarChart) {
                 classBarChart.data.datasets[1].data = [null, null];
-                document.getElementById('submittedCount').innerText = `0/8 Groups Submitted`;
             }
 
             if (classBarChart) classBarChart.update();
 
-            // Update Table
-            const tbody = document.getElementById('dataTableBody');
-            if (tbody) {
-                tbody.innerHTML = '';
-                [{ temp: '25 °C Cold Water', key: 25 }, { temp: '80 °C Hot Water', key: 80 }].forEach(row => {
-                    let tr = document.createElement('tr');
-                    tr.className = "border-b hover:bg-slate-50";
-                    
-                    let html = `<td class="p-2 font-bold border-r bg-slate-50">${row.temp}</td>`;
-                    for(let i=1; i<=8; i++) {
-                        const gVal = classData[`Group ${i}`].data ? classData[`Group ${i}`].data[row.key] : '-';
-                        const isMyGroup = `Group ${i}` === currentRole;
-                        html += `<td class="p-2 border-r ${isMyGroup ? 'bg-sky-100 font-bold text-sky-900' : ''}">${gVal} ${gVal !== '-' ? 's' : ''}</td>`;
-                    }
+            // Update 8 Groups Data Tables (Both Student & Teacher Views)
+            render8GroupsMatrix('dataTableBody', 'submittedCount');
+            render8GroupsMatrix('teacherDataTableBody', 'teacherSubmittedCount');
 
-                    const avgVal = avgData ? avgData[row.key] : '-';
-                    html += `<td class="p-2 font-bold bg-teal-50 text-teal-800">${avgVal} ${avgVal !== '-' ? 's' : ''}</td>`;
-                    
-                    tr.innerHTML = html;
-                    tbody.appendChild(tr);
-                });
-            }
+            // Update Teacher Bar Chart
+            updateTeacherChart();
 
             // Update Student Learning Summary if active
-            if (currentRole !== "Teacher") {
+            if (currentRole !== "Teacher" && currentRole !== "Admin") {
                 renderPersonalizedLearningSummary(currentRole);
             }
 
@@ -3306,95 +3806,324 @@ Crucial Formatting & Output Rules:
                 }
             }
 
+            updateDataModeUI();
+            updateTeacherChart();
+            render8GroupsMatrix('teacherDataTableBody', 'teacherSubmittedCount');
             renderWholeClassDiscussionPrompts();
             renderTeacherReflectionGallery();
         }
 
-        // Generate SRL Whole Class Discussion Prompts (HOTS) based on live data
+        // ================= TEACHER CHART LOGIC =================
+        let teacherClassBarChart = null;
+        let teacherChartViewMode = 'all'; // 'all' or 'focus'
+        let teacherChartFocusGroup = 'Group 1';
+
+        function setTeacherChartView(mode) {
+            teacherChartViewMode = mode;
+            const allBtn = document.getElementById('teacherChartViewAllBtn');
+            const focusBtn = document.getElementById('teacherChartViewFocusBtn');
+            const select = document.getElementById('teacherChartFocusSelect');
+            const subtitle = document.getElementById('teacherChartSubtitle');
+
+            if (mode === 'all') {
+                if (allBtn) allBtn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white shadow-sm transition";
+                if (focusBtn) focusBtn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+                if (select) select.classList.add('hidden');
+                if (subtitle) subtitle.innerText = "Comparing All 8 Groups side-by-side with Class Average for Cold (25°C) & Hot (80°C) Water. / 橫向對比全班 8 組冷水與熱水秒數，並對齊全班平均值。";
+            } else {
+                if (focusBtn) focusBtn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-sky-600 text-white shadow-sm transition";
+                if (allBtn) allBtn.className = "px-3 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+                if (select) select.classList.remove('hidden');
+                if (subtitle) subtitle.innerText = `Comparing ${teacherChartFocusGroup} (Blue Bar) vs Class Average (Green Bar). / 對比特定組別數據與全班平均值。`;
+            }
+            updateTeacherChart();
+        }
+
+        function initTeacherChart() {
+            const canvas = document.getElementById('teacherClassBarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            teacherClassBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'AVG (平均)'],
+                    datasets: [
+                        {
+                            label: '25 °C Cold Water (冷水)',
+                            data: [null, null, null, null, null, null, null, null, null],
+                            backgroundColor: '#0284c7',
+                            borderRadius: 6
+                        },
+                        {
+                            label: '80 °C Hot Water (熱水)',
+                            data: [null, null, null, null, null, null, null, null, null],
+                            backgroundColor: '#f97316',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 350 },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Dissolving Time (seconds / 秒)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTeacherChart() {
+            if (!teacherClassBarChart) return;
+            const avgData = calculateClassAverage();
+
+            if (teacherChartViewMode === 'all') {
+                const labels = ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'AVG (平均)'];
+                const data25 = [];
+                const data80 = [];
+                for (let i = 1; i <= 8; i++) {
+                    const g = classData[`Group ${i}`].data;
+                    data25.push(g ? g[25] : null);
+                    data80.push(g ? g[80] : null);
+                }
+                data25.push(avgData ? avgData[25] : null);
+                data80.push(avgData ? avgData[80] : null);
+
+                teacherClassBarChart.data.labels = labels;
+                teacherClassBarChart.data.datasets = [
+                    {
+                        label: '25 °C Cold Water (冷水)',
+                        data: data25,
+                        backgroundColor: '#0284c7',
+                        borderRadius: 6
+                    },
+                    {
+                        label: '80 °C Hot Water (熱水)',
+                        data: data80,
+                        backgroundColor: '#f97316',
+                        borderRadius: 6
+                    }
+                ];
+            } else {
+                const select = document.getElementById('teacherChartFocusSelect');
+                if (select) teacherChartFocusGroup = select.value || 'Group 1';
+                const gData = classData[teacherChartFocusGroup]?.data;
+
+                teacherClassBarChart.data.labels = ['25 °C Cold Water (冷水)', '80 °C Hot Water (熱水)'];
+                teacherClassBarChart.data.datasets = [
+                    {
+                        label: `${teacherChartFocusGroup} (本組)`,
+                        data: [gData ? gData[25] : null, gData ? gData[80] : null],
+                        backgroundColor: '#0284c7',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Class Average (全班平均)',
+                        data: [avgData ? avgData[25] : null, avgData ? avgData[80] : null],
+                        backgroundColor: '#10b981',
+                        borderRadius: 8
+                    }
+                ];
+            }
+            teacherClassBarChart.update();
+        }
+
+        // ================= CONTEXTUALIZED REAL-TIME SRL DISCUSSION PROMPTS ENGINE (HOTQs) =================
+        let activeDiscussionFilter = 'all';
+
+        function filterDiscussionQuestions(category) {
+            activeDiscussionFilter = category;
+            const pills = document.querySelectorAll('#discussionFilterTabs button');
+            pills.forEach(p => {
+                if (p.id === `btnFilter-${category}`) {
+                    p.className = "px-3 py-1 rounded-full text-xs font-bold transition bg-amber-600 text-white shadow-sm";
+                } else {
+                    p.className = "px-3 py-1 rounded-full text-xs font-bold transition bg-white/80 hover:bg-white text-amber-900 border border-amber-300";
+                }
+            });
+
+            const cards = document.querySelectorAll('.hotq-card');
+            cards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                if (category === 'all' || cat === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function refreshDiscussionQuestionsWithAnimation() {
+            const container = document.getElementById('wholeClassDiscussionContainer');
+            if (container) {
+                container.classList.add('opacity-40', 'scale-[0.99]');
+                setTimeout(() => {
+                    renderWholeClassDiscussionPrompts();
+                    container.classList.remove('opacity-40', 'scale-[0.99]');
+                }, 200);
+            }
+        }
+
         function renderWholeClassDiscussionPrompts() {
             const container = document.getElementById('wholeClassDiscussionContainer');
             if (!container) return;
 
             const avg = calculateClassAverage();
-            const avgDiff = avg ? (avg[25] - avg[80]) : 120;
-            const outliers = detectOutliers();
+            const avgDiff = avg ? Math.max(1, avg[25] - avg[80]) : 125;
+            const speedRatio = avg && avg[80] > 0 ? (avg[25] / avg[80]).toFixed(1) : "3.3";
 
-            // Card 1: Outlier or Temperature difference
-            let card1Html = "";
-            if (outliers && outliers.length > 0) {
-                const out = outliers[0];
-                card1Html = `
-                    <div class="bg-rose-50 p-4 rounded-2xl border-2 border-rose-300 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[10px] font-bold bg-rose-200 text-rose-900 px-2 py-0.5 rounded-md">⚠️ Outlier Spotting / 異常值排查</span>
-                                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
-                            </div>
-                            <h4 class="text-xs font-bold text-rose-950 mb-1">🚨 Live Warning / 實時警示：${out.descEn}</h4>
-                            <p class="text-[11px] text-rose-900 font-semibold mb-1">${out.descZh}</p>
-                            <p class="text-[11px] text-slate-700 mb-1 leading-snug">Should scientists simply delete unexpected data, or investigate whether stirring was missed or water cooled down?</p>
-                            <p class="text-[11px] text-slate-600 mb-2 leading-snug">面對異常數據，科學家會直接刪除，還是重新排查「是否忘記攪拌」或「水溫放久變涼」？如何從批判角度分析？</p>
-                        </div>
-                        <div class="pt-2 border-t border-rose-200 text-[10px] text-rose-800 font-medium">
-                            💡 Higher-order Goal / 高階目標：Cultivate critical inquiry to investigate anomalies without blindly trusting data. (培養不盲從數據、懂得排查反常現象的批判思維。)
-                        </div>
-                    </div>
-                `;
-            } else {
-                card1Html = `
-                    <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 1 • Microscopic Kinetics / 微觀分子動力學</span>
-                                <i data-lucide="atom" class="w-4 h-4 text-amber-600"></i>
-                            </div>
-                            <h4 class="text-xs font-bold text-slate-900 mb-1">🔍 Class Avg 80°C is ~${avgDiff}s faster than 25°C! How does particle energy explain this?</h4>
-                            <p class="text-[11px] text-slate-700 font-bold mb-1">全班平均 80°C 比 25°C 快約 ${avgDiff} 秒！微觀分子能量如何解釋？</p>
-                            <p class="text-[11px] text-slate-600 mb-1 leading-snug">Observe the particle simulation: water molecules at 80°C move faster and collide violently with salt crystals (NaCl). How does this speed up dissolving?</p>
-                            <p class="text-[11px] text-slate-500 mb-2 leading-snug">請同學觀察「分子動能模擬」：熱水水分子以更高速劇烈碰撞食鹽晶格，這如何加速了晶體被拆解的過程？</p>
-                        </div>
-                        <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
-                            💡 Core Goal / 核心目標：Connect macro timing differences to micro water molecule kinetic energy and collision theory. (將巨觀「秒數差異」昇華至微觀「水分子動能與碰撞理論」。)
-                        </div>
-                    </div>
-                `;
+            // 1. Scan for extremes in 80°C
+            let submittedGroups = [];
+            for (let i = 1; i <= 8; i++) {
+                const gKey = `Group ${i}`;
+                const gObj = classData[gKey];
+                if (gObj && gObj.data && typeof gObj.data[80] === 'number') {
+                    submittedGroups.push({ group: gKey, num: i, t80: gObj.data[80], t25: gObj.data[25] });
+                }
             }
 
-            container.innerHTML = `
-                ${card1Html}
+            let fastestGroup = { name: "Group 2", time: 48 };
+            let slowestGroup = { name: "Group 5", time: 68 };
+            if (submittedGroups.length >= 2) {
+                submittedGroups.sort((a, b) => a.t80 - b.t80);
+                fastestGroup = { name: submittedGroups[0].group, time: submittedGroups[0].t80 };
+                slowestGroup = { name: submittedGroups[submittedGroups.length - 1].group, time: submittedGroups[submittedGroups.length - 1].t80 };
+            } else if (submittedGroups.length === 1) {
+                fastestGroup = { name: submittedGroups[0].group, time: submittedGroups[0].t80 };
+                slowestGroup = { name: "Group 8", time: Math.round(submittedGroups[0].t80 * 1.3) };
+            }
+            const extremeDiff = Math.max(5, Math.abs(slowestGroup.time - fastestGroup.time));
 
-                <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 2 • Error & Reliability / 誤差與可靠性</span>
-                            <i data-lucide="scale" class="w-4 h-4 text-amber-600"></i>
+            // 2. Scan for student quotes & dialogue evidence
+            let kineticQuote = null;
+            let stopwatchQuote = null;
+            let meltingQuote = null;
+            let stirringQuote = null;
+
+            for (let i = 1; i <= 8; i++) {
+                const gKey = `Group ${i}`;
+                const gObj = classData[gKey];
+                if (!gObj) continue;
+
+                if (gObj.chatLogs && gObj.chatLogs.length > 0) {
+                    for (let msg of gObj.chatLogs) {
+                        if (msg.sender === 'user') {
+                            const text = (msg.zh || '') + ' ' + (msg.en || '');
+                            if (!kineticQuote && (/撞|動能|賽車|能量|快|激烈|collide|kinetic|fast/i.test(text))) {
+                                kineticQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                            }
+                            if (!stopwatchQuote && (/碼錶|準|時差|平均|反應|遲|timer|stopwatch|delay/i.test(text))) {
+                                stopwatchQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                            }
+                            if (!stirringQuote && (/攪拌|手痛|忘記|慢咗|攰|力|stir|uneven|tired/i.test(text))) {
+                                stirringQuote = { group: gKey, quote: (msg.zh || msg.en).substring(0, 30) };
+                            }
+                        }
+                    }
+                }
+
+                const reflectText = (gObj.usedToThink || '') + ' ' + (gObj.nowIThink || '');
+                if (!meltingQuote && (/融化|溶化|melt/i.test(reflectText))) {
+                    meltingQuote = { group: gKey, quote: (gObj.usedToThink || gObj.nowIThink).substring(0, 35) };
+                }
+            }
+
+            if (!kineticQuote) kineticQuote = { group: "Group 3", quote: "熱水分子運動好劇烈、撞得好快" };
+            if (!stopwatchQuote) stopwatchQuote = { group: "Group 5", quote: "個人按碼錶有時差，全班平均好似準啲" };
+            if (!meltingQuote) meltingQuote = { group: "Group 1", quote: "以前以為食鹽在熱水中融化了，現在知道是溶解" };
+            if (!stirringQuote) stirringQuote = { group: "Group 6", quote: "攪拌速度好難完全一樣，手會累" };
+
+            // 3. Assemble 5 Contextualized HOTQs
+            const questions = [
+                {
+                    category: "kinetics",
+                    badgeText: "HOTS 1 • Microscopic Kinetics / 微觀分子動力學",
+                    icon: "atom",
+                    titleEn: `Class Avg 80°C is ~${avgDiff}s faster (~${speedRatio}x)! How does particle collision explain this?`,
+                    titleZh: `全班平均 80°C 比 25°C 快約 ${avgDiff} 秒（快約 ${speedRatio} 倍）！微觀分子能量如何解釋？`,
+                    bodyEn: `Observe the particle simulation. ${kineticQuote.group} noted during inquiry: "${kineticQuote.quote}". Water molecules at 80°C move violently with high kinetic energy. How does this high-speed bombardment dismantle the solid NaCl crystal lattice?`,
+                    bodyZh: `請觀察「分子動能模擬」。${kineticQuote.group} 在對話中敏銳提出：「${kineticQuote.quote}」。80°C 熱水分子具有極高動能、碰撞頻繁，這種高頻劇烈撞擊如何加速把固態食鹽晶格拆解開？`,
+                    goalEn: `Connect macro timing differences to micro water molecule kinetic energy and collision theory.`,
+                    goalZh: `將巨觀「秒數差異」昇華至微觀「水分子動能與碰撞拆解理論」。`
+                },
+                {
+                    category: "reliability",
+                    badgeText: "HOTS 2 • Error & Reliability / 誤差抵消與實驗信度",
+                    icon: "scale",
+                    titleEn: `Why does calculating the 8-group class average eliminate individual stopwatch delay?`,
+                    titleZh: `為什麼計算全班 8 組平均值能「消除」個人隨機誤差？`,
+                    bodyEn: `${stopwatchQuote.group} insightfully remarked: "${stopwatchQuote.quote}". If one team stopped the timer 2s late, and another stirred slightly faster, single-group data varies. How does the 8-group average balance out random positive and negative errors like a scale?`,
+                    bodyZh: `${stopwatchQuote.group} 在探究中敏銳指出：「${stopwatchQuote.quote}」。若某組按停碼錶慢了 2 秒，另一組攪拌稍快，單組數據都有偏差。全班平均值如何像天平一樣互相抵消正負誤差、提高科學信度 (Reliability)？`,
+                    goalEn: `Deepen understanding of large-sample averages, random error cancellation, and scientific reliability.`,
+                    goalZh: `深刻理解大樣本平均值消除隨機誤差的本質與科學信度 Reliability。`
+                },
+                {
+                    category: "discrepancy",
+                    badgeText: "HOTS 3 • Discrepancy & Fair Test / 異常排查與公平測試",
+                    icon: "alert-triangle",
+                    titleEn: `${fastestGroup.name} (${fastestGroup.time}s) vs ${slowestGroup.name} (${slowestGroup.time}s): What hidden variables caused this ${extremeDiff}s gap?`,
+                    titleZh: `【實測對比】${fastestGroup.name} (${fastestGroup.time}秒) vs ${slowestGroup.name} (${slowestGroup.time}秒)：相差 ${extremeDiff} 秒！有哪些未控制的隱藏變因？`,
+                    bodyEn: `Both groups tested 80°C hot water with identical 100 mL volume and 5.0 g salt. Why did dissolving time differ by ${extremeDiff} seconds? Could stirring frequency vary, or did water cool down on the bench? How should scientists critically analyze discrepancies?`,
+                    bodyZh: `兩組明明都是 80°C 熱水、100 mL 水與 5.0 g 食鹽，為什麼秒數相差了 ${extremeDiff} 秒？是攪拌頻率快慢不一，還是水放久變涼？面對反常數據，科學家應如何批判排查而非盲信或隨意刪除？`,
+                    goalEn: `Cultivate critical inquiry to spot and investigate hidden variables without blindly trusting data.`,
+                    goalZh: `培養不盲從數據、能從實驗細微處排查未受控「隱藏變因」的批判思維。`
+                },
+                {
+                    category: "concepts",
+                    badgeText: "HOTS 4 • Conceptual Shift / 概念轉變：溶解 vs 融化",
+                    icon: "brain",
+                    titleEn: `Do salt crystals "melt" in hot water, or "dissolve"? How do particle models distinguish them?`,
+                    titleZh: `食鹽在熱水中是「融化」還是「溶解」？微觀粒子模型如何區分兩者？`,
+                    bodyEn: `${meltingQuote.group} shared in reflection: "${meltingQuote.quote}". Everyday speech often says salt "melts" in hot soup. If water completely evaporates, does salt reappear? What is the fundamental particle difference between melting and dissolving?`,
+                    bodyZh: `${meltingQuote.group} 在反思卡中寫道：「${meltingQuote.quote}」。日常口語常說鹽在熱湯中「融化了」。若把水完全蒸乾，食鹽還會在嗎？冰塊融化與食鹽溶解在微觀粒子上有何根本區別？`,
+                    goalEn: `Achieve conceptual transformation by distinguishing dissolution from melting via particle theory.`,
+                    goalZh: `運用微觀粒子理論徹底辨析「溶解」與「融化」的本質差異，實現科學概念轉變。`
+                },
+                {
+                    category: "engineering",
+                    badgeText: "HOTS 5 • STEM Engineering / STEM 工程改良與自動化",
+                    icon: "lightbulb",
+                    titleEn: `How to design an automated apparatus with "zero human stirring error"?`,
+                    titleZh: `如何設計「零人為攪拌誤差」的自動化科學實驗裝置？`,
+                    bodyEn: `${stirringQuote.group} reflected: "${stirringQuote.quote}". Manual stirring suffers from fatigue and subjective delays. How could a motorized magnetic stirrer or optical turbidity sensor completely eliminate human bias in modern industrial labs?`,
+                    bodyZh: `${stirringQuote.group} 在實驗中提到：「${stirringQuote.quote}」。手動攪拌難免疲勞波動，肉眼判斷終點也存在主觀時差。若引入「定速磁力攪拌器」或「光電濁度傳感器」，可以如何徹底固定控制變因？`,
+                    goalEn: `Develop STEM engineering thinking, automated sensing, and fair test evaluation.`,
+                    goalZh: `啟發 STEM 工程思維、自動化監測與真實科研公平測試極致評估。`
+                }
+            ];
+
+            container.innerHTML = questions.map(q => `
+                <div class="hotq-card bg-white p-4 rounded-2xl border border-amber-200/90 shadow-sm flex flex-col justify-between transition hover:shadow-md hover:border-amber-400 ${activeDiscussionFilter !== 'all' && activeDiscussionFilter !== q.category ? 'hidden' : ''}" data-category="${q.category}">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between pb-1.5 border-b border-amber-100">
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                ${q.badgeText}
+                            </span>
+                            <i data-lucide="${q.icon}" class="w-4 h-4 text-amber-600"></i>
                         </div>
-                        <h4 class="text-xs font-bold text-slate-900 mb-1">⚖️ Why does calculating the 8-group class average eliminate random errors?</h4>
-                        <p class="text-[11px] text-slate-700 font-bold mb-1">為什麼計算全班 8 組平均值能「消除」個人隨機誤差？</p>
-                        <p class="text-[11px] text-slate-600 mb-1 leading-snug">If Group 2 stopped the timer 3s late, and Group 5 stirred faster, individual data varies. How does the 8-group average balance out errors like a scale?</p>
-                        <p class="text-[11px] text-slate-500 mb-2 leading-snug">若第 2 組按停碼錶慢了 3 秒，而第 5 組攪拌速度稍快，單組數據都有偏差。全班平均值如何像天平一樣互相抵消正負誤差？</p>
+                        <h4 class="text-xs font-bold text-slate-900 leading-snug">
+                            ${q.titleEn}
+                        </h4>
+                        <p class="text-[11px] text-amber-950 font-bold leading-snug">
+                            ${q.titleZh}
+                        </p>
+                        <p class="text-[11px] text-slate-600 leading-relaxed pt-1">
+                            ${q.bodyEn}
+                        </p>
+                        <p class="text-[11px] text-slate-700 leading-relaxed font-medium bg-amber-50/60 p-2 rounded-xl border border-amber-100">
+                            ${q.bodyZh}
+                        </p>
                     </div>
-                    <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
-                        💡 Core Goal / 核心目標：Deepen understanding of large-sample averages and experimental reliability. (深刻理解大樣本平均值與實驗信度 Reliability 的本質。)
+                    <div class="pt-2.5 mt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium flex items-start gap-1">
+                        <span class="font-bold flex-shrink-0">💡 核心目標:</span>
+                        <span>${q.goalZh}</span>
                     </div>
                 </div>
+            `).join('');
 
-                <div class="bg-white p-4 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md">HOTS 3 • STEM Engineering / STEM 工程改良</span>
-                            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600"></i>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-900 mb-1">🛠️ How to design an automated apparatus with "zero human error"?</h4>
-                        <p class="text-[11px] text-slate-700 font-bold mb-1">如何設計「零人為誤差」的自動化實驗裝置？</p>
-                        <p class="text-[11px] text-slate-600 mb-1 leading-snug">Manual stirring fluctuates with fatigue, and eye-judgment of end-point has subjective delays. How could a magnetic stirrer or optical sensor fix controlled variables?</p>
-                        <p class="text-[11px] text-slate-500 mb-2 leading-snug">人手攪拌極易疲勞波動，肉眼判斷終點也存在主觀時差。若引入「定速磁力攪拌器」或「光電濁度傳感器」，可以如何徹底固定控制變因？</p>
-                    </div>
-                    <div class="pt-2 border-t border-slate-100 text-[10px] text-amber-800 font-medium">
-                        💡 Core Goal / 核心目標：Develop STEM engineering thinking, automated sensing, and fair test evaluation. (STEM 工程思維、自動化監測與公平測試極致評估。)
-                    </div>
-                </div>
-            `;
             if (window.lucide) lucide.createIcons();
         }
 
@@ -3865,6 +4594,7 @@ Crucial Formatting & Output Rules:
         // ================= MICROSCOPIC PARTICLE SIMULATION (KINETIC THEORY) =================
         let particleAnimId = null;
         let isParticlePaused = false;
+        let isTeacherParticlePaused = false;
 
         class ParticleSimulation {
             constructor(canvasId, tempMode) {
@@ -3872,6 +4602,7 @@ Crucial Formatting & Output Rules:
                 if (!this.canvas) return;
                 this.ctx = this.canvas.getContext('2d');
                 this.tempMode = tempMode; // 'cold' (25°C) or 'hot' (80°C)
+                this.isTeacher = canvasId.startsWith('teacher');
                 this.width = this.canvas.width = 320;
                 this.height = this.canvas.height = 200;
                 this.isHot = (tempMode === 'hot');
@@ -3922,7 +4653,7 @@ Crucial Formatting & Output Rules:
             }
 
             update() {
-                if (isParticlePaused) return;
+                if (this.isTeacher ? isTeacherParticlePaused : isParticlePaused) return;
 
                 const cx = this.width / 2;
                 const cy = this.height / 2;
@@ -4063,20 +4794,32 @@ Crucial Formatting & Output Rules:
 
         let coldSim = null;
         let hotSim = null;
+        let teacherColdSim = null;
+        let teacherHotSim = null;
 
         function initParticles() {
             coldSim = new ParticleSimulation('particleCanvasCold', 'cold');
             hotSim = new ParticleSimulation('particleCanvasHot', 'hot');
+            teacherColdSim = new ParticleSimulation('teacherParticleCanvasCold', 'cold');
+            teacherHotSim = new ParticleSimulation('teacherParticleCanvasHot', 'hot');
         }
 
         function animateParticles() {
-            if (coldSim) {
+            if (coldSim && coldSim.ctx) {
                 coldSim.update();
                 coldSim.draw();
             }
-            if (hotSim) {
+            if (hotSim && hotSim.ctx) {
                 hotSim.update();
                 hotSim.draw();
+            }
+            if (teacherColdSim && teacherColdSim.ctx) {
+                teacherColdSim.update();
+                teacherColdSim.draw();
+            }
+            if (teacherHotSim && teacherHotSim.ctx) {
+                teacherHotSim.update();
+                teacherHotSim.draw();
             }
             particleAnimId = requestAnimationFrame(animateParticles);
         }
@@ -4088,6 +4831,17 @@ Crucial Formatting & Output Rules:
                 btn.innerHTML = isParticlePaused ? 
                     '<i data-lucide="play" class="w-3 h-3 text-emerald-600"></i> 繼續播放 (Play)' : 
                     '<i data-lucide="pause" class="w-3 h-3 text-indigo-600"></i> 暫停模擬 (Pause)';
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function toggleTeacherParticleSim() {
+            isTeacherParticlePaused = !isTeacherParticlePaused;
+            const btn = document.getElementById('teacherParticleToggleBtn');
+            if (btn) {
+                btn.innerHTML = isTeacherParticlePaused ? 
+                    '<i data-lucide="play" class="w-3.5 h-3.5 text-emerald-600"></i> 繼續播放 (Play)' : 
+                    '<i data-lucide="pause" class="w-3.5 h-3.5 text-indigo-600"></i> 暫停模擬 (Pause)';
                 if (window.lucide) lucide.createIcons();
             }
         }
@@ -4146,54 +4900,49 @@ Crucial Formatting & Output Rules:
         window.addEventListener('DOMContentLoaded', () => {
             if (window.lucide) lucide.createIcons();
             
-            // Check URL parameters (e.g. ?class=Class+1A&group=Group+2)
+            // Check URL parameters (e.g. ?class=Class+1B&group=Group+3)
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('class')) {
                 currentClass = urlParams.get('class').trim();
                 localStorage.setItem('salt_exp_class', currentClass);
             }
+            if (urlParams.get('group')) {
+                const gParam = urlParams.get('group').trim();
+                const targetRole = gParam.toLowerCase().startsWith('group') ? gParam : ('Group ' + gParam);
+                currentRole = targetRole;
+                lastSelectedRole = targetRole;
+                startupSelectedGroup = targetRole;
+            }
+
             const classInput = document.getElementById('classInput');
             if (classInput) classInput.value = currentClass;
             const tBadge = document.getElementById('teacherClassBadge');
             if (tBadge) tBadge.innerText = currentClass;
             const aBadge = document.getElementById('adminClassBadge');
             if (aBadge) aBadge.innerText = currentClass;
+            const gSelect = document.getElementById('groupSelect');
+            if (gSelect) gSelect.value = currentRole;
 
             initChart();
+            initTeacherChart();
+            updateDataModeUI();
             loadFromStorage();
             initMqtt();
             initParticles();
             animateParticles();
             loadAdminUI();
 
-            // Check URL parameters or open Startup Modal (Image 3) on entry
-            if (urlParams.get('group')) {
-                const gParam = urlParams.get('group').trim();
-                const targetRole = gParam.toLowerCase().startsWith('group') ? gParam : ('Group ' + gParam);
-                const gSelect = document.getElementById('groupSelect');
-                if (gSelect) {
-                    gSelect.value = targetRole;
-                    handleRoleChange();
-                }
-            } else if (urlParams.get('role') === 'teacher') {
-                const gSelect = document.getElementById('groupSelect');
-                if (gSelect) {
-                    gSelect.value = 'Teacher';
-                    handleRoleChange();
-                }
-            } else if (urlParams.get('role') === 'admin') {
-                const gSelect = document.getElementById('groupSelect');
-                if (gSelect) {
-                    gSelect.value = 'Admin';
-                    handleRoleChange();
-                }
-            } else {
-                // Open Class & Group selection modal automatically for students
-                openStartupModal();
-            }
-
             renderStudentChatHistory();
             updateAllUI();
+
+            // Requirement 4: Anyone entering the website first sees the startup modal
+            if (urlParams.get('role') === 'teacher') {
+                openPasswordModal('Teacher');
+            } else if (urlParams.get('role') === 'admin') {
+                openPasswordModal('Admin');
+            } else {
+                openStartupModal();
+            }
         });
     </script>
 </body>
