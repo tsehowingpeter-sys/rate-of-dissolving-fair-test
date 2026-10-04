@@ -3,3 +3,7 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+
+# Sensitive environment configuration & runtime data
+.env
+data/

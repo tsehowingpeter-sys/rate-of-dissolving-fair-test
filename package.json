@@ -1,0 +1,21 @@
+{
+  "name": "rate-of-dissolving-fair-test",
+  "version": "1.2.0",
+  "description": "S1 Integrated Science Fair Test - Rate of Dissolving Table Salt with Real-Time AI Gateway & Token Budget Control",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test_server.js"
+  },
+  "keywords": [
+    "science",
+    "education",
+    "fair-test",
+    "particle-theory",
+    "gemini-ai",
+    "token-budget-gateway"
+  ],
+  "author": "",
+  "license": "MIT"
+}

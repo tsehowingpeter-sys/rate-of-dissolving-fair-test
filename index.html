@@ -128,6 +128,9 @@
 </head>
 <body class="text-slate-800 pb-12">
 
+    <!-- Real-time Toast Notifications Container (Layered for instant feedback) -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
     <!-- Header / Navbar -->
     <header class="bg-gradient-to-r from-teal-600 via-sky-600 to-indigo-700 text-white shadow-lg py-4 px-4 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -169,7 +172,7 @@
                 <!-- Class Input / Switcher -->
                 <div class="bg-slate-900/40 px-2.5 py-1 rounded-lg border border-white/20 flex items-center gap-1.5 shadow-inner">
                     <span class="text-[11px] text-teal-200 font-bold">班別 Class:</span>
-                    <input type="text" id="classInput" value="Class 1A" onchange="handleClassChange(this.value)" class="bg-white/90 text-slate-900 text-xs font-bold px-2 py-0.5 rounded w-20 focus:outline-none focus:ring-1 focus:ring-teal-400 text-center">
+                    <input type="text" id="classInput" value="1CL" onchange="handleClassChange(this.value)" class="bg-white/90 text-slate-900 text-xs font-bold px-2 py-0.5 rounded w-20 focus:outline-none focus:ring-1 focus:ring-teal-400 text-center">
                 </div>
 
                 <!-- Selector Dropdown with Teacher & Admin Password Access -->
@@ -378,10 +381,10 @@
                                 </p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <button type="button" onclick="toggleStudentExperimentMode()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-semibold transition border border-slate-200 flex items-center gap-1">
-                                    <i data-lucide="shuffle" class="w-3 h-3 text-slate-500"></i>
-                                    <span id="studentModeToggleBtnText">切換為2人小組 (2組數據)</span>
-                                </button>
+                                <span id="studentModeBadge" class="px-3 py-1 bg-sky-50 text-sky-800 border border-sky-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                                    <i data-lucide="lock" class="w-3 h-3 text-sky-600"></i>
+                                    <span id="studentModeBadgeText">模式：4 人 1 組 (每組提交 1 個數據)</span>
+                                </span>
                                 <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full flex items-center gap-1 font-medium">
                                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span> Live Sync Active / 實時同步中
                                 </span>
@@ -787,7 +790,7 @@
                                 <i data-lucide="tv" class="w-3 h-3"></i> Live Presentation Mode / 觀課投屏模式
                             </span>
                             <span class="px-2.5 py-0.5 bg-sky-500/30 text-sky-200 border border-sky-400/30 text-[10px] rounded-full">SRL Pedagogy Analytics Engine</span>
-                            <span id="teacherClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">Class 1A</span>
+                            <span id="teacherClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">1CL</span>
                         </div>
                         <h2 class="text-2xl md:text-3xl font-bold font-fun tracking-wide text-white">
                             Teacher Command Center • 教師智慧指揮中心
@@ -1156,7 +1159,7 @@
                             <span class="px-2.5 py-0.5 bg-white/10 text-purple-200 border border-purple-400/30 text-[10px] rounded-full">
                                 管理員專屬後台 (Protected by System Password)
                             </span>
-                            <span id="adminClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">Class 1A</span>
+                            <span id="adminClassBadge" class="px-2.5 py-0.5 bg-teal-500/30 text-teal-200 border border-teal-400/30 text-[10px] font-bold rounded-full">1CL</span>
                         </div>
                         <h2 class="text-2xl md:text-3xl font-bold font-fun tracking-wide text-white">
                             AI Engine & Token Budget Admin • 系統管理控制台
@@ -1235,40 +1238,59 @@
                                 </div>
                             </div>
 
-                            <!-- API Key Input Field -->
+                            <!-- Three-Tier Security Architecture: AI Gateway Endpoint -->
+                            <div class="p-3 bg-slate-800/80 border border-slate-700 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-slate-200 font-bold text-[11px] flex items-center gap-1.5">
+                                        <i data-lucide="shield" class="w-3.5 h-3.5 text-teal-400"></i>
+                                        <span>AI Gateway 伺服器代理端點 (API Gateway Proxy)</span>
+                                    </label>
+                                    <span id="adminGatewayStatusBadge" class="text-[9px] px-2 py-0.5 rounded-full font-bold bg-slate-700 text-slate-300 border border-slate-600">偵測中...</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="text" id="adminGatewayUrlInput" placeholder="留空預設為本機伺服器 (/api/chat) 或輸入如 http://localhost:3000" class="flex-1 bg-slate-900 text-white border border-slate-700 rounded-xl px-3 py-1.5 font-mono text-[11px] focus:ring-2 focus:ring-teal-400 focus:outline-none placeholder:text-slate-500">
+                                    <button type="button" onclick="checkGatewayHealth()" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-teal-300 rounded-xl text-[10px] font-bold transition flex items-center gap-1">
+                                        <i data-lucide="refresh-cw" class="w-3 h-3"></i> 連線探測
+                                    </button>
+                                </div>
+                                <p class="text-[10px] text-slate-400 leading-relaxed">
+                                    🛡️ 核心控制腦模式：API Key 保存於伺服器後端環境，前端學生端絕不持有金鑰，由伺服器中介層強制執行配額扣減與防刷限制。
+                                </p>
+                            </div>
+
+                            <!-- API Key Input Field (For Server Key Injection or Fallback) -->
                             <div>
                                 <div class="flex items-center justify-between mb-1">
                                     <label class="text-slate-300 font-bold text-[11px] flex items-center gap-1">
-                                        <span>API 金鑰 (API Key)</span>
-                                        <span class="text-[10px] text-slate-400 font-normal">保存於老師本機 (Local Storage)</span>
+                                        <span>Google Gemini API 金鑰 (API Key)</span>
+                                        <span class="text-[10px] text-emerald-400 font-normal">🔒 伺服器安全保管庫</span>
                                     </label>
                                     <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 text-[11px] font-bold flex items-center gap-0.5 transition">
                                         獲取免費 Gemini Key <i data-lucide="external-link" class="w-3 h-3"></i>
                                     </a>
                                 </div>
                                 <div class="relative">
-                                    <input type="password" id="adminApiKeyInput" placeholder="AIzaSy... (貼上你的 Google Gemini API Key)" class="w-full bg-slate-800/90 text-white border border-slate-700 rounded-xl pl-3 pr-10 py-2.5 font-mono text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none placeholder:text-slate-500">
+                                    <input type="password" id="adminApiKeyInput" placeholder="AIzaSy... (注入至伺服器安全保管庫，絕不外流至學生端)" class="w-full bg-slate-800/90 text-white border border-slate-700 rounded-xl pl-3 pr-10 py-2.5 font-mono text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none placeholder:text-slate-500">
                                     <button type="button" onclick="togglePasswordVisibility('adminApiKeyInput', 'adminApiKeyEyeIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200">
                                         <i data-lucide="eye" id="adminApiKeyEyeIcon" class="w-4 h-4"></i>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Student Auto Sync Checkbox Box -->
-                            <div class="p-3 bg-slate-800/60 border border-slate-700/80 rounded-2xl flex items-center justify-between gap-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-400 border border-sky-400/30 flex items-center justify-center flex-shrink-0">
-                                        <i data-lucide="radio" class="w-4 h-4"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-white text-xs">全班自動同步 (Sync to Students)</p>
-                                        <p class="text-[10px] text-slate-400">學生平板無需手動輸入 Key，連線後自動共享此模型進行水精靈對話</p>
-                                    </div>
+                            <!-- Token Quota & Rate Limit Parameters -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-2.5">
+                                    <label class="block text-slate-300 font-bold text-[10px] mb-1">
+                                        全班每日 Token 預算限制 (Daily Token Budget)
+                                    </label>
+                                    <input type="number" id="adminTokenBudgetInput" value="100000" min="1000" step="5000" class="w-full bg-slate-900 text-amber-300 font-mono font-bold text-xs border border-slate-700 rounded-xl px-2.5 py-1.5 focus:ring-2 focus:ring-amber-400 focus:outline-none">
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="adminSyncCheckbox" checked class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                                </label>
+                                <div class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-2.5">
+                                    <label class="block text-slate-300 font-bold text-[10px] mb-1">
+                                        單組請求頻率上限 (Rate Limit / min)
+                                    </label>
+                                    <input type="number" id="adminRateLimitInput" value="15" min="1" max="60" class="w-full bg-slate-900 text-sky-300 font-mono font-bold text-xs border border-slate-700 rounded-xl px-2.5 py-1.5 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1313,6 +1335,26 @@
                             <button type="button" onclick="resetTokenStats()" class="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 border border-slate-700 px-2 py-1 rounded-lg transition">
                                 <i data-lucide="rotate-ccw" class="w-3 h-3"></i> 重設統計
                             </button>
+                        </div>
+
+                        <!-- Daily Token Budget Quota Progress Bar (Server-Enforced) -->
+                        <div class="bg-slate-800/80 p-3.5 rounded-2xl border border-slate-700/80 mb-4 space-y-2">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="text-slate-200 font-bold flex items-center gap-1.5">
+                                    <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-teal-400"></i>
+                                    <span>今日 Token 消耗配額進度 (Daily Budget Quota)</span>
+                                </span>
+                                <span id="budgetUsageLabel" class="font-mono text-teal-300 font-bold text-xs">0 / 100,000 (0%)</span>
+                            </div>
+                            <div class="w-full bg-slate-950/70 rounded-full h-3 p-0.5 border border-slate-700/60 overflow-hidden">
+                                <div id="budgetProgressBar" class="bg-gradient-to-r from-teal-400 via-sky-400 to-indigo-400 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                <span>剩餘安全配額: <span id="budgetRemainingText" class="font-bold text-emerald-400 font-mono">100,000</span> Tokens</span>
+                                <span class="text-teal-400/90 font-medium flex items-center gap-1">
+                                    <i data-lucide="lock" class="w-3 h-3"></i> 伺服器中介層扣減防護 (Backend Enforced)
+                                </span>
+                            </div>
                         </div>
 
                         <!-- 4 Stat Counters (2x2 Grid) -->
@@ -1413,14 +1455,15 @@
                     <span>🏫</span> 1. 選擇你的班別 (Select Class)
                 </div>
                 <div class="flex items-center gap-2 flex-wrap" id="startupClassChips">
-                    <button type="button" onclick="selectStartupClass('Class 1A')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1A</button>
-                    <button type="button" onclick="selectStartupClass('Class 1B')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1B</button>
-                    <button type="button" onclick="selectStartupClass('Class 1C')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1C</button>
-                    <button type="button" onclick="selectStartupClass('Class 1D')" class="startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">Class 1D</button>
+                    <button type="button" onclick="selectStartupClass('1CL')" class="startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">1CL</button>
+                    <button type="button" onclick="selectStartupClass('1CW')" class="startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">1CW</button>
+                    <button type="button" onclick="selectStartupClass('1LF')" class="startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">1LF</button>
+                    <button type="button" onclick="selectStartupClass('1LH')" class="startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">1LH</button>
+                    <button type="button" onclick="selectStartupClass('1LL')" class="startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100">1LL</button>
                 </div>
                 <div class="flex items-center gap-2 pt-1 text-xs text-slate-600">
                     <span class="text-[11px] text-slate-400 whitespace-nowrap">或自訂班別:</span>
-                    <input type="text" id="startupCustomClassInput" placeholder="Class 1A" oninput="handleStartupCustomClassInput(this.value)" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    <input type="text" id="startupCustomClassInput" placeholder="1CL" oninput="handleStartupCustomClassInput(this.value)" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-sky-400 focus:outline-none">
                 </div>
             </div>
 
@@ -1518,7 +1561,7 @@
                 <span class="text-[10px] text-slate-400 font-bold uppercase">課堂網址 (URL):</span>
                 <p id="shareUrlText" class="text-xs font-mono font-bold text-sky-700 truncate select-all"></p>
                 <div class="flex justify-between items-center pt-1">
-                    <span class="text-[10px] text-teal-600 font-bold">目前連線頻道: <span id="shareChannelText">Class 1A</span></span>
+                    <span class="text-[10px] text-teal-600 font-bold">目前連線頻道: <span id="shareChannelText">1CL</span></span>
                     <button onclick="copyShareUrl()" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-[11px] font-bold shadow transition">複製網址</button>
                 </div>
             </div>
@@ -1728,7 +1771,7 @@
     <!-- JS Logic -->
     <script>
         // Global State & Real-Time Sync Configuration
-        let currentClass = localStorage.getItem('salt_exp_class') || "Class 1B";
+        let currentClass = localStorage.getItem('salt_exp_class') || "1CL";
         let currentRole = "Group 3"; // Default role
         let lastSelectedRole = "Group 3";
         let selectedCardForClickMove = null;
@@ -1753,19 +1796,55 @@
         let mqttClient = null;
         let isMqttConnected = false;
 
+        // Toast Notification System
+        function showToast(message, type = 'sky') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const typeMap = {
+                emerald: 'bg-emerald-600 border-emerald-400 text-white',
+                sky: 'bg-sky-600 border-sky-400 text-white',
+                indigo: 'bg-indigo-600 border-indigo-400 text-white',
+                amber: 'bg-amber-600 border-amber-400 text-white',
+                rose: 'bg-rose-600 border-rose-400 text-white'
+            };
+            const colorClass = typeMap[type] || 'bg-slate-800 border-slate-700 text-white';
+            toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xl border ${colorClass} transition-all duration-300 transform translate-y-[-8px] opacity-0`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-8px]', 'opacity-0');
+            });
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-8px]');
+                setTimeout(() => toast.remove(), 350);
+            }, 3500);
+        }
+
         // Experiment Data Mode: 'single' (4人一組，每組1個數據) or 'pair' (4人拆分兩組2人小組，每組2個數據：小組A & 小組B)
         let experimentDataMode = localStorage.getItem('salt_exp_data_mode') || 'single';
 
         function setExperimentDataMode(mode) {
+            // Requirement 3: Strictly teacher/admin only
+            if (currentRole !== 'Teacher' && currentRole !== 'Admin') {
+                showToast("⚠️ 只有教師指揮中心具備設定實驗數據模式之權限！(Teacher only)", "amber");
+                return;
+            }
             experimentDataMode = mode;
             localStorage.setItem('salt_exp_data_mode', mode);
 
             broadcastData();
             updateDataModeUI();
             updateAllUI();
+            showToast(mode === 'pair' ? "✅ 已切換為：拆分 2 人小組模式 (2組數據)" : "✅ 已切換為：4 人 1 組模式", "emerald");
         }
 
         function toggleStudentExperimentMode() {
+            // Disabled for students
+            if (currentRole !== 'Teacher' && currentRole !== 'Admin') {
+                showToast("⚠️ 學生端無法自行切換模式，已由老師統一鎖定與即時同步。", "amber");
+                return;
+            }
             const nextMode = (experimentDataMode === 'pair') ? 'single' : 'pair';
             setExperimentDataMode(nextMode);
         }
@@ -1784,25 +1863,26 @@
                 }
             }
 
-            // Update Student Step 2 form visibility
+            // Update Student Step 2 form visibility & locked mode badge
             const singleContainer = document.getElementById('singleDataEntryContainer');
             const pairContainer = document.getElementById('pairDataEntryContainer');
-            const subtitleEl = document.getElementById('studentDataModeSubtitle');
-            const toggleBtnText = document.getElementById('studentModeToggleBtnText');
+            const badgeEl = document.getElementById('studentModeBadge');
+            const badgeTextEl = document.getElementById('studentModeBadgeText');
 
             if (singleContainer && pairContainer) {
                 if (experimentDataMode === 'single') {
                     singleContainer.classList.remove('hidden');
                     pairContainer.classList.add('hidden');
-                    if (subtitleEl) subtitleEl.innerText = "模式：4 人一組 (全組提交 1 個數據)";
-                    if (toggleBtnText) toggleBtnText.innerText = "切換為2人小組 (2組數據)";
+                    if (badgeTextEl) badgeTextEl.innerText = "模式：4 人 1 組 (每組提交 1 個數據)";
+                    if (badgeEl) badgeEl.className = "px-3 py-1 bg-sky-50 text-sky-800 border border-sky-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs";
                 } else {
                     singleContainer.classList.add('hidden');
                     pairContainer.classList.remove('hidden');
-                    if (subtitleEl) subtitleEl.innerText = "模式：拆分 2 人小組 (每組提交 2 個數據：小組 A & 小組 B)";
-                    if (toggleBtnText) toggleBtnText.innerText = "切換為4人1組模式";
+                    if (badgeTextEl) badgeTextEl.innerText = "模式：拆分 2 人小組 (每組提交 2 個數據：A & B)";
+                    if (badgeEl) badgeEl.className = "px-3 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-2xs";
                 }
             }
+            if (window.lucide) lucide.createIcons();
         }
 
         // Global Data Structure for 8 Groups
@@ -2159,18 +2239,22 @@
                     try {
                         const parsed = JSON.parse(message.toString());
                         if (parsed) {
-                            if (parsed.payload && !parsed.type) {
-                                mergeIncomingClassData(parsed.payload);
+                            if (parsed.type === 'MODE_SYNC' || (parsed.mode && parsed.mode !== experimentDataMode)) {
                                 if (parsed.mode && parsed.mode !== experimentDataMode) {
                                     experimentDataMode = parsed.mode;
                                     localStorage.setItem('salt_exp_data_mode', experimentDataMode);
                                     updateDataModeUI();
                                     updateAllUI();
+                                    showToast(experimentDataMode === 'pair' ? "📢 老師已設定全班為：拆分 2 人小組 (2組數據) 模式！" : "📢 老師已設定全班為：4 人 1 組 (1組數據) 模式！", "sky");
                                 }
+                            }
+                            if (parsed.payload && !parsed.type) {
+                                mergeIncomingClassData(parsed.payload);
                             } else if (parsed.type === 'AI_CONFIG_SYNC') {
+                                // Model & Gateway state sync (NEVER accept raw API keys over public MQTT)
                                 sharedAiConfig = {
-                                    apiKey: parsed.apiKey || '',
-                                    model: parsed.model || 'gemini-2.5-flash'
+                                    model: parsed.model || 'gemini-2.5-flash',
+                                    isServerActive: Boolean(parsed.isServerActive)
                                 };
                                 updateAdminAiStatusBadge();
                             } else if (parsed.type === 'TOKEN_LOG_BROADCAST') {
@@ -2222,7 +2306,7 @@
         }
 
         function handleClassChange(newClass) {
-            currentClass = (newClass || "Class 1A").trim();
+            currentClass = (newClass || "1CL").trim();
             localStorage.setItem('salt_exp_class', currentClass);
             document.getElementById('classInput').value = currentClass;
             const tBadge = document.getElementById('teacherClassBadge');
@@ -2333,13 +2417,18 @@
 
         if (localBroadcastChannel) {
             localBroadcastChannel.onmessage = (event) => {
-                if (event.data && event.data.payload) {
-                    mergeIncomingClassData(event.data.payload);
-                    if (event.data.mode && event.data.mode !== experimentDataMode) {
-                        experimentDataMode = event.data.mode;
-                        localStorage.setItem('salt_exp_data_mode', experimentDataMode);
-                        updateDataModeUI();
-                        updateAllUI();
+                if (event.data) {
+                    if (event.data.type === 'MODE_SYNC' || (event.data.mode && event.data.mode !== experimentDataMode)) {
+                        if (event.data.mode && event.data.mode !== experimentDataMode) {
+                            experimentDataMode = event.data.mode;
+                            localStorage.setItem('salt_exp_data_mode', experimentDataMode);
+                            updateDataModeUI();
+                            updateAllUI();
+                            showToast(experimentDataMode === 'pair' ? "📢 老師已設定全班為：拆分 2 人小組 (2組數據) 模式！" : "📢 老師已設定全班為：4 人 1 組 (1組數據) 模式！", "sky");
+                        }
+                    }
+                    if (event.data.payload) {
+                        mergeIncomingClassData(event.data.payload);
                     }
                 }
             };
@@ -2358,7 +2447,7 @@
 
         // ================= STARTUP MODAL FUNCTIONS (IMAGE 3) =================
         function openStartupModal() {
-            startupSelectedClass = currentClass || 'Class 1B';
+            startupSelectedClass = currentClass || '1CL';
             startupSelectedGroup = (currentRole && currentRole.startsWith('Group')) ? currentRole : 'Group 3';
             
             updateStartupClassChipsUI();
@@ -2384,9 +2473,9 @@
             const chips = document.querySelectorAll('.startup-class-chip');
             chips.forEach(chip => {
                 if (chip.innerText.trim() === startupSelectedClass) {
-                    chip.className = "startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-sky-500 bg-[#0284c7] text-white shadow-sm";
+                    chip.className = "startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-sky-500 bg-[#0284c7] text-white shadow-sm";
                 } else {
-                    chip.className = "startup-class-chip px-4 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100";
+                    chip.className = "startup-class-chip px-3.5 py-1.5 rounded-full text-xs font-bold transition border border-slate-200 bg-white text-slate-700 hover:bg-slate-100";
                 }
             });
         }
@@ -2399,7 +2488,7 @@
         }
 
         function handleStartupCustomClassInput(val) {
-            startupSelectedClass = val.trim() || "Class 1B";
+            startupSelectedClass = val.trim() || "1CL";
             updateStartupClassChipsUI();
         }
 
@@ -2530,13 +2619,61 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        function confirmPasswordModal() {
+        const AUTH_SALT = "salt_fair_test_2026_xK9#mQ";
+        // Pre-computed salted SHA-256 hashes (NO plaintext password in source code)
+        const HASH_TEACHER = "aa9e820dad46b5d658da2781cd005cc63d9012d40269bb332251949dc484dc16";
+        const HASH_ADMIN = "8a38fe964c118e39319245375e5f7007c62f1ba8e4b0ae0940eac03ba6dcca13";
+
+        async function computeSha256(str) {
+            try {
+                const enc = new TextEncoder().encode(str);
+                const buf = await crypto.subtle.digest('SHA-256', enc);
+                return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch(e) {
+                console.error("SHA-256 computation failed:", e);
+                return null;
+            }
+        }
+
+        async function confirmPasswordModal() {
             const pwdInput = document.getElementById('maskedPasswordInput');
             const errEl = document.getElementById('passwordErrorMsg');
-            const pwd = pwdInput ? pwdInput.value.trim() : '';
+            const pwd = pwdInput ? pwdInput.value : '';
+
+            if (!pwd) {
+                if (errEl) {
+                    errEl.innerText = "⚠️ 請輸入密碼！(Please enter password)";
+                    errEl.classList.remove('hidden');
+                }
+                return;
+            }
+
+            // Cryptographic salted hash computation (protects password from source code inspection)
+            const inputHash = await computeSha256(AUTH_SALT + pwd);
+
+            // Also check with backend server if available
+            let serverAuthSuccess = null;
+            try {
+                const gatewayUrl = getGatewayUrl();
+                const resp = await fetch(`${gatewayUrl}/api/auth/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ role: pendingTargetRole, hash: inputHash, salt: AUTH_SALT })
+                }).catch(() => null);
+                if (resp && resp.ok) {
+                    const data = await resp.json();
+                    serverAuthSuccess = data.ok;
+                    if (data.token) {
+                        sessionStorage.setItem('salt_auth_token', data.token);
+                    }
+                }
+            } catch(e) {
+                // Backend not connected, fallback to client cryptographic hash check
+            }
 
             if (pendingTargetRole === 'Teacher') {
-                if (pwd === 'teacherwater') {
+                const isMatch = (serverAuthSuccess === true) || (inputHash === HASH_TEACHER);
+                if (isMatch) {
                     currentRole = "Teacher";
                     lastSelectedRole = "Teacher";
                     document.getElementById('roleBadge').innerText = "Teacher Command Center / 教師模式";
@@ -2552,6 +2689,7 @@
                     renderTeacherDashboardUI();
                     closePasswordModal();
                     closeStartupModal();
+                    showToast("🎉 已成功驗證並登入 Teacher Command Center！", "emerald");
                 } else {
                     if (errEl) {
                         errEl.innerText = "❌ 密碼錯誤！請重新輸入 (Incorrect Password!)";
@@ -2563,7 +2701,8 @@
                     }
                 }
             } else if (pendingTargetRole === 'Admin') {
-                if (pwd === 'teacheradmin') {
+                const isMatch = (serverAuthSuccess === true) || (inputHash === HASH_ADMIN);
+                if (isMatch) {
                     currentRole = "Admin";
                     lastSelectedRole = "Admin";
                     document.getElementById('roleBadge').innerText = "AI System Admin / 系統管理員";
@@ -2579,6 +2718,7 @@
                     loadAdminUI();
                     closePasswordModal();
                     closeStartupModal();
+                    showToast("🛡️ 已成功驗證並登入 AI Engine & Token Budget Admin！", "indigo");
                 } else {
                     if (errEl) {
                         errEl.innerText = "❌ 管理員密碼錯誤！請重新輸入 (Incorrect Admin Password!)";
@@ -2743,9 +2883,92 @@
             handleRoleChange();
         }
 
-        // ================= AI SYSTEM ADMIN CONSOLE & TOKEN MONITOR =================
+        // ================= AI SYSTEM ADMIN CONSOLE & THREE-TIER AI GATEWAY =================
+        function getGatewayUrl() {
+            const savedUrl = localStorage.getItem('salt_gateway_url');
+            if (savedUrl !== null && savedUrl !== undefined && savedUrl.trim() !== '') {
+                return savedUrl.trim().replace(/\/+$/, '');
+            }
+            if (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin.startsWith('http')) {
+                return window.location.origin;
+            }
+            return '';
+        }
+
+        let isGatewayConnected = false;
+        let isGatewayChecked = false;
+
+        async function checkGatewayHealth() {
+            const badge = document.getElementById('adminGatewayStatusBadge');
+            const gUrl = getGatewayUrl();
+            if (badge) {
+                badge.className = "text-[9px] px-2 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badge.innerText = "探測連線中...";
+            }
+            try {
+                const resp = await fetch(`${gUrl}/api/health`, { method: 'GET' }).catch(() => null);
+                if (resp && resp.ok) {
+                    const data = await resp.json();
+                    isGatewayConnected = true;
+                    isGatewayChecked = true;
+                    if (badge) {
+                        badge.className = "text-[9px] px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        badge.innerText = `🟢 伺服器代理在線 (${data.model || 'Active'})`;
+                    }
+                    if (data.dailyBudget) {
+                        const budgetInput = document.getElementById('adminTokenBudgetInput');
+                        if (budgetInput && !budgetInput.dataset.userEdited) {
+                            budgetInput.value = data.dailyBudget;
+                        }
+                    }
+                    updateAdminAiStatusBadge();
+                    fetchServerStatsAndLogs();
+                    return true;
+                } else {
+                    throw new Error('Not running');
+                }
+            } catch(e) {
+                isGatewayConnected = false;
+                isGatewayChecked = true;
+                if (badge) {
+                    badge.className = "text-[9px] px-2 py-0.5 rounded-full font-bold bg-slate-700 text-slate-400 border border-slate-600";
+                    badge.innerText = "🔵 靜態託管 / 本地離線模式";
+                }
+                updateAdminAiStatusBadge();
+                return false;
+            }
+        }
+
+        async function fetchServerStatsAndLogs() {
+            try {
+                const gUrl = getGatewayUrl();
+                const resp = await fetch(`${gUrl}/api/admin/stats`).catch(() => null);
+                if (resp && resp.ok) {
+                    const data = await resp.json();
+                    if (data.stats) {
+                        localStorage.setItem('salt_gemini_token_stats', JSON.stringify(data.stats));
+                    }
+                }
+                const logsResp = await fetch(`${gUrl}/api/admin/logs`).catch(() => null);
+                if (logsResp && logsResp.ok) {
+                    const lData = await logsResp.json();
+                    if (Array.isArray(lData.logs)) {
+                        localStorage.setItem('salt_gemini_activity_log', JSON.stringify(lData.logs));
+                    }
+                }
+                updateAdminStatsUI();
+            } catch(e) {
+                // Background sync ignore
+            }
+        }
+
         function getAdminConfig() {
-            const def = { apiKey: '', model: 'gemini-2.5-flash', syncToStudents: true };
+            const def = {
+                apiKey: '',
+                model: 'gemini-2.5-flash',
+                dailyTokenBudget: 100000,
+                rateLimitPerMin: 15
+            };
             try {
                 const saved = localStorage.getItem('salt_gemini_config');
                 return saved ? Object.assign(def, JSON.parse(saved)) : def;
@@ -2779,12 +3002,24 @@
             const modelSelect = document.getElementById('adminModelSelect');
             const customContainer = document.getElementById('adminCustomModelContainer');
             const customInput = document.getElementById('adminCustomModelInput');
-            const syncCheckbox = document.getElementById('adminSyncCheckbox');
             const classBadge = document.getElementById('adminClassBadge');
+            const gatewayUrlInput = document.getElementById('adminGatewayUrlInput');
+            const tokenBudgetInput = document.getElementById('adminTokenBudgetInput');
+            const rateLimitInput = document.getElementById('adminRateLimitInput');
+
+            if (gatewayUrlInput) {
+                gatewayUrlInput.value = localStorage.getItem('salt_gateway_url') || '';
+            }
+            if (tokenBudgetInput) {
+                tokenBudgetInput.value = config.dailyTokenBudget || 100000;
+            }
+            if (rateLimitInput) {
+                rateLimitInput.value = config.rateLimitPerMin || 15;
+            }
 
             if (keyInput) keyInput.value = config.apiKey || '';
             
-            const presets = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro'];
+            const presets = ['gemini-3.6-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
             if (modelSelect) {
                 if (presets.includes(config.model)) {
                     modelSelect.value = config.model;
@@ -2799,9 +3034,9 @@
                 }
             }
 
-            if (syncCheckbox) syncCheckbox.checked = (config.syncToStudents !== false);
             if (classBadge) classBadge.innerText = currentClass;
 
+            checkGatewayHealth();
             updateAdminAiStatusBadge();
             updateAdminStatsUI();
             if (window.lucide) lucide.createIcons();
@@ -2822,9 +3057,12 @@
             const text = document.getElementById('adminAiStatusText');
             if (!badge || !text) return;
 
-            if (activeKey) {
+            if (isGatewayConnected) {
                 badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1";
-                text.innerText = `Gemini AI 在線 (${activeModel})`;
+                text.innerText = `AI Gateway 在線 (${activeModel})`;
+            } else if (activeKey) {
+                badge.className = "text-[10px] bg-sky-500/20 text-sky-300 border border-sky-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1";
+                text.innerText = `本地直連模式 (${activeModel})`;
             } else {
                 badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-2.5 py-1 rounded-full font-bold flex items-center gap-1";
                 text.innerText = "本地規則引擎 (Local Fallback)";
@@ -2844,31 +3082,74 @@
             updateAdminAiStatusBadge();
         }
 
-        function saveAdminConfig(silent = false) {
+        async function saveAdminConfig(silent = false) {
             const keyInput = document.getElementById('adminApiKeyInput');
             const modelSelect = document.getElementById('adminModelSelect');
             const customInput = document.getElementById('adminCustomModelInput');
-            const syncCheckbox = document.getElementById('adminSyncCheckbox');
+            const gatewayUrlInput = document.getElementById('adminGatewayUrlInput');
+            const tokenBudgetInput = document.getElementById('adminTokenBudgetInput');
+            const rateLimitInput = document.getElementById('adminRateLimitInput');
 
             const apiKey = keyInput ? keyInput.value.trim() : '';
             let model = modelSelect ? modelSelect.value : 'gemini-2.5-flash';
             if (model === 'custom') {
                 model = (customInput && customInput.value.trim()) ? customInput.value.trim() : 'gemini-2.5-flash';
             }
-            const syncToStudents = syncCheckbox ? syncCheckbox.checked : true;
 
-            const config = { apiKey, model, syncToStudents };
+            const gatewayUrl = gatewayUrlInput ? gatewayUrlInput.value.trim() : '';
+            localStorage.setItem('salt_gateway_url', gatewayUrl);
+
+            const dailyTokenBudget = parseInt(tokenBudgetInput ? tokenBudgetInput.value : '100000', 10) || 100000;
+            const rateLimitPerMin = parseInt(rateLimitInput ? rateLimitInput.value : '15', 10) || 15;
+
+            const config = { apiKey, model, dailyTokenBudget, rateLimitPerMin };
             localStorage.setItem('salt_gemini_config', JSON.stringify(config));
 
-            updateAdminAiStatusBadge();
+            // Sync with backend Gateway Server if reachable
+            let serverSynced = false;
+            try {
+                const effectiveGatewayUrl = getGatewayUrl();
+                const token = sessionStorage.getItem('salt_auth_token') || '';
+                
+                // 1. Update Server Config (Inject API Key into Server Vault safely)
+                if (apiKey) {
+                    await fetch(`${effectiveGatewayUrl}/api/admin/config`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ apiKey, defaultModel: model })
+                    }).catch(() => null);
+                }
 
-            // Broadcast to all student iPads via MQTT
-            if (syncToStudents && apiKey && mqttClient && isMqttConnected) {
+                // 2. Update Server Budget Settings
+                const budgetResp = await fetch(`${effectiveGatewayUrl}/api/admin/budget`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ dailyTokenBudget, rateLimitPerMin, defaultModel: model })
+                }).catch(() => null);
+
+                if (budgetResp && budgetResp.ok) {
+                    serverSynced = true;
+                }
+            } catch(e) {
+                console.warn("Server gateway sync note:", e.message);
+            }
+
+            // Probe connection status
+            await checkGatewayHealth();
+
+            // Broadcast only model and status over MQTT (NEVER transmit the secret apiKey)
+            if (mqttClient && isMqttConnected) {
                 const topic = `openclass_salt_v1/${currentClass.replace(/\s+/g, '_')}/ai_sync`;
                 mqttClient.publish(topic, JSON.stringify({
                     type: 'AI_CONFIG_SYNC',
-                    apiKey: apiKey,
                     model: model,
+                    isServerActive: isGatewayConnected,
                     timestamp: Date.now()
                 }), { qos: 0, retain: true });
             }
@@ -2877,18 +3158,33 @@
                 const noticeEl = document.getElementById('adminConfigNotice');
                 if (noticeEl) {
                     noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                    noticeEl.innerHTML = `💾 配置已成功儲存！${syncToStudents ? '已自動派發至全班學生端 (Synced to students)！' : ''}`;
+                    noticeEl.innerHTML = `💾 配置已成功儲存！${serverSynced ? '已同步至後端 AI Gateway 伺服器並更新全班 Token 配額！' : '全班推論模型已同步！'}`;
                     noticeEl.classList.remove('hidden');
                     setTimeout(() => noticeEl.classList.add('hidden'), 4000);
                 }
+                showToast("✅ AI 引擎與配額配置已儲存！", "emerald");
             }
         }
 
-        function clearAdminApiKey() {
+        async function clearAdminApiKey() {
             if (confirm("確定要清除儲存的 Gemini API Key 嗎？\n(Clear saved API Key?)")) {
                 localStorage.removeItem('salt_gemini_config');
                 const keyInput = document.getElementById('adminApiKeyInput');
                 if (keyInput) keyInput.value = '';
+
+                try {
+                    const effectiveGatewayUrl = getGatewayUrl();
+                    const token = sessionStorage.getItem('salt_auth_token') || '';
+                    await fetch(`${effectiveGatewayUrl}/api/admin/config`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ apiKey: '' })
+                    }).catch(() => null);
+                } catch(e) {}
+
                 updateAdminAiStatusBadge();
                 const noticeEl = document.getElementById('adminConfigNotice');
                 if (noticeEl) {
@@ -2897,15 +3193,30 @@
                     noticeEl.classList.remove('hidden');
                     setTimeout(() => noticeEl.classList.add('hidden'), 4000);
                 }
+                showToast("🗑️ 金鑰已清除！", "amber");
             }
         }
 
-        function resetTokenStats() {
+        async function resetTokenStats() {
             if (confirm("確定要重設 Token 使用量與調用記錄嗎？\n(Reset all token stats and activity log?)")) {
                 const blankStats = { calls: 0, totalTokens: 0, promptTokens: 0, candidateTokens: 0, costUsd: 0.0 };
                 localStorage.setItem('salt_gemini_token_stats', JSON.stringify(blankStats));
                 localStorage.setItem('salt_gemini_activity_log', JSON.stringify([]));
+
+                try {
+                    const effectiveGatewayUrl = getGatewayUrl();
+                    const token = sessionStorage.getItem('salt_auth_token') || '';
+                    await fetch(`${effectiveGatewayUrl}/api/admin/reset`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }).catch(() => null);
+                } catch(e) {}
+
                 updateAdminStatsUI();
+                showToast("🔄 Token 統計數據已重設！", "sky");
             }
         }
 
@@ -2948,6 +3259,7 @@
 
         function updateAdminStatsUI() {
             const stats = getTokenStats();
+            const config = getAdminConfig();
             const callsEl = document.getElementById('tokenStatCalls');
             const totalEl = document.getElementById('tokenStatTotal');
             const bdEl = document.getElementById('tokenStatBreakdown');
@@ -2957,6 +3269,29 @@
             if (totalEl) totalEl.innerText = stats.totalTokens.toLocaleString();
             if (bdEl) bdEl.innerText = `${stats.promptTokens.toLocaleString()} / ${stats.candidateTokens.toLocaleString()}`;
             if (costEl) costEl.innerHTML = `約 $${stats.costUsd.toFixed(4)} <span class="text-[9px]">USD</span>`;
+
+            // Daily Token Budget Quota Progress Bar
+            const budgetLimit = config.dailyTokenBudget || 100000;
+            const usedTokens = stats.totalTokens || 0;
+            const remaining = Math.max(0, budgetLimit - usedTokens);
+            const pct = Math.min(100, Math.round((usedTokens / budgetLimit) * 100));
+
+            const usageLabel = document.getElementById('budgetUsageLabel');
+            const pBar = document.getElementById('budgetProgressBar');
+            const remText = document.getElementById('budgetRemainingText');
+
+            if (usageLabel) usageLabel.innerText = `${usedTokens.toLocaleString()} / ${budgetLimit.toLocaleString()} (${pct}%)`;
+            if (remText) remText.innerText = remaining.toLocaleString();
+            if (pBar) {
+                pBar.style.width = `${pct}%`;
+                if (pct > 90) {
+                    pBar.className = "bg-gradient-to-r from-rose-500 to-red-600 h-full rounded-full transition-all duration-500";
+                } else if (pct > 70) {
+                    pBar.className = "bg-gradient-to-r from-amber-400 to-rose-400 h-full rounded-full transition-all duration-500";
+                } else {
+                    pBar.className = "bg-gradient-to-r from-teal-400 via-sky-400 to-indigo-400 h-full rounded-full transition-all duration-500";
+                }
+            }
 
             // Render Recent Activity Table
             const tbody = document.getElementById('adminActivityTableBody');
@@ -3002,22 +3337,50 @@
                 model = (customInput && customInput.value.trim()) ? customInput.value.trim() : 'gemini-2.5-flash';
             }
 
+            if (noticeEl) {
+                noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30";
+                noticeEl.innerHTML = "⏳ 正在測試連線... (Testing connection...)";
+                noticeEl.classList.remove('hidden');
+            }
+
+            const startTime = Date.now();
+
+            // 1. If Gateway is available, test through Gateway
+            const gUrl = getGatewayUrl();
+            try {
+                const gResp = await fetch(`${gUrl}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userText: "Hello! Reply with 'OK' and 3 words in Traditional Chinese.",
+                        callerGroup: "Admin Test",
+                        classId: currentClass,
+                        model: model
+                    })
+                }).catch(() => null);
+
+                if (gResp && gResp.ok) {
+                    const gData = await gResp.json();
+                    const latency = Date.now() - startTime;
+                    if (noticeEl) {
+                        noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        noticeEl.innerHTML = `✅ AI Gateway 伺服器連線成功！(Gateway Active)<br>延遲: ${latency}ms • 伺服器扣減 Token: ${gData.usage?.totalTokens || 0} • 回應: "${gData.data?.zh || gData.data?.en}"`;
+                    }
+                    saveAdminConfig(true);
+                    return;
+                }
+            } catch(e) {}
+
+            // 2. Direct Fallback Test if API Key is entered in client
             if (!apiKey) {
                 if (noticeEl) {
-                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                    noticeEl.innerHTML = "❌ 請先輸入 Google Gemini API Key！(Please enter API Key first)";
+                    noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    noticeEl.innerHTML = "ℹ️ AI Gateway 伺服器未運行，且本機未輸入 API Key。系統將使用本地規則引擎。(Local rule engine active)";
                     noticeEl.classList.remove('hidden');
                 }
                 return;
             }
 
-            if (noticeEl) {
-                noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-sky-500/20 text-sky-200 border border-sky-500/30";
-                noticeEl.innerHTML = "⏳ 正在測試與 Google Gemini 伺服器連線... (Testing connection...)";
-                noticeEl.classList.remove('hidden');
-            }
-
-            const startTime = Date.now();
             try {
                 const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
                 const resp = await fetch(endpoint, {
@@ -3037,11 +3400,11 @@
                     const candT = usage.candidatesTokenCount || 4;
                     const totalT = usage.totalTokenCount || (promptT + candT);
 
-                    recordApiActivity('連線測試 (Test)', model, promptT, candT, totalT, 'SUCCESS', 'OK', latency);
+                    recordApiActivity('連線測試 (Test)', model, promptT, candT, totalT, 'SUCCESS', 'OK (Direct)', latency);
 
                     if (noticeEl) {
                         noticeEl.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                        noticeEl.innerHTML = `✅ Gemini API 連線成功！(Connection OK)<br>延遲 (Latency): ${latency}ms • 消耗: ${totalT} Tokens • 回應: "${text.trim()}"`;
+                        noticeEl.innerHTML = `✅ Gemini 直連成功！(Connection OK)<br>延遲: ${latency}ms • 消耗: ${totalT} Tokens • 回應: "${text.trim()}"`;
                     }
                     saveAdminConfig(true);
                 } else {
@@ -3717,15 +4080,70 @@
 
         async function callAgentWaterGemini(userText, callerGroup) {
             const adminConfig = getAdminConfig();
-            const apiKey = adminConfig.apiKey || sharedAiConfig.apiKey;
             let model = adminConfig.model || sharedAiConfig.model || 'gemini-2.5-flash';
             if (model === 'custom' && adminConfig.customModel) {
                 model = adminConfig.customModel.trim();
             }
 
-            if (!apiKey) return null;
+            const gData = classData[callerGroup];
+            let contextExtra = "";
+            if (gData && gData.data) {
+                contextExtra = `[Group ${callerGroup} recorded 25°C Cold Water: ${gData.data[25]}s, 80°C Hot Water: ${gData.data[80]}s]`;
+            }
 
-            const systemInstruction = `You are "Agent Water (水精靈 AI 導師)", an encouraging, scientifically precise S1 Integrated Science AI tutor for secondary school students conducting "Exp 1.2: Rate of Dissolving Table Salt (水溫對食鹽溶解速率的影響)".
+            const gatewayUrl = getGatewayUrl();
+            const startTime = Date.now();
+
+            // --- TIER 1: SERVER AI GATEWAY PROXY (Primary Secure & Audited Path) ---
+            try {
+                const resp = await fetch(`${gatewayUrl}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userText: userText,
+                        callerGroup: callerGroup,
+                        classId: currentClass,
+                        model: model,
+                        contextExtra: contextExtra
+                    })
+                }).catch(() => null);
+
+                if (resp) {
+                    const latency = Date.now() - startTime;
+                    const json = await resp.json().catch(() => ({}));
+
+                    if (resp.ok && json.ok && json.data) {
+                        isGatewayConnected = true;
+                        if (json.usage) {
+                            recordApiActivity(callerGroup, model, json.usage.promptTokens, json.usage.candidateTokens, json.usage.totalTokens, 'SUCCESS', 'OK (AI Gateway)', latency);
+                        }
+                        if (json.budget && json.budget.totalUsedToday !== undefined) {
+                            const stats = getTokenStats();
+                            stats.totalTokens = json.budget.totalUsedToday;
+                            localStorage.setItem('salt_gemini_token_stats', JSON.stringify(stats));
+                            updateAdminStatsUI();
+                        }
+                        return json.data;
+                    } else if (resp.status === 429) {
+                        const errReason = json.error || "Token 配額已達上限或發送頻率過高 (Quota exceeded / Rate limited)";
+                        showToast(`⚠️ ${errReason}`, "amber");
+                        recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', errReason, latency);
+                        return {
+                            en: "⚠️ The class daily token budget has reached its limit or rate limit was triggered. Please ask your teacher to check the Admin Console! 💧",
+                            zh: `⚠️ ${errReason}。水精靈建議你們先對比本組數據並記錄實驗結論！💧`
+                        };
+                    } else if (json.error) {
+                        console.warn("AI Gateway returned error:", json.error);
+                    }
+                }
+            } catch(gatewayErr) {
+                console.warn("AI Gateway connection exception, falling back:", gatewayErr);
+            }
+
+            // --- TIER 2: LOCAL DIRECT FALLBACK (For offline / static dev with client key) ---
+            const localApiKey = adminConfig.apiKey;
+            if (localApiKey) {
+                const systemInstruction = `You are "Agent Water (水精靈 AI 導師)", an encouraging, scientifically precise S1 Integrated Science AI tutor for secondary school students conducting "Exp 1.2: Rate of Dissolving Table Salt (水溫對食鹽溶解速率的影響)".
 Target Audience: Grade 7 / Secondary 1 students (11-13 years old).
 Mission:
 1. Warmly answer student greetings (e.g. "hello", "你好") and questions asking for guidance or help.
@@ -3740,79 +4158,65 @@ Crucial Formatting & Output Rules:
 - DO NOT output any internal thoughts, goals, prompt meta-tags (e.g. NEVER write "/Goal:*", "Goal:", or "Prompt:").
 - DO NOT duplicate English into the "zh" field. The "zh" field MUST contain natural Traditional Chinese characters.`;
 
-            const gData = classData[callerGroup];
-            let contextExtra = "";
-            if (gData && gData.data) {
-                contextExtra = ` [Group ${callerGroup} recorded 25°C Cold Water: ${gData.data[25]}s, 80°C Hot Water: ${gData.data[80]}s]`;
-            }
-
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-            const startTime = Date.now();
-
-            try {
-                let requestBody = {
-                    systemInstruction: { parts: [{ text: systemInstruction }] },
-                    contents: [
-                        { role: "user", parts: [{ text: `Current group: ${callerGroup}.${contextExtra}\nStudent says: "${userText}"\nRemember: Reply in valid JSON with {"en": "...", "zh": "..."} where zh MUST be Traditional Chinese.` }] }
-                    ],
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 1000,
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                en: { type: "STRING", description: "English response for S1 student" },
-                                zh: { type: "STRING", description: "Traditional Chinese response for S1 student" }
-                            },
-                            required: ["en", "zh"]
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(localApiKey)}`;
+                try {
+                    let requestBody = {
+                        systemInstruction: { parts: [{ text: systemInstruction }] },
+                        contents: [
+                            { role: "user", parts: [{ text: `Current group: ${callerGroup}.${contextExtra}\nStudent says: "${userText}"\nRemember: Reply in valid JSON with {"en": "...", "zh": "..."} where zh MUST be Traditional Chinese.` }] }
+                        ],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1000,
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    en: { type: "STRING", description: "English response for S1 student" },
+                                    zh: { type: "STRING", description: "Traditional Chinese response for S1 student" }
+                                },
+                                required: ["en", "zh"]
+                            }
                         }
-                    }
-                };
+                    };
 
-                let resp = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody)
-                });
-
-                // Fallback attempt without responseSchema if HTTP 400 (older models or custom endpoints)
-                if (!resp.ok && resp.status === 400) {
-                    delete requestBody.generationConfig.responseSchema;
-                    delete requestBody.generationConfig.responseMimeType;
-                    resp = await fetch(endpoint, {
+                    let resp = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(requestBody)
                     });
+
+                    if (!resp.ok && resp.status === 400) {
+                        delete requestBody.generationConfig.responseSchema;
+                        delete requestBody.generationConfig.responseMimeType;
+                        resp = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        });
+                    }
+
+                    const latency = Date.now() - startTime;
+
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (text) {
+                            const usage = data.usageMetadata || {};
+                            const promptT = usage.promptTokenCount || 60;
+                            const candT = usage.candidatesTokenCount || 40;
+                            const totalT = usage.totalTokenCount || (promptT + candT);
+                            recordApiActivity(callerGroup, model, promptT, candT, totalT, 'SUCCESS', 'OK (Direct)', latency);
+                            return parseBilingualResponse(text, userText, callerGroup);
+                        }
+                    }
+                } catch(dirErr) {
+                    console.warn("Direct Gemini call exception:", dirErr);
                 }
-
-                const latency = Date.now() - startTime;
-
-                if (!resp.ok) {
-                    const err = await resp.json().catch(() => ({}));
-                    const errMsg = err.error?.message || `HTTP ${resp.status}`;
-                    recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', errMsg);
-                    return null;
-                }
-
-                const data = await resp.json();
-                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!text) return null;
-
-                const usage = data.usageMetadata || {};
-                const promptT = usage.promptTokenCount || 60;
-                const candT = usage.candidatesTokenCount || 40;
-                const totalT = usage.totalTokenCount || (promptT + candT);
-
-                recordApiActivity(callerGroup, model, promptT, candT, totalT, 'SUCCESS', 'OK', latency);
-
-                return parseBilingualResponse(text, userText, callerGroup);
-            } catch(e) {
-                console.warn("Gemini call exception:", e);
-                recordApiActivity(callerGroup, model, 0, 0, 0, 'FAILED', e.message);
-                return null;
             }
+
+            // --- TIER 3: SOCRATIC RULE-BASED FALLBACK (Zero Leakage) ---
+            return null;
         }
 
         function appendThinkingBubble(group) {
